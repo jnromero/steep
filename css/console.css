@@ -1,0 +1,128 @@
+
+/** * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/) * http://cssreset.com */
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,time, mark, audio, video {  margin: 0;  padding: 0; border: 0;  font-size: 100%;  font: inherit;  vertical-align: baseline;}/* HTML5 display-role reset for older browsers */article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {  display: block;}body {  line-height: 1;}ol, ul {  list-style: none;}blockquote, q { quotes: none;}blockquote:before, blockquote:after,q:before, q:after { content: '';  content: none;}table {  border-collapse: collapse;  border-spacing: 0;}
+
+html{
+  background-color:rgba(0, 0, 0, .2);
+  -webkit-tap-highlight-color:transparent;
+}
+
+
+body{
+  background-color:rgba(255,255,255,.9);
+  width:1600px;
+  height:900px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0px;
+}
+
+
+#mainDiv{
+  width: 100%;
+  height:100%;
+  border:0px solid red;
+  overflow: scroll;
+  position:relative;
+  background-color: rgba(0,255,0,.1);
+  background-color: rgba(255,255,255,1);
+}
+
+
+
+#pythonConsole{
+  background-color: rgba(255,255,255,1);
+  position:absolute;
+  left: 2%;
+  top:5%;
+  height:90%;
+  width:90%;
+  border:0px solid black;
+  overflow: hidden;
+  overflow: scroll; 
+}
+
+#pythonConsoleIN{
+  background-color: rgba(255,255,255,1);
+  color:green;
+  position:absolute;
+  left: 0%;
+  top:0%;
+  width:100%;
+  min-height:100%;
+  border:0px solid black;
+  overflow: hidden;
+  overflow-x: scroll;
+
+}
+
+.error{
+  color:red;
+}
+
+#consoleTabContainer{
+  position: absolute;
+  top:900px;
+  width:1600px;
+  line-height: 50px;
+  border-left: 1px solid black;
+}
+
+
+.consoleTab{
+  display: inline-block;
+  top:0px;
+  text-align: center;
+  width:50px;
+  height:50px;
+  line-height: 50px;
+  border: 1px solid black;
+  border-top: 0px;
+  border-left: 0px;
+  text-decoration: none;
+  font-size: 150%;
+}
+
+.consoleTabPressed{
+  background-color: rgba(0,255,0,.1);
+}
+
+.lineNumber{
+  display: inline-block;
+  color:black;
+  font-size: 50%;
+  width:50px;
+  height: 25px;
+  text-align: center;
+  line-height: 25px;
+}
+
+.stdTwisted{
+  color:blue;
+}
+
+.stdErr{
+  color:red;
+}
+
+.stdOut{
+  color:green;
+}
+
+.consoleLine{
+  font-family: Inconsolata;
+  font-size: 24px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 500;
+  line-height: 30px;
+  width:30000px;
+  overflow-x: scroll;
+}
+
+.subLine{
+  color:black;
+  margin-left:50px;
+  font-size: 16px;
+  line-height: 18px;
+}

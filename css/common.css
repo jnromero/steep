@@ -1,0 +1,169 @@
+/** * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/) * http://cssreset.com */
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,time, mark, audio, video {  margin: 0;  padding: 0; border: 0;  font-size: 100%;  font: inherit;  vertical-align: baseline;}/* HTML5 display-role reset for older browsers */article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {  display: block;}body {  line-height: 1;}ol, ul {  list-style: none;}blockquote, q { quotes: none;}blockquote:before, blockquote:after,q:before, q:after { content: '';  content: none;}table {  border-collapse: collapse;  border-spacing: 0;}
+
+* {
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+
+body {
+    background-color:rgba(50,50,150,.1);
+    padding: 0;
+    margin:0px auto;
+    /*font-family:'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;*/
+    font-family:Proxima Nova;
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 300;
+}
+
+
+div{
+    -khtml-user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+
+}
+
+
+#mainDiv {
+    position:relative;
+    width:1280px;    
+    height:1024px;    
+    width:1600px;    
+    height:900px;    
+    background-color:rgba(255,255,0,.1);
+    margin: 0 auto;
+    overflow-y:hidden;
+}
+
+
+#genericScreen{
+    font-size: 300%;
+    position: absolute;
+    background-color: rgba(250,250,250,1);
+    display: block;
+    width: 100%;
+    height:100%;
+    box-sizing: border-box;
+    border:10px green solid;
+    text-align:center;
+}
+
+
+#genericScreenInside { 
+  position: absolute; 
+  width: 100%;
+  height:100%;
+  box-sizing: border-box;
+  border:60px transparent solid;
+  display: table; 
+}
+
+#genericScreenText {
+  display: table-cell; 
+  vertical-align: middle; 
+  text-align: center; 
+    line-height:100px;;
+}
+
+
+
+.arrow-box-down {
+  box-sizing: border-box;
+  position: absolute;
+  background: #88b7d5;
+  border: 4px solid #c2e1f5;
+  min-height:100px;
+  width:200px;
+  line-height:50px;
+  text-align:center;
+  animation-name: bounce;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1s;
+}
+
+
+.arrow-box-down:after, .arrow-box-down:before {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.arrow-box-down:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-top-color: #88b7d5;
+    border-width: 30px;
+    margin-left: -30px;
+}
+.arrow-box-down:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-top-color: #c2e1f5;
+    border-width: 36px;
+    margin-left: -36px;
+}
+
+
+.arrow-box-up {
+  z-index: 9999;
+  box-sizing: border-box;
+  position: absolute;
+  background: #88b7d5;
+  border: 4px solid #c2e1f5;
+  min-height:100px;
+  width:200px;
+  line-height:25px;
+  text-align:center;
+  animation-name: bounce;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1s;
+}
+.arrow-box-up:after, .arrow-box-up:before {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.arrow-box-up:after {
+  border-color: rgba(136, 183, 213, 0);
+  border-bottom-color: #88b7d5;
+  border-width: 30px;
+  margin-left: -30px;
+}
+.arrow-box-up:before {
+  border-color: rgba(194, 225, 245, 0);
+  border-bottom-color: #c2e1f5;
+  border-width: 36px;
+  margin-left: -36px;
+}
+
+
+@keyframes bounce {
+    0% {transform: translateY(0px);}
+    50% {transform: translateY(20px);}
+    100% {transform: translateY(0px);}
+}
+
+
+
+
+

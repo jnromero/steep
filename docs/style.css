@@ -1,0 +1,93 @@
+/** * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/) * http://cssreset.com */
+/*html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,time, mark, audio, video {  margin: 0;  padding: 0; border: 0;  font-size: 100%;  font: inherit;  vertical-align: baseline;}/* HTML5 display-role reset for older browsers */article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {  display: block;}body {  line-height: 1;}ol, ul {  list-style: none;}blockquote, q { quotes: none;}blockquote:before, blockquote:after,q:before, q:after { content: '';  content: none;}table {  border-collapse: collapse;  border-spacing: 0;}*/
+
+* {
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+
+body {
+    background-color:rgba(50,50,150,0);
+    padding: 0;
+    margin:0px auto;
+    /*font-family:'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;*/
+    font-family:Proxima Nova;
+    font-size: 16px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 10;
+    line-height: 22px;
+}
+
+
+div{
+    -khtml-user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+
+}
+
+
+#mainDiv {
+    position:relative;
+    width:1280px;    
+    background-color:rgba(0,255,0,.05);
+    margin: 0 auto;
+    overflow-y:hidden;
+}
+
+#container {
+	position:relative;
+	width:1000px;    
+    background-color:rgba(255,255,0,0);
+    left:200px;
+    margin-top: 40px;
+}
+
+
+
+#container h1 {
+	margin-left: 20px;
+	font-size: 150%;
+	line-height: 200%;
+}
+
+#container ul {
+	list-style-type: disc;
+}
+
+#container li {
+	padding-bottom: 5px;
+}
+
+#sidebar {
+	position:absolute;
+	width:200px;    
+    left:00px;
+    margin-top: 40px;
+}
+
+
+#sidebar ul{
+	width: 150px;
+	background-color: rgba(255,0,0,0);
+	margin-left: 25px;
+	padding-left: 0px;
+}
+#sidebar li{
+	display: table-row;
+	width: 150px;
+	height:50px;	
+	border: 1px solid red;
+}
+
+.important{
+        font-weight: 900;
+
+}
