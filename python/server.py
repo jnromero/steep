@@ -37,8 +37,6 @@ except:
    sys.exit("ERROR: Config file couldn't be loaded (probably not a python file).\n %s \nYou can see all options by running 'python server.py -h'"%(options.configFile))
 
 #Save data to temporary file.  This avoids clutter
-import shutil
-config['dataFolder']
 if options.saveData=="False":
    serverStartString="tmp"
 #Add serverStartString to config file

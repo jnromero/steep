@@ -9,8 +9,8 @@ def getOptions():
                         help="location of server configuration file.  Default is ../config/settings.py")
    parser.add_option("-l", "--location", dest="location", default="NONE",
                      help="the location where the server is being run, specifics are defined in the config file.")
-   parser.add_option("-o", "--openBrowser", dest="openBrowser", default="False",
-                     help="set to True to open the browser on start.")
+   parser.add_option("-o", "--openBrowser", dest="openBrowser", default="True",
+                     help="set to False to not open the browser on start.")
    parser.add_option("-r", "--restart", dest="restart", default="False",
                      help="set to the string %Y%m%d-%H%M%S to restart the server.")
    parser.add_option("-d", "--debug", dest="debug", default="False",
