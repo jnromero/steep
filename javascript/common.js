@@ -181,4 +181,3 @@ function updateStatus(msg) {
 
 mainDiv = createDiv("mainDiv");
 $("body").prepend(mainDiv);
-

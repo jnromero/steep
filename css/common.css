@@ -75,66 +75,21 @@ div{
 }
 
 
+/*https://jsfiddle.net/qaws2emt/*/
 
-.arrow-box-down {
-  box-sizing: border-box;
-  position: absolute;
-  background: #88b7d5;
-  border: 4px solid #c2e1f5;
-  min-height:100px;
-  width:200px;
-  line-height:50px;
-  text-align:center;
-  animation-name: bounce;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-duration: 1s;
-}
-
-
-.arrow-box-down:after, .arrow-box-down:before {
-    top: 100%;
-    left: 50%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-}
-
-.arrow-box-down:after {
-    border-color: rgba(136, 183, 213, 0);
-    border-top-color: #88b7d5;
-    border-width: 30px;
-    margin-left: -30px;
-}
-.arrow-box-down:before {
-    border-color: rgba(194, 225, 245, 0);
-    border-top-color: #c2e1f5;
-    border-width: 36px;
-    margin-left: -36px;
-}
-
-
-.arrow-box-up {
+.arrow_box {
   z-index: 9999;
   box-sizing: border-box;
   position: absolute;
+  border: 4px solid;
   background: #88b7d5;
-  border: 4px solid #c2e1f5;
+  border-color: #c2e1f5;
   min-height:100px;
   width:200px;
   line-height:25px;
   text-align:center;
-  animation-name: bounce;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-duration: 1s;
 }
-.arrow-box-up:after, .arrow-box-up:before {
-  bottom: 100%;
-  left: 50%;
+.arrow_box:after, .arrow_box:before {
   border: solid transparent;
   content: " ";
   height: 0;
@@ -143,27 +98,104 @@ div{
   pointer-events: none;
 }
 
-.arrow-box-up:after {
+.arrow_box:after {
   border-color: rgba(136, 183, 213, 0);
-  border-bottom-color: #88b7d5;
-  border-width: 30px;
-  margin-left: -30px;
+  border-width: 20px;
 }
-.arrow-box-up:before {
+.arrow_box:before {
   border-color: rgba(194, 225, 245, 0);
-  border-bottom-color: #c2e1f5;
-  border-width: 36px;
-  margin-left: -36px;
+  border-width: 26px;
+}
+
+.arrow_box_left,.arrow_box_right{
+  animation-name: bounceLR;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1s;
+}
+.arrow_box_left:after, .arrow_box_left:before {
+  right: 100%;
+  top: 50%;
+}
+
+.arrow_box_left:after {
+  border-right-color: #88b7d5;
+  margin-top: -20px;
+}
+.arrow_box_left:before {
+  border-right-color: #c2e1f5;
+  margin-top: -26px;
+}
+
+.arrow_box_right:after, .arrow_box_right:before {
+  left: 100%;
+  top: 50%;
+}
+
+.arrow_box_right:after {
+  border-left-color: #88b7d5;
+  margin-top: -20px;
+}
+.arrow_box_right:before {
+  border-left-color: #c2e1f5;
+  margin-top: -26px;
+}
+
+.arrow_box_up,.arrow_box_down{
+  animation-name: bounceUD;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1s;
 }
 
 
-@keyframes bounce {
+.arrow_box_up:after, .arrow_box_up:before {
+  left: 50%;
+  bottom: 100%;
+}
+
+.arrow_box_up:after {
+  border-bottom-color: #88b7d5;
+  margin-left: -20px;
+}
+.arrow_box_up:before {
+  border-bottom-color: #c2e1f5;
+  margin-left: -26px;
+}
+
+
+.arrow_box_down:after, .arrow_box_down:before {
+  left: 50%;
+  top: 100%;
+}
+
+.arrow_box_down:after {
+  border-top-color: #88b7d5;
+  margin-left: -20px;
+}
+.arrow_box_down:before {
+  border-top-color: #c2e1f5;
+  margin-left: -26px;
+}
+
+
+
+.thisArrow{
+  left:100px;
+  top:100px;
+}
+
+@keyframes bounceUD {
     0% {transform: translateY(0px);}
     50% {transform: translateY(20px);}
     100% {transform: translateY(0px);}
 }
 
-
+@keyframes bounceLR {
+    0% {transform: translateX(0px);}
+    50% {transform: translateX(20px);}
+    100% {transform: translateX(0px);}
+}
 
 
 
