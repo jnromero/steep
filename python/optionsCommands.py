@@ -33,14 +33,12 @@ def getOptions():
 
 def printRestartString(serverStartString):
    #Print the restart server string
-   print "To restart use:"
-   print 
+   print("To restart use:\n")
    if "-r" in sys.argv:
       this=sys.argv
       i=this.index("-r")
       del this[i]
       del this[i]
    restartString="python "+" ".join(sys.argv)+" -r %s"%(serverStartString)
-   print restartString
-   print 
+   print(restartString+"\n")
    return restartString 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import os
 import imp
@@ -6,7 +7,11 @@ import string
 import random
 import time
 import json
-import urlparse
+if sys.version_info >= (3,0):
+   import urllib.parse as theURLparse
+else:
+   import urlparse as theURLparse
+
 import webbrowser
 
 from twisted.internet import reactor
@@ -48,7 +53,7 @@ config=settings.defaultSettings(options.location,options.configFile,serverStartS
 import logger
 if options.debug!="True":
    thisLogger=logger.TwistedLogger(config['webServerRoot']+config['dataFolder'])
-   print restartString
+   print(restartString)
 
 #load the experiment file
 experimentFile=config['webServerRoot']+config['currentExperiment']+"/files/experiment.py"
@@ -56,10 +61,10 @@ experiment = imp.load_source('experiment', experimentFile)
 
 #Print server starting message
 if options.restart=="False":
-   print "SERVER RUNNING - %s!!!"%(serverStartString)
+   print("SERVER RUNNING - %s!!!"%(serverStartString))
 else:
-   print "SERVER RESTARTING - %s!!!"%(serverStartString)
-print "current Experiment: "+config['currentExperiment']
+   print("SERVER RESTARTING - %s!!!"%(serverStartString))
+print("current Experiment: "+config['currentExperiment'])
 
 #Get value from url key function
 def getValueFromQueryKey(query,key):
@@ -76,63 +81,63 @@ class RequestHandler(Resource):
    def __init__(self,config):
       self.config=config
    def render_GET(self, request):
-      parsedURL=urlparse.urlparse(request.uri)#scheme,netloc,path,query
-      if parsedURL.path=="/":
+      parsedURL=theURLparse.urlparse(request.uri)#scheme,netloc,path,query
+      thisPath=parsedURL.path.decode("utf-8")
+      if thisPath=="/":
          ext=".py"
          filename="index.py"
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
-      elif parsedURL.path in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html"]:
+      elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html"]:
          ext=".py"
-         filename=parsedURL.path.replace(".html",".py").replace("/","")
+         filename=thisPath.replace(".html",".py").replace("/","")
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
-      elif parsedURL.path in ["/console.html"]:
+      elif thisPath in ["/console.html"]:
          thisPage=getValueFromQueryKey(parsedURL.query,"page")
          if thisPage=="":
             thisPage=thisLogger.fileCount
          self.logURL=self.config['domain']+self.config['dataFolder']+"/logs/%s.log"%(thisPage)
-         print "HERE",self.logURL
          self.currentLogTab=thisPage
          ext=".py"
-         filename=parsedURL.path.replace(".html",".py").replace("/","")
+         filename=thisPath.replace(".html",".py").replace("/","")
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
       else:
-         root,ext=os.path.splitext(parsedURL.path)
-         filename=os.path.basename(parsedURL.path)
+         root,ext=os.path.splitext(thisPath)
+         filename=os.path.basename(thisPath)
          if filename=="":
             filename="index.py"
             ext=".py"
-         fileFolder=parsedURL.path.replace(filename,"")
+         fileFolder=thisPath.replace(filename,"")
          fullPath=self.config['webServerRoot']+fileFolder+filename
          if filename=="favicon.ico":
-            print "FAVICON"
             fullPath=self.config['webServerRoot']+self.config['packageFolder']+"/html/triangle.png"
 
 
       if os.path.isfile(fullPath):
          if filename=="console.py":
-            print "running %s from %s"%(filename,self.config['webServerRoot']+fileFolder)
+            print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))
             thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
             output=thisPage.getPage(self.config,self.logURL,thisLogger.fileCount,self.currentLogTab)
-            return output
+            return output.encode('utf-8')
          elif ext==".py":
-            print "running %s from %s"%(filename,self.config['webServerRoot']+fileFolder)
+            print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))
             thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
             output=thisPage.getPage(self.config)
-            return output
+            return output.encode('utf-8')
          elif ext==".m4a":
             request.setHeader("Content-Type","audio/mp4")
-            thisFile=File(self.config['webServerRoot']+parsedURL.path)
+            thisFile=File(self.config['webServerRoot']+thisPath)
             return File.render_GET(thisFile,request)
          else:
             #print "getting file: "+self.config['webServerRoot']+fileFolder+filename
             thisFile=File(self.config['webServerRoot']+fileFolder+filename)
             return File.render_GET(thisFile,request)
       else:
-         print request
-         print >> sys.stderr, "ErrorLine: File NOT found: ",fullPath
+         print(request)
+         print("ErrorLine: File NOT found: %s"%(fullPath), file=sys.stderr)
+         #print >> sys.stderr, "ErrorLine: File NOT found: %s"%(fullPath)
          return "<html><h1>File Not Found - %s</h1></html>"%(fullPath)
 
 
@@ -207,14 +212,14 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
 
    def stopAccepting(self,message,client):
       self.data['acceptingClients']=0
-      print "Done Accepting Clients!"
-      print "%s Clients Connected"%(len(self.data['subjectIDs']))
-      print self.data['subjectIDs']
+      print("Done Accepting Clients!")
+      print("%s Clients Connected"%(len(self.data['subjectIDs'])))
+      print(self.data['subjectIDs'])
       self.setMatchings()
 
    def startAccepting(self,message,client):
       self.data['acceptingClients']=1
-      print "Accepting Clients Now!"
+      print("Accepting Clients Now!")
 
    # def updateStatusFromClient(self,message,client):
    #    sid=client.subjectID
@@ -281,7 +286,7 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
          if viewType=="regular":
             if subjectID not in self.data['subjectIDs']: 
                if self.data['acceptingClients']==1:
-                  print "new regular client",subjectID
+                  print("new regular client: %s"%(subjectID))
                   self.clientsById[subjectID]=client
                   self.createSubject(subjectID,client)
                   self.data[subjectID].ipAddress=client.peer
@@ -295,9 +300,9 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
                   for sid in self.data["subjectIDs"]:
                      connections.append(self.data[sid].connectionStatus)
                   client.sendMessage(json.dumps(msg).encode('utf8'))
-                  print "New Client Trying to Join, not accepting anymore",self.data['acceptingClients']
+                  print("New Client Trying to Join, not accepting anymore %s"%(self.data['acceptingClients']))
             elif subjectID in self.data['subjectIDs']:
-               print "reconnecting subject",subjectID
+               print("reconnecting subject %s"%(subjectID))
                if subjectID in self.clientsById:
                   #IF a client with that ID is currently connected
                   msg={}
@@ -309,10 +314,10 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
                self.data[subjectID].connectionStatus='connected'
                self.reconnectingClient(client)
          elif viewType=="monitor":
-            print "New monitor client"
+            print("New monitor client")
             self.monitorClients.append(client)
          elif viewType=="video":
-            print "New video client"
+            print("New video client")
             self.videoClients.append(client)
             if self.data['instructionsRunning']==1:
                self.reconnectInstructions(client)
@@ -320,7 +325,7 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
       elif self.config['serverType']=="demoExperiment":
          if subjectID in self.data['subjectIDs']: 
             self.deleteSubject(subjectID)
-         print "new demo client",subjectID
+         print("new demo client: %s"%(subjectID))
          self.clientsById[subjectID]=client
          self.createSubject(subjectID,client)
          self.data[subjectID].ipAddress=client.peer
@@ -385,13 +390,13 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
       try:
          self.clientsById[subjectID].sendMessage(json.dumps(msg).encode('utf8'))
       except:
-         print "can't send %s message to %s"%(msg['type'],subjectID)
+         print("can't send %s message to %s"%(msg['type'],subjectID))
 
    def runCommand(self,message,client):
       try:
          exec(message['command'])
       except Exception as thisExept: 
-         print thisExept
+         print(thisExept)
 
    def refreshMyPage(self,message,client):
       msg={}
@@ -416,7 +421,7 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
          for client in self.monitorClients:
             client.sendMessage(json.dumps(msg).encode('utf8'))
       except:
-         print "can't send message to server"
+         print("can't send message to server")
 
    def taskDone(self,message):
       self.data['monitorTasks'][message['index']]['status']='Done'
@@ -427,7 +432,7 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
    def reconnectInstructions(self,client):
       for k in self.data['monitorTasks']:
          if k['type']=='loadInstructions':
-            print "sending"
+            print("sending")
             self.loadInstructions(k,client)
             break 
       msg={}
@@ -534,7 +539,7 @@ if __name__ == '__main__':
    factory = BroadcastServerFactory(config["websocketURL"],config)
    factory.port=config["webSocketPort"]
    factory.protocol = BroadcastServerProtocol
-   factory.setProtocolOptions(allowHixie76 = True)
+   #factory.setProtocolOptions(allowHixie76 = True)
    listenWS(factory)
 
    #webserver
