@@ -42,9 +42,9 @@ function getUrlParameter(sParam)
 }
 
 function insertParam(params) {
-        varNewURL=document.location.search;
-        for(k=0;k<params.length;k++){
-            key = escape(params[k][0]); value = escape(params[k][1]);
+        var varNewURL=document.location.search;
+        for(var k=0;k<params.length;k++){
+            var key = escape(params[k][0]); value = escape(params[k][1]);
             var kvp = varNewURL.substr(1).split('&');
             if (kvp == '') {
                 varNewURL = '?' + key + '=' + value;
@@ -74,7 +74,7 @@ function insertParam(params) {
 
 
 function isDivNotThere(divIN){
-    out=true;
+    var out=true;
     if(document.getElementById(divIN)!=null){
         out=false;
     }
@@ -96,10 +96,10 @@ function deleteDiv(id){
 }
 
 function clearAll(){
-    cursorDiv=document.getElementById("cursorOverlay");
-    captionOverlay=document.getElementById("captionOverlay");
+    var cursorDiv=document.getElementById("cursorOverlay");
+    var captionOverlay=document.getElementById("captionOverlay");
     deleteDiv("mainDiv");
-    mainDiv=createDiv("mainDiv");
+    var mainDiv=createDiv("mainDiv");
     $("body").prepend(mainDiv);
     $("#mainDiv").prepend(cursorDiv);
     $("#mainDiv").prepend(captionOverlay);
@@ -140,7 +140,7 @@ function makeTimePretty(timeIN){
 }
 
 function moveTimer(timerName){
-    timerSeconds=window.timers[timerName]-((new Date()).getTime()-window.timers['timerCheck'])/1000;
+    var timerSeconds=window.timers[timerName]-((new Date()).getTime()-window.timers['timerCheck'])/1000;
     var pf = partial(moveTimer,timerName);
     if(timerSeconds>0){
         var pretty = makeTimePretty(timerSeconds);
