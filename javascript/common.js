@@ -6,6 +6,17 @@ var partial = function (func /*, 0..n args */) {
     };
 };
 
+function clickButton(buttonType, divID, func) {
+  var args = Array.prototype.slice.call(arguments,3);
+  var functionToRun = partial(func, args);
+  var thisDiv = document.getElementById(divID);
+  thisDiv.addEventListener("click", function listener(e) {
+    if (buttonType == "once") {
+      thisDiv.removeEventListener("click", listener);
+    }
+    functionToRun();
+  });
+}
 
 function refreshMyPage(){
     console.log("ref");
