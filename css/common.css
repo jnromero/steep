@@ -41,7 +41,7 @@ div{
     height:900px;    
     background-color:rgba(255,255,0,.1);
     margin: 0 auto;
-    overflow-y:hidden;
+    overflow:hidden;
 }
 
 

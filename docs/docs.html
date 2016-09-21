@@ -102,10 +102,10 @@ def defaultSettings(location,configFile,serverStartString):
                                 <pre class="brush: python">config['webServerRoot']="/Users/myUsername/experiments/"</pre> On windows it might look something like:
                                 <pre class="brush: python">config['webServerRoot']="C:/Users/myUsername/experiments/"</pre> Note that for windows, you will keep the slashes as forward slashes, and not the backslashes that windows typically uses.
                             </li>
-                            <li>You also need to make sure that the path on line 15 plus the path on line 10 is where you put the STEEP folder (/Users/myUsername/experiments/steep/ in this example) and the path on line 15 plus the path on line 11 is where you put the "simple" folder (/Users/myusername/experiments/simple/ in this example).
+                            <li>You also need to make sure that the path on line 15 plus the path on line 10 is where you put the STEEP folder (/Users/myUsername/experiments/steep/ in this example) and the path on line 15 plus the path on line 11 is where you put the "simple" folder (/Users/myusername/experiments/simple/ in this example).  Note that a path with multiple slashes is fine (/Users//myusername///experiments///simple).
                                 <li>Once this is setup, you can run the program by moving to the steep/python folder in terminal on a mac or the command prompt on windows by doing this:
                                     <pre class="brush: bash">cd /Users/myUsername/experiments/steep/python/</pre> Then you can run the program like this:
-                                    <pre class="brush: bash">python server.py -c '/Users/myUsername/experiments/simple/files/config.py' -l myComputer -d True</pre> to see all of the options you can run
+                                    <pre class="brush: bash">python server.py -c "/Users/myUsername/experiments/simple/files/config.py" -l myComputer -d True</pre> to see all of the options you can run
                                     <pre class="brush: bash">python server.py -h</pre>
                                 </li>
                                 <li>If you want to run the server on a different computer you can comment out the following 9 lines, and edit the code for those. This would be useful for example to run it on a lab computer or a web server.</li>

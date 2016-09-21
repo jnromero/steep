@@ -19,7 +19,7 @@ def getPage(config):
         tasksJS="""<script type="text/javascript" src="<CURRENTEXPHERE><INSTRUCTIONSPATHHERE>tasks/taskList.js"></script>"""
 
     if "quiz" in config:
-        if config['quiz']==True:
+        if config['quiz']=="True":
             quizJS="""<script type="text/javascript" src="<CURRENTEXPHERE>files/quiz.js"></script>"""
 
 

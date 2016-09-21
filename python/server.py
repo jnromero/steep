@@ -221,10 +221,10 @@ class BroadcastServerFactory(WebSocketServerFactory,experiment.experimentClass,e
       self.data['acceptingClients']=1
       print("Accepting Clients Now!")
 
-   # def updateStatusFromClient(self,message,client):
-   #    sid=client.subjectID
-   #    self.data[sid].status=message['status']
-   #    #self.updateStatus(sid)
+   def updateStatusFromClient(self,message,client):
+      sid=client.subjectID
+      self.data[sid].status=message['status']
+      #self.updateStatus(sid)
 
    def register(self, client):
       if client not in self.clients:
