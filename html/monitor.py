@@ -1,34 +1,28 @@
 #!/usr/bin/python
 
 
-def getPage(config):
+def getPage(config,tf):
   currentExperiment=config['currentExperiment']
   packageFolder=config['packageFolder']
   domain=config['domain']
 
-  this="""
-  <html>
-    <head>
-      <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/jquery-1.11.3.min.js"></script>
-      <script type="text/javascript" src="<JAVASCRIPTCONFIGFILE>"></script>
-      <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/common.js"></script>
-      <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/websocketConnect.js"></script>
-      <link rel="stylesheet" type="text/css" href="<PACKAGEFOLDERHERE>css/common.css" />
-      <link rel="stylesheet" type="text/css" href="<PACKAGEFOLDERHERE>css/switch.css" />
-      <link rel="stylesheet" type="text/css" href="<PACKAGEFOLDERHERE>css/monitor.css" />
-    </head>
-    <body>
+  this=''
+  this+='<html>\n'
+  this+='\t<head>\n'
+  this+='\t\t<title>STEEP: Monitor</title>\n'
+  this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['jquery.js'])
+  this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf[currentExperiment]['config.js'])
+  this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['common.js'])
+  this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['websocketConnect.js'])
+  this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s" />\n'%(domain,packageFolder,tf['common']['common.css'])
+  this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s" />\n'%(domain,packageFolder,tf['common']['switch.css'])
+  this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s" />\n'%(domain,packageFolder,tf['common']['monitor.css'])
+  this+='\t</head>\n'
+  this+='\t<body>\n'
+  this+='\t\t<div id="mainDiv"></div>\n'
+  this+='\t\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['monitor.js'])
+  this+='\t\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['video.js'])
+  this+='\t<body>\n'
+  this+='</html>'
 
-        <div id="mainDiv"></div>
-      <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/monitor.js"></script>
-      <!--<script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/console.js"></script>-->
-       <script src="<PACKAGEFOLDERHERE>javascript/video.js"></script>
-  </body>
-
-  </html>
-  """    
-  this=this.replace("<JAVASCRIPTCONFIGFILE>",config["configJsURL"])
-  this=this.replace("<CURRENTEXPHERE>",domain+currentExperiment)
-  this=this.replace("<PACKAGEFOLDERHERE>",domain+packageFolder)
-  this=this.replace("<DOMAINHERE>",domain)
   return this

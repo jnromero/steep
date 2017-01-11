@@ -1,0 +1,1532 @@
+#mainDiv {
+    width:1280px;    
+    height:1024px;    
+}
+
+
+
+body {
+    background-color:rgba(50,50,150,.1);
+    padding: 0;
+    margin:0px auto;
+    /*font-family:'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;*/
+    font-family:Proxima Nova;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 300;
+}
+
+
+.row {
+    display:block;
+    height:50px;
+}
+.square {
+    text-decoration:none;
+    display:inline-block;
+    font-size: 125%;
+    visibility:visible;
+    box-sizing: border-box;
+    width: 50px;
+    height:50px;
+    text-align: center;
+    line-height: 50px;
+    margin:0px auto;
+    border:1px solid black;
+    position:absolute;
+}
+
+.makeSpace{
+    position:relative;
+}
+
+.defaultSelected{
+    box-sizing: border-box;
+    border:4px solid green;
+}
+
+
+.small{
+    font-size: 75%;
+    width: 28px;
+    height:28px;
+    line-height: 30px;
+}
+
+.highlight
+{
+    border:3px solid red;
+}
+
+.blankSquare{
+    background-color:white;
+    border:1px solid black;
+}
+
+.wSquare{
+  background-color:#FFFF00;
+}
+
+.ySquare{
+  background-color:#8ED6FF;
+}
+
+.qSquare{
+  background-color:#FFFFFF;
+}
+
+.proposed {
+    opacity: 0.25;
+}
+
+.confirmed {
+    opacity: 1;
+}
+
+
+.numberSquare{
+  background-color:#FFFFFF;
+    border:none;
+}
+
+
+.wSquare:after {
+    content:"W";
+}
+.ySquare:after {
+    content:"Y";
+}
+.qSquare:after {
+    content:"?";
+}
+
+.numberSquare:after {
+    content:"";
+    color:black;
+}
+
+
+.constructorButton {
+    text-decoration:none;
+    display:block;    
+    font-size: 85%;
+    visibility:visible;
+    width: 28px;
+    height:28px;
+    border:1px solid white;
+    text-align: center;
+    line-height: 30px;
+    margin:0px auto;
+    margin: 0px;
+    position:absolute;
+}
+
+.minusConstructorButton{
+    background-color:#FFFFFF;
+    border:1px solid red;
+    font-size: 150%;
+}
+
+.noConstructorButton{
+    background-color:transparent;
+    border:1px solid transparent;
+}
+
+.minusConstructorButton:after {
+    content:"-";
+    color:black;
+}
+
+
+.plusConstructorButton{
+    display:inline-block;
+    background-color:#FFFFFF;
+    margin:0px;
+    border:1px solid green;
+    font-size: 150%;
+}
+
+.plusConstructorButton:after {
+    content:"+";
+    color:black;
+}
+
+.noConstructorButton:after {
+    content:"+";
+    color:transparent;
+}
+
+
+.constructor {
+    position:absolute;
+    display:inline-block;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 730px;
+    margin: 0 auto;
+    height:200px;
+}
+
+
+.constructorColumn {
+    float:left;
+    background-color:transparent;
+    padding:0px;
+    width: 50px;
+    margin: 0 auto;
+    height:150px;
+}
+
+
+.constructorSpacer {
+    float:left;
+    display:inline-block;
+    background-color:transparent;
+    padding:0px;
+    width: 50px;
+    margin: 0 auto;
+    height:150px;
+    overflow:hidden;
+}
+
+
+
+.constructorIn {
+    position:absolute;
+    left:0px;
+    top:0px;
+    background-color:transparent;
+    overflow-x: scroll;
+    padding: 0px;
+    margin: 0 auto;
+    padding-top:20px;
+    height:180px;
+}
+
+
+.constructorIn2 {
+    position:absolute;
+    left:0px;
+    top:0px;
+    height:200px;
+    overflow-x: scroll;
+    width:730px;
+}
+
+#regular_history {
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width:1280px;    
+    height:150px;   
+    top:50px; 
+    overflow:hidden; 
+}
+
+#hypHistoryMessage{
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width:630px;
+    left:5px;
+    top:230px;
+    height:60px;
+    line-height: 5px;
+    text-align: center;
+    font-size: 150%;
+}
+
+.hypHistoryMessageAddendum{
+    font-size: 75%;
+    color:rgba(255,0,0,1);
+}
+
+
+
+#hypActualHistoryMessage{
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width:630px;
+    left:645px;
+    top:230px;
+    height:60px;
+    line-height: 5px;
+    text-align: center;
+    font-size: 150%;
+}
+
+.hypSliderSwitchButton{
+    position:absolute;
+    display:block;
+    background-color:rgba(0,255,255,0);
+    width:60px;    
+    height:20px;   
+    top:105px;
+    left:5px; 
+    overflow:hidden; 
+    box-sizing: border-box;
+    border:1px solid rgba(255,0,0,.2);
+    text-align: center;
+    line-height: 20px;
+}
+
+.actualSliderSwitchButton{
+    position:absolute;
+    display:block;
+    background-color:rgba(0,255,255,1);
+    width:60px;    
+    height:20px;   
+    top:105px;
+    left:645px; 
+    overflow:hidden; 
+    box-sizing: border-box;
+    border:1px solid red;
+    text-align: center;
+    line-height: 20px;
+}
+
+
+#hypTitle{
+    position:absolute;
+    top:75px;
+    width:640px;
+    text-align: center;
+    font-size: 200%;
+}
+
+
+#hypActualTitle{
+    position:absolute;
+    top:75px;
+    left:640px;
+    width:640px;
+    text-align: center;
+    font-size: 200%;
+}
+
+#hyp_history {
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width:1000px;    
+    height:150px;   
+    top:125px;
+    left:5px; 
+    overflow:hidden; 
+    transform:scale(.63);
+    transform-origin:top left;
+}
+
+
+#hypActual_history {
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width:1000px;    
+    height:150px;   
+    top:125px;
+    left:645px; 
+    overflow:hidden; 
+    transform:scale(.63);
+    transform-origin:top left;
+}
+
+
+
+
+.allHistoryDiv {
+    position:absolute;
+    display:block;
+    background-color:rgba(255,0,0,0);
+    width:200000px;
+    height:150px;    
+/*    transform: translate(1280px,0);
+*/}
+
+.history {
+    position: relative;
+    background-color:transparent;
+    padding: 0px;
+    margin: 0 auto;
+    height:150px;
+    width:1280px;
+}
+
+
+.historyIN {
+    position: relative;
+    background-color:rgba(255,0,0,0);
+    padding: 0px;
+    margin: 0 auto;
+    height:150px;
+    width:2280px;
+}
+
+
+
+.historyLabels {
+    position: relative;
+    background-color:transparent;
+    padding: 0px;
+    margin: 0 auto;
+    height:25px;
+    width:200000px;
+}
+
+.historyLabelEntry {
+    position:absolute;
+    display:block;
+    background-color: transparent;
+    float:left;
+    line-height: 25px;
+    text-align: center;
+    font-size: 100%;
+    width: 50px;
+    margin: 0 auto;
+    height:25px;
+}
+
+
+.historyPayoffEntry {
+    position:absolute;
+    display:block;
+    background-color: transparent;
+    float:left;
+    line-height: 25px;
+    text-align: center;
+    font-size: 100%;
+    width: 50px;
+    margin: 0 auto;
+    height:25px;
+}
+
+
+.historyLabelColumn {
+    float:left;
+    background-color:transparent;
+    padding:0px;
+    width: 50px;
+    margin: 0 auto;
+    height:25px;
+}
+
+
+
+.historyLabels {
+    position:absolute;
+    background-color:rgba(255,255,255,.95);
+    top:0px;
+    left:0px;
+    width: 150px;
+    height:150px;
+}
+
+.historyLabelEntryShort {
+    position: absolute;
+    text-align:center;
+    vertical-align:middle;
+    display: inline-block;
+    width: 150px;
+    line-height: 25px;
+    height:25px;
+    box-sizing: border-box;
+    border:1px solid black;
+}
+
+.historyLabelEntry {
+    position: absolute;
+    text-align:center;
+    vertical-align:middle;
+    display: inline-block;
+    width: 150px;
+    line-height: 50px;
+    height:50px;
+    box-sizing: border-box;
+    border:1px solid black;
+}
+
+
+.historyPeriodLabel {
+    position: absolute;
+    text-align:center;
+    vertical-align:middle;
+    display: inline-block;
+    width: 50px;
+    line-height: 25px;
+    height:25px;
+}
+
+
+.historyPayoffLabel {
+    position: absolute;
+    text-align:center;
+    vertical-align:middle;
+    display: inline-block;
+    width: 50px;
+    line-height: 25px;
+    height:25px;
+}
+
+
+#hyp_history .historyLabels {
+    position:absolute;
+    background-color:rgba(255,255,255,.95);
+    top:0px;
+    left:0px;
+    width: 150px;
+    height:150px;
+}
+
+
+#regularRuleList {
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width:1280px;    
+    height:524px; 
+    top:225px;      
+    overflow:scroll; 
+}
+
+#regularRuleListIn {
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    min-width:1280px;    
+    min-height:524px;    
+}
+
+
+#hypRuleList {
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width:1000px;    
+    height:700px; 
+    top:300px;     
+    left:5px;     
+    overflow:scroll; 
+    transform:scale(.63);
+    transform-origin:top left;
+}
+
+#hypRuleListIn{
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    min-width:1000px;    
+    min-height:700px;    
+}
+
+
+#hypActualRuleList {
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width:1000px;    
+    height:700px; 
+    top:300px; 
+    left:645px;     
+    overflow:scroll; 
+    transform:scale(.63);
+    transform-origin:top left;
+}
+
+#hypActualRuleListIn{
+    position:absolute;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    min-width:1000px;    
+    min-height:700px;    
+}
+
+#hypLeft{
+    font-size: 300%;
+    position: absolute;
+    background-color: rgba(230,255,230,1);
+    display: block;
+    width: 640px;
+    height:700px;
+    top:50px;
+    left:0px;
+    box-sizing: border-box;
+    border:5px green solid;
+    text-align:center;
+}
+
+
+
+#hypRight{
+    font-size: 300%;
+    position: absolute;
+    background-color: rgba(230,230,255,1);
+    display: block;
+    width: 640px;
+    height:700px;
+    top:50px;
+    left:640px;
+    box-sizing: border-box;
+    border:5px blue solid;
+    text-align:center;
+}
+
+
+#bottomInfo {
+    position:absolute;
+    display:block;
+    background-color:transparent;
+    width:1280px;    
+    height:250px;   
+    top:774px;      
+    overflow:hidden; 
+}
+
+#topInfo {
+    display:block;
+    background-color:transparent;
+    width:1280px;    
+    height:50px;    
+}
+
+#topInfoLeft {
+    position: relative;
+    display:inline-block;
+    background-color:transparent;
+    width:300px;    
+    height:50px;    
+    line-height: 50px; 
+    text-align:center;
+    vertical-align: middle;
+    font-size: 150%;
+    color:black;
+}
+
+#topInfoMiddle {
+    position: relative;
+    display:inline-block;
+    background-color:transparent;
+    width:480px;    
+    height:50px;    
+    line-height: 50px; 
+    text-align:center;
+    vertical-align: middle;
+    font-size: 150%;
+    color:black;
+}
+
+#topInfoRight {
+    position: relative;
+    display:inline-block;
+    background-color:transparent;
+    width:400px;    
+    height:50px;   
+    line-height: 50px; 
+    text-align:center;
+    vertical-align: middle;
+    font-size: 150%;
+    color:black;
+}
+
+
+#mainSpacer {
+    display:block;
+    background-color:transparent;
+    width:1280px;    
+    height:25px;    
+}
+
+
+
+.highlightDiv{
+    position:absolute;
+    display: block;
+    background-color:rgba(0,0,0,0);
+    box-sizing: border-box;
+    border:5px solid red;
+    z-index:25;
+}
+
+
+.highlightDivText{
+    position:absolute;
+    text-align: center;
+    z-index:25;
+}
+
+
+#noButtonOverlay {
+    position:absolute;
+    display: block;
+    background-color:rgba(0,0,0,0);
+    z-index:200;
+    left: 0px;
+    top:200px;
+    width:1280px;    
+    height:1024px;    
+    overflow-y:hidden;
+}
+
+
+
+
+#bottomInfoLeft{
+    display:inline-block;
+    background-color:transparent;
+    width:200px;    
+    height:250px;    
+}
+
+#bottomInfoMiddle{
+    display:inline-block;
+    background-color:transparent;
+    width:730px;    
+    height:250px;    
+}
+
+
+#bottomInfoMiddleTop{
+    display:block;
+    background-color:transparent;
+    width:730px;    
+    height:200px;    
+}
+#bottomInfoMiddleBottom{
+    display:block;
+    background-color:transparent;
+    width:730px;    
+    height:50px;    
+}
+
+
+#bottomInfoRight{
+    vertical-align: top;
+    display:inline-block;
+    background-color:transparent;
+    width:350px;    
+    height:250px;    
+}
+
+
+#gameDiv {
+    position:absolute;
+    top:774px;
+    left:930px;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 350px;
+    margin: 0 auto;
+    height:250px;
+    overflow:hidden;
+    font-size: 100%;
+}
+
+
+
+#rulesLocked {
+    position:absolute;
+    top:774px;
+    left:0px;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 930px;
+    margin: 0 auto;
+    height:250px;
+    overflow:hidden;
+    box-sizing: border-box;
+    border:5px solid red;
+    z-index:201;
+}
+
+
+#lockRulesButton {
+    position:absolute;
+    top:774px;
+    left:780px;
+    background-color:rgba(230,255,230,1);
+    padding:0px;
+    width: 150px;
+    margin: 0 auto;
+    height:60px;
+    line-height:20px;
+    overflow:hidden;
+    box-sizing: border-box;
+    border:1px solid red;
+    z-index:201;
+    font-size: 100%;
+    vertical-align: middle; 
+    text-align: center; 
+    transform:scale(1);
+    transition:.2s ease-in-out;
+}
+
+#lockRulesButton:hover {
+    transform:scale(2);
+    transition:.2s ease-in-out;
+}
+
+
+#rulesLockedIN {
+    position: relative;
+    height:250px;
+    width:930px;
+    display: table-cell; 
+    vertical-align: middle; 
+    text-align: center; 
+    line-height:50px;
+    font-size: 300%;
+}
+
+
+#hypGame{
+    position:absolute;
+    top:769px;
+    left:925px;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 350px;
+    margin: 0 auto;
+    height:250px;
+    overflow:hidden;
+    font-size: 100%;
+    transform:scale(1.4);
+    transform-origin:bottom right;
+}
+
+
+
+#changeNext{
+    position:absolute;
+    top:25px;
+    left:50px;
+    padding:0px;
+    transform:scale(.8);
+    margin: 0 auto;
+    /*transform:translate3d(1120px,25px,0px);
+    box-sizing: border-box;
+    border:1px green solid;
+    */
+}
+
+#changeNext1{
+    position:absolute;
+    top:0px;
+    line-height: 25px;
+    left:0px;
+    padding:0px;
+    margin: 0 auto;
+    width:150px;
+    text-align: center;
+}
+
+
+#changeNext2{
+    position:absolute;
+    top:75px;
+    line-height: 25px;
+    left:0px;
+    padding:0px;
+    margin: 0 auto;
+    width:150px;
+    text-align: center;
+}
+
+
+#changeActionButton{
+    position:absolute;
+    top:0px;
+    left:0px;
+    background-color:rgba(0,255,0,.1);
+    padding:0px;
+    width: 150px;
+    margin: 0 auto;
+    height:100px;
+    line-height: 33px;
+    overflow:hidden;
+    font-size: 100%;
+    transform:translate3d(1120px,25px,0px);
+    box-sizing: border-box;
+    border:1px green solid;
+    text-align: center;
+}
+
+.entryRow {
+    display:block;
+    width: 360px;
+    height: 50px;
+    overflow:hidden;
+    background-color:rgba(255,255,255,1);
+}
+
+.entry {
+    background-color:rgba(255,255,255,1);
+    text-decoration:none;
+    float:left;
+    font-size: 125%;
+    visibility:visible;
+    box-sizing: border-box;
+    width: 50px;
+    height:50px;
+    border:1px solid black;
+    text-align: center;
+    line-height: 50px;
+    margin:0px auto;
+    position:absolute;
+    vertical-align: top;
+}
+
+.entryTitle {
+    width: 150px;
+    box-sizing: border-box;
+}
+
+.rule {
+    position: relative;
+    overflow: hidden;
+    background-color:transparent;
+    padding: 0px;
+    margin: 0px;
+    height:100px;
+}
+
+.ruleColumn {
+    float:left;
+    background-color:transparent;
+    padding:0px;
+    width: 50px;
+    margin: 0 auto;
+    height:100px;
+}
+
+.defaultRuleColumn {
+    float:left;
+    background-color:transparent;
+    padding-top:25px;
+    width: 50px;
+    margin: 0 auto;
+    height:100px;
+}
+
+
+
+.listEntry {
+    position:relative;
+    display:inline-block;
+    height:148px;
+    border:1px solid rgba(0,0,0,.2);
+    background-color: white;
+}
+
+
+
+/*.listEntry:hover {
+        transform: scale(1.4);
+    transition: .2s ease-in-out;
+        background-color: white;
+         z-index:555555 !important;
+}
+*/
+.listEntryRule {
+    left:left;
+    height:100px;
+    background-color:transparent;
+    padding-top:-5px;
+    padding-right:15px;
+    padding-left:10px;
+}
+
+.listEntryDefaultRule {
+    float:left;
+    height:135px;
+    width:75px;
+    background-color:red;
+    padding-top:-5px;
+    padding-right:15px;
+    padding-left:37.5px;
+}
+
+
+
+
+.listEntryButtons {
+    position: relative; 
+    float:left;
+    height:100px;
+    width:50px;
+    background-color:transparent;
+    padding:0;
+    padding-top:0px;
+}
+
+.listEntryNoButtons {
+    float:left;
+    height:100px;
+    width:37.5px;
+    background-color:transparent;
+    padding:0;
+    padding-top:0px;
+}
+
+
+.listEntryButton{
+    text-decoration:none;
+    display:block;    
+    font-size: 150%;
+    visibility:visible;
+    box-sizing: border-box;
+    width: 30px;
+    height:30px;
+    text-align: center;
+    line-height: 30px;
+    margin: 0px;
+    position:absolute;
+}
+
+
+
+
+.listEntryCopyButton{
+    background-color:#FFFFFF;
+    border:1px solid green;
+
+}
+
+.listEntryDeleteButton{
+    background-color:#FFFFFF;
+    border:1px solid red;
+}
+
+.listEntryMoveButton{
+    background-color:#FFFFFF;
+    border:1px solid blue;
+}
+
+
+
+.listEntryTitle {
+    width:100%;
+    position: absolute;
+    text-align: center; 
+    top:0px;
+    height:24px;
+    line-height:24px;
+    text-align: center; 
+}
+
+
+.listEntryStats {
+    position: absolute; 
+    right:10px;
+    top:125px;
+    height:24px;
+    line-height:24px;
+    text-align: right; 
+    background-color: transparent;
+}
+
+
+.testDiv {
+    position: absolute; 
+    width:200px;
+    height:100px;
+    text-align: right; 
+    background-color: red;
+}
+
+
+#regularConstructorDiv {
+    position:absolute;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 730px;
+    margin: 0 auto;
+    height:250px;
+    top:774px;
+    left:200px;
+    font-size: 100%;
+}
+
+
+
+#quizConstructorDiv {
+    position:absolute;
+    background-color:rgba(255,255,255,0);
+    padding:0px;
+    width: 730px;
+    margin: 0 auto;
+    height:250px;
+    top:774px;
+    left:200px;
+    overflow:hidden;
+    font-size: 100%;
+}
+
+
+#regularDefaultDiv {
+    position:absolute;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 200px;
+    margin: 0 auto;
+    height:250px;
+    top:774px;
+    left:0px;
+    overflow:hidden;
+    font-size: 100%;
+}
+
+
+#hypDefaultDiv {
+    position:absolute;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 200px;
+    margin: 0 auto;
+    height:250px;
+    top:774px;
+    left:5px;
+    overflow:hidden;
+    font-size: 100%;
+}
+
+
+#hypConstructorDiv {
+    position:absolute;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 730px;
+    margin: 0 auto;
+    height:250px;
+    top:774px;
+    left:200px;
+    font-size: 100%;
+}
+
+
+#defaultDivTop{
+    font-size: 125%;
+    display:block;
+    background-color: transparent;
+    width:200px;    
+    height:50px;
+    line-height: 50px;
+    text-align:center;    
+}
+
+
+.defaultDivTitle{
+    position:absolute;
+    font-size: 125%;
+    display:block;
+    background-color: transparent;
+    width:200px;    
+    height:50px;
+    line-height: 50px;
+    text-align:center;    
+}
+
+
+
+#defaultDivBottom{
+    display:block;
+    background-color: transparent;
+    width:200px;    
+    height:200px;
+}
+
+.defaultDivBottomEntry{
+    display:block;
+    background-color: transparent;
+    height:75px;
+    width:200px;
+    padding-left:75px;
+    margin-top:15px;
+}
+
+
+#constructorSubmitButton{
+    background-color: red;
+    position:absolute;
+    display:block;
+    width: 300px;
+    height:50px;
+    top:200px;
+    left:215px;
+    overflow:hidden;
+    font-size: 100%;
+    line-height: 50px;
+    text-align: center;
+}
+
+
+#switchRulesButton{
+    position:absolute;
+    display:block;
+    padding:0px;
+    width: 200px;
+    margin: 0 auto;
+    height:50px;
+    left:530px;
+    top:200px;
+    overflow:hidden;
+    font-size: 100%;
+    line-height: 50px;
+    text-align: center;
+}
+
+
+#hypothetical{
+    position: absolute;
+    top:0px;
+    left:0px;
+    background-color: rgba(250,250,250,.95);
+    display:block;
+    width: 1276px;
+    height:1020px;
+/*    border-radius: 50px;
+*/    border:2px red solid;
+}
+
+
+
+
+#inGameMessage{
+    font-size: 300%;
+    position: absolute;
+    top:50px;
+    left:0px;
+    background-color: rgba(255,255,255,.9);
+    display:block;
+    width: 1280px;
+    height:150px;
+    text-align: center;
+}
+
+
+#inGameMessageInside { 
+  position: absolute; 
+  left: 0px; 
+  top: 0px; 
+  width: 1280px; 
+  height: 150px; 
+  display: table; 
+}
+
+#inGameMessageText {
+  display: table-cell; 
+  vertical-align: middle; 
+  text-align: center; 
+    line-height:150%;
+}
+
+
+
+
+#hypothetical21{
+    position: absolute;
+    top:200px;
+    left:0px;
+    background-color: rgba(250,0,255,.95);
+    display:block;
+    width: 638px;
+    height:500px;
+}
+
+#hypothetical31{
+    position: absolute;
+    top:700px;
+    left:0px;
+    background-color: rgba(0,255,255,.95);
+    display:block;
+    width: 638px;
+    height:124px;
+}
+
+
+#hypothetical1{
+    position: absolute;
+    top:0px;
+    left:0px;
+    background-color: rgba(250,0,0,.95);
+    display:block;
+    width: 1276px;
+    height:200px;
+}
+
+
+#hypothetical4{
+    position: absolute;
+    top:824px;
+    left:0px;
+    background-color: rgba(250,255,0,.95);
+    display:block;
+    width: 1276px;
+    height:200px;
+}
+
+
+#hypotheticalRuleList1 {
+    float:left;
+    position:relative;
+    display:block;
+    background-color:rgba(255,255,255,1);
+    width: 638px;
+    height:500px;
+    overflow:scroll; 
+}
+
+
+.ruleHighlight {
+    background-color:transparent;
+    position:absolute;
+    pointer-events:none;
+    width:100px;
+    height:100px;
+    left:0px;
+    top:0px;
+}
+
+.gameHighlight {
+    background-color:transparent;
+    position:absolute;
+    width:50px;
+    height:250px;
+    box-sizing: border-box;
+    border:4px solid red;
+    left:0px;
+    top:0px;
+}
+
+
+
+.ruleHighlightTopleft {
+    position:absolute;
+    width: 150px;
+    height: 100px;
+    box-sizing: border-box;
+    border-top:4px solid red;
+    border-left:4px solid red;
+}
+
+
+.ruleHighlightBottom {
+    position:absolute;
+    top:50px;
+    width: 100px;
+    height: 50px;
+    box-sizing: border-box;
+    border-bottom:4px solid red;
+    border-right:4px solid red;
+}
+
+.ruleHighlightRight {
+    position:absolute;
+    left:96px;
+    width: 54px;
+    height: 50px;
+    box-sizing: border-box;
+    border-bottom:4px solid red;
+    border-right:4px solid red;
+}
+
+.ruleHighlightDefault {
+    position:absolute;
+    width: 50px;
+    height: 50px;
+    top:0px;
+    left:0px;
+    box-sizing: border-box;
+    border:4px solid red;
+}
+
+
+#quizDiv {
+    position:absolute;
+    background-color:rgba(0,255,0,.1);
+    padding:0px;
+    width: 930px;
+    margin: 0 auto;
+    height:250px;
+    top:774px;
+    left:0px;
+    overflow:hidden;
+    font-size: 100%;
+    border:5px solid green;
+    box-sizing: border-box;
+}
+
+#quizEarningsDiv {
+    position:absolute;
+    background-color:rgba(255,255,255,1);
+    padding:0px;
+    width: 200px;
+    margin: 0 auto;
+    height:50px;
+    top:0px;
+    left:730px;
+    overflow:hidden;
+    font-size: 125%;
+    box-sizing: border-box;
+    border-bottom:5px solid green;
+    border-left:5px solid green;
+    line-height: 50px;
+    text-align: center;
+}
+
+
+#quizQuestionDiv{
+    position:absolute;
+    left:100px;
+    top:50px;
+    width:730px;
+    line-height: 25px;
+    font-size: 150%;
+}
+
+#quizQuestionHint{
+    position:absolute;
+    top:150px;
+    width:730px;
+    text-align: center;
+    line-height: 25px;
+    font-size: 100%;
+    color:red;
+}
+
+#quizQuestionHint2{
+    position:absolute;
+    top:115px;
+    width:250px;
+    text-align: center;
+    line-height: 25px;
+    font-size: 100%;
+    color:red;
+}
+
+
+
+
+#quizQuestionLeftDiv{
+    position:absolute;
+    left:25px;
+    top:25px;
+    width:250px;
+    line-height: 25px;
+    font-size: 150%;
+}
+
+
+
+#quizAnswerDiv{
+    background-color: rgba(255,255,255,1);
+    position:absolute;
+    left:100px;
+    top:794px;
+    height: 200px;
+    width:730px;
+    line-height: 50px;
+    font-size: 150%;
+    border:5px solid green;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#quizAnswerDivButton{
+    background-color: rgba(255,255,255,1);
+    position:absolute;
+    left:525px;
+    top:145px;
+    height: 50px;
+    width:200px;
+    line-height: 40px;
+    font-size: 100%;
+    border:5px solid green;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+
+
+.answerW{
+    position: absolute;
+    top:125px;
+    left:300px;
+}
+
+
+.answerY{
+    position: absolute;
+    top:125px;
+    left:580px;
+}
+
+
+
+
+
+#incompleteHypotheticalHistory{
+    color: rgba(255,0,0,1);
+}
+
+#completeHypotheticalHistory{
+    color: rgba(0,150,0,1);
+}
+
+
+#hypChoiceRuleNumber{
+    color: rgba(0,150,0,1);
+}
+
+#hypActualChoiceRuleNumber{
+    color: rgba(0,150,0,1);
+}
+
+#alreadySubmitted{
+    position:absolute;
+    top:125px;
+    right:-10px;
+    opacity: 1;
+    width:210px;
+    height:50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 100%;
+    color:blue;
+    transition:all 1.5s ease;
+    transition-delay:.5s;
+    background-color: white;
+    border:2px solid blue;
+}
+
+.didLoad{
+    transform:translatex(250px);
+}
+
+#costAnimation{
+    position:absolute;
+    top:0px;
+    right:120px;
+    opacity: 1;
+    width:210px;
+    height:50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 250%;
+    color:red;
+    transition:all 1.5s ease;
+    transition-delay:.5s;
+    background-color: transparent;
+    z-index: 999;
+}
+
+#makeChoiceWarning{
+    font-size: 125%;
+    left:1075px;
+    top:200px;
+}
+
+#warningTimer{
+    line-height: 50px;
+    font-size: 200%;
+}

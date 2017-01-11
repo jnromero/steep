@@ -19,8 +19,6 @@ def getOptions():
                      help="set to False to write data to tmp folder, rather than unique folder.  This should NEVER be used when you run an experiment in the lab.")
    (options, args) = parser.parse_args()
 
-
-
    if options.configFile=="NONE":
       sys.exit("ERROR: You must set a config file to run the server.  You can see all options by running 'python server.py -h'")
    else:
@@ -28,6 +26,8 @@ def getOptions():
          sys.exit("ERROR: Config file not found.\n %s \nYou can see all options by running 'python server.py -h'"%(options.configFile))
    if options.location=="NONE":
       sys.exit("ERROR: You must set a location to run the server.  You can see all options by running 'python server.py -h'")
+
+
    return options
 
 
@@ -40,5 +40,4 @@ def printRestartString(serverStartString):
       del this[i]
       del this[i]
    restartString="python "+" ".join(sys.argv)+" -r %s"%(serverStartString)
-   print(restartString+"\n")
    return restartString 

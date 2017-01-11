@@ -1,66 +1,43 @@
 #!/usr/bin/python
 
-def getPage(config):
+def getPage(config,tf):
     currentExperiment=config['currentExperiment']
     packageFolder=config['packageFolder']
     domain=config['domain']
 
-    instructionsJS=""
-    captionsJS=""
-    tasksJS=""
-    quizJS=""
+    this=''
+    this+='<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Traditional//EN">\n'
+    this+='<html id="everything">\n'
+    this+='\t<head>\n'
+    this+='\t\t<title>STEEP: Client</title>\n'
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['jquery.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['velocity.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf[currentExperiment]['config.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['common.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['websocketConnect.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['quiz.js'])
+    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf['common']['instructions.css'])
+    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf['common']['common.css'])
+    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf['common']['quiz.css'])
+    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf['common']['questionnaire.css'])
+    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf['common']['simulateMouse.css'])
+    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf[currentExperiment]['experiment.css'])
+    this+='\t</head>\n'
+    this+='\t<body>\n'
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['simulateMouse.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['video.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf[currentExperiment]['experiment.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['instructions.js'])
+    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['questionnaire.js'])
+
 
     instructions=False
     if "instructionsFolder" in config:
         instructions=True
     if instructions==True:
-        instructionsJS="""<script type="text/javascript" src="<CURRENTEXPHERE><INSTRUCTIONSPATHHERE>instructions.js"></script>"""
-        captionsJS="""<script type="text/javascript" src="<CURRENTEXPHERE><INSTRUCTIONSPATHHERE>captions/captionsList.js"></script>"""
-        tasksJS="""<script type="text/javascript" src="<CURRENTEXPHERE><INSTRUCTIONSPATHHERE>tasks/taskList.js"></script>"""
+            this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf[currentExperiment]['instructions.js'])
 
-    if "quiz" in config:
-        if config['quiz']=="True":
-            quizJS="""<script type="text/javascript" src="<CURRENTEXPHERE>files/quiz.js"></script>"""
+    this+='\t</body>\n'
+    this+='</html>'
 
-
-    this="""
-    <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Traditional//EN">
-    <html id="everything">
-      <head>
-        <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/jquery-1.11.3.min.js"></script>
-        <script type="text/javascript" src="<JAVASCRIPTCONFIGFILE>"></script>
-        <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/common.js"></script>
-        <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/websocketConnect.js"></script>
-        <link rel="stylesheet" type="text/css" href="<PACKAGEFOLDERHERE>css/instructions.css" />
-        <link rel="stylesheet" type="text/css" href="<PACKAGEFOLDERHERE>css/common.css" />
-        <link rel="stylesheet" type="text/css" href="<PACKAGEFOLDERHERE>css/quiz.css" />
-        <link rel="stylesheet" type="text/css" href="<PACKAGEFOLDERHERE>css/questionnaire.css" />
-        <link rel="stylesheet" type="text/css" href="<PACKAGEFOLDERHERE>javascript/simulateMouse/simulateMouse.css" />
-        <link rel="stylesheet" type="text/css" href="<CURRENTEXPHERE>files/experiment.css" />
-      </head>
-      <body>
-        <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/simulateMouse/simulateMouse.js"></script>
-        <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/video.js"></script>
-        <script type="text/javascript" src="<CURRENTEXPHERE>files/experiment.js"></script>
-        <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/instructions.js"></script>
-        <script type="text/javascript" src="<PACKAGEFOLDERHERE>javascript/questionnaire.js"></script>
-        quizJSHERE
-        instructionsJSHERE
-        captionsJSHERE
-        tasksJSHERE
-      </body>
-    </html>       
-    """    
-
-    this=this.replace("instructionsJSHERE",instructionsJS)
-    this=this.replace("captionsJSHERE",captionsJS)
-    this=this.replace("tasksJSHERE",tasksJS)
-    this=this.replace("quizJSHERE",quizJS)
-
-
-    this=this.replace("<JAVASCRIPTCONFIGFILE>",config["configJsURL"])
-    this=this.replace("<CURRENTEXPHERE>",config['domain']+config['currentExperiment'])
-    this=this.replace("<PACKAGEFOLDERHERE>",config['domain']+config['packageFolder'])
-    if instructions==True:
-        this=this.replace("<INSTRUCTIONSPATHHERE>",config['instructionsFolder'])
     return this
