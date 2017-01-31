@@ -56,7 +56,7 @@ steepWebServer = imp.load_source('steepWebSockets', "modules/webServer.py")
 
 #load autoVersion module
 autoversion = imp.load_source('autoversion', "modules/auto-versioning.py")
-autoversion.updateAutoVersion(config)
+# autoversion.updateAutoVersion(config)
 
 #load websockets module
 steepWebSockets = imp.load_source('steepWebSockets', "modules/webSockets.py")
@@ -74,6 +74,10 @@ from steepInstructions import SteepInstructions
 steepQuiz = imp.load_source('steepQuiz', "modules/quiz.py")
 from steepQuiz import SteepQuiz
 
+#load questionnaire module
+# steepQuestionnaire = imp.load_source('steepQuestionnaire', "modules/questionnaire.py")
+# from steepQuestionnaire import SteepQuestionnaire
+#No reason for this right now.
 
 class ExperimentQuiz():
    def __init__(self):
@@ -84,6 +88,14 @@ if 'quiz' in config:
    from experimentQuiz import ExperimentQuiz
 
 
+class ExperimentQuestionnaire():
+   def __init__(self):
+      "defin blank class in case not importing other"
+if 'questionnaire' in config:
+   #load experiment specific questionnaire module
+   experimentQuestionnaire = imp.load_source('experimentQuestionnaire',config['webServerRoot']+config['currentExperiment']+"/files/questionnaire.py")
+   from experimentQuestionnaire import ExperimentQuestionnaire
+
 class ExperimentInstructions():
    def __init__(self):
       "defin blank class in case not importing other"
@@ -92,17 +104,16 @@ if 'instructions' in config:
    experimentInstructions = imp.load_source('experimentInstructions',config['webServerRoot']+config['currentExperiment']+"/files/instructions.py")
    from experimentInstructions import ExperimentInstructions
 
+
 #load monitor module
 steepMonitor = imp.load_source('steepMonitor', "modules/monitor.py")
 from steepMonitor import monitorClass
 
-
-
-#load monitor module
+#load timer module
 steepTimer = imp.load_source('steepTimer', "modules/timer.py")
 from steepTimer import SteepTimerManager
 
-class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepQuiz,ExperimentQuiz,SteepTimerManager,ExperimentInstructions):
+class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepQuiz,ExperimentQuiz,SteepTimerManager,ExperimentInstructions,ExperimentQuestionnaire):
    def __init__(self,config,options,serverStartString):
       self.config=config
       self.options=options
@@ -119,6 +130,7 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       SteepQuiz.__init__(self)
       ExperimentQuiz.__init__(self)
       ExperimentInstructions.__init__(self)
+      ExperimentQuestionnaire.__init__(self)
 
 
 if __name__ == '__main__':

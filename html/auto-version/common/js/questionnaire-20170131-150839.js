@@ -185,7 +185,7 @@ function placeTextQuestionnaire(incoming){
     textDiv.style.top=incoming['top'];
     textDiv.style.width=incoming['width'];
     textDiv.style.fontSize=incoming['fontSize'];
-    textDiv.style.left=incoming['left'];
+    textDiv.style.left=incoming['left']+"px";
     textDiv.style.textAlign=incoming["textAlign"];
     textDiv.style.color=incoming["color"];
     textDiv.style.position="absolute";

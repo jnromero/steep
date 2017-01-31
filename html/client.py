@@ -30,7 +30,6 @@ def getPage(config,tf):
     this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['instructions.js'])
     this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['questionnaire.js'])
 
-
     instructions=False
     if "instructionsFolder" in config:
         instructions=True
@@ -39,5 +38,4 @@ def getPage(config,tf):
 
     this+='\t</body>\n'
     this+='</html>'
-
     return this

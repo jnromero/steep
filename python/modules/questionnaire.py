@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-class Questionnaire():
+class SteepQuestionnaire():
    def __init__(self):
       "no init"
 

@@ -40,7 +40,7 @@ function showQuestionnaire(subjectID,payoff){
 
 function checkIfAnswersComplete(args){
 	var ids=args[0];
-    console.log(args);
+    console.log(ids);
 	incomplete=0;
 	answers={}
 	for(id in ids){
@@ -63,7 +63,7 @@ function checkIfAnswersComplete(args){
 function makeButton(incoming){
     if(incoming['backgroundColor']==undefined){incoming['backgroundColor']="rgba(0,255,0,.3)"}
     if(incoming['height']==undefined){incoming['height']="100px"}
-    if(incoming['width']==undefined){incoming['width']="200px"}
+    if(incoming['width']==undefined){incoming['height']="200px"}
     if(incoming['left']==undefined){incoming['left']="300px"}
     if(incoming['top']==undefined){incoming['top']="700px"}
     if(incoming['fontSize']==undefined){incoming['fontSize']="150%"}
@@ -82,7 +82,7 @@ function makeButton(incoming){
     submitButton.style.lineHeight=incoming['lineHeight'];
     submitButton.style.left=incoming['left'];
     submitButton.style.backgroundColor=incoming['backgroundColor'];
-    clickButton("many",incoming['id'],checkIfAnswersComplete,incoming['listOfIds']);
+    clickButton("many",incoming['id'],checkIfAnswersComplete,[incoming['listOfIds']]);
 }
 
 function makeTextBox(incoming){
@@ -168,26 +168,5 @@ function dropdownTitle(incoming){
     select.style.fontSize=incoming['fontSize'];
     select.style.width=incoming['width'];
     select.style.textAlign=incoming['textAlign'];
-}
-
-
-function placeTextQuestionnaire(incoming){
-    if(incoming['id']==undefined){incoming['id']="randomID"}
-    if(incoming['text']==undefined){incoming['top']="Text Here"}
-    if(incoming['left']==undefined){incoming['left']="90px"}
-    if(incoming['top']==undefined){incoming['top']="50px"}
-    if(incoming['width']==undefined){incoming['width']="200px"}
-    if(incoming['fontSize']==undefined){incoming['fontSize']="150%"}
-    if(incoming['textAlign']==undefined){incoming['textAlign']="center"}
-    if(incoming['color']==undefined){incoming['color']="rgba(255,0,0,1)"}
-    var textDiv=createAndAddDiv(incoming["id"],"mainDiv")
-    textDiv.innerHTML=incoming['text'];
-    textDiv.style.top=incoming['top'];
-    textDiv.style.width=incoming['width'];
-    textDiv.style.fontSize=incoming['fontSize'];
-    textDiv.style.left=incoming['left'];
-    textDiv.style.textAlign=incoming["textAlign"];
-    textDiv.style.color=incoming["color"];
-    textDiv.style.position="absolute";
 }
 

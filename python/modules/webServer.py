@@ -28,6 +28,7 @@ class RequestHandler(Resource):
    isLeaf = True
    def __init__(self,config,debug,restartString):
       self.config=config
+      self.transformedFiles=autoVersion.updateAllAutoVersion(config)
       if debug=="False":
          import logger
          self.thisLogger=logger.TwistedLogger(config['webServerRoot']+config['dataFolder'])
@@ -76,8 +77,8 @@ class RequestHandler(Resource):
          elif ext==".py":
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))            
             thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
-            transformedFiles=autoVersion.updateAutoVersion(self.config)
-            output=thisPage.getPage(self.config,transformedFiles)
+            self.transformedFiles=autoVersion.updateAutoVersion(self.config)
+            output=thisPage.getPage(self.config,self.transformedFiles)
             return output.encode('utf-8')
          elif ext==".m4a":
             request.setHeader("Content-Type","audio/mp4")

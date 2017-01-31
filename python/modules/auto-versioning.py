@@ -34,21 +34,19 @@ def loadFileList(config):
 def updateAutoVersion(config):
     originalFiles=loadFileList(config)
     transformedFiles=loadTransformedFile(config)
-    transformedFiles=transformFiles(config,originalFiles,transformedFiles)
+    transformedFiles=updateFilesIfNeeded(config,originalFiles,transformedFiles)
     return transformedFiles
 
 
-def transformFiles(config,originalFiles,transformedFiles):
+def updateFilesIfNeeded(config,originalFiles,transformedFiles):
     timeStamp=time.strftime("%Y%m%d-%H%M%S",time.localtime(time.time()))
     webServerRoot=config['webServerRoot']
     packageFolder=config['packageFolder']
     currentExperiment=config['currentExperiment']
     for fileType in ['common',currentExperiment]:
-
         for filename in originalFiles[fileType]:
             extension = os.path.splitext(filename)[1].replace(".","")
             folderName="%s/%s"%(fileType.replace("/","_"),extension)
-
             update=0
             if currentExperiment not in transformedFiles:
                 transformedFiles[fileType]={}
@@ -68,6 +66,47 @@ def transformFiles(config,originalFiles,transformedFiles):
                     os.remove(webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename])
                 except:
                     print("no old files to remove")
+
+                #make folder if needed
+                thisAVFolder=webServerRoot+packageFolder+"/html/auto-version/%s/"%(folderName)
+                if not os.path.exists(thisAVFolder):
+                    os.makedirs(thisAVFolder)
+
+                #copy original to auto-version
+                originalFilename=webServerRoot+originalFiles[fileType][filename]
+                transformedFiles[fileType][filename]="/%s/"%(folderName)+filename.replace(".","-"+timeStamp+".")
+                newFile=webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename]
+                copyfile(originalFilename,newFile)
+    return transformedFiles
+
+
+def updateAllAutoVersion(config):
+    print("updating All autoversion files")
+    originalFiles=loadFileList(config)
+    transformedFiles=loadTransformedFile(config)
+    transformedFiles=updateAllFiles(config,originalFiles,transformedFiles)
+    return transformedFiles
+
+
+def updateAllFiles(config,originalFiles,transformedFiles):
+    timeStamp=time.strftime("%Y%m%d-%H%M%S",time.localtime(time.time()))
+    webServerRoot=config['webServerRoot']
+    packageFolder=config['packageFolder']
+    currentExperiment=config['currentExperiment']
+    for fileType in ['common',currentExperiment]:
+        for filename in originalFiles[fileType]:
+            extension = os.path.splitext(filename)[1].replace(".","")
+            folderName="%s/%s"%(fileType.replace("/","_"),extension)
+            update=0
+            if currentExperiment not in transformedFiles:
+                transformedFiles[fileType]={}
+            update=1
+            if update==1:
+                #remove Old File
+                try:
+                    os.remove(webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename])
+                except:
+                    print("no old files to remove",filename)
 
                 #make folder if needed
                 thisAVFolder=webServerRoot+packageFolder+"/html/auto-version/%s/"%(folderName)

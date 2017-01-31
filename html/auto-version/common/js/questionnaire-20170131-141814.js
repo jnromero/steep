@@ -20,7 +20,7 @@ function showQuestionnaire(subjectID,payoff){
     makeTextTitle("strategyTitle",550,"Was there anything that was confusing to you in this expeirment");
     makeTextBox("confusedText",600);
     makeButton();
-    document.getElementById("submitButton").addEventListener("click",checkIfAnswersComplete,[["genderSelect","ageSelect","majorSelect","yearSelect","microSelect","gameTheorySelect","gpaSelect","strategyText","likedText","confusedText"]]);
+    document.getElementById("submitButton").addEventListener("click",checkIfAnswersComplete);
 
 
 	var select = document.createElement("p");
@@ -38,9 +38,8 @@ function showQuestionnaire(subjectID,payoff){
 
 
 
-function checkIfAnswersComplete(args){
-	var ids=args[0];
-    console.log(args);
+function checkIfAnswersComplete(){
+	ids=["genderSelect","ageSelect","majorSelect","yearSelect","microSelect","gameTheorySelect","gpaSelect","strategyText","likedText","confusedText"]
 	incomplete=0;
 	answers={}
 	for(id in ids){
@@ -59,30 +58,9 @@ function checkIfAnswersComplete(args){
 }
 
 
-
-function makeButton(incoming){
-    if(incoming['backgroundColor']==undefined){incoming['backgroundColor']="rgba(0,255,0,.3)"}
-    if(incoming['height']==undefined){incoming['height']="100px"}
-    if(incoming['width']==undefined){incoming['width']="200px"}
-    if(incoming['left']==undefined){incoming['left']="300px"}
-    if(incoming['top']==undefined){incoming['top']="700px"}
-    if(incoming['fontSize']==undefined){incoming['fontSize']="150%"}
-    if(incoming['lineHeight']==undefined){incoming['lineHeight']="150%"}
-    if(incoming['id']==undefined){incoming['id']="submitButton"}
-    if(incoming['top']==undefined){incoming['top']="50px"}
-    if(incoming['title']==undefined){incoming['title']="Submit"}
-    if(incoming['listOfIds']==undefined){incoming['listOfIds']=[]}
-    var submitButton = createAndAddElement("button",incoming['id'],"mainDiv");
-    submitButton.innerHTML=incoming['title'];
-    submitButton.style.top=incoming['top'];
-    submitButton.style.position="absolute";
-    submitButton.style.width=incoming['width'];
-    submitButton.style.height=incoming['height'];
-    submitButton.style.fontSize=incoming['fontSize'];
-    submitButton.style.lineHeight=incoming['lineHeight'];
-    submitButton.style.left=incoming['left'];
-    submitButton.style.backgroundColor=incoming['backgroundColor'];
-    clickButton("many",incoming['id'],checkIfAnswersComplete,incoming['listOfIds']);
+function makeButton(){
+    var select = createAndAddElement("button","submitButton","mainDiv");
+    select.innerHTML="Submit";
 }
 
 function makeTextBox(incoming){
@@ -168,26 +146,5 @@ function dropdownTitle(incoming){
     select.style.fontSize=incoming['fontSize'];
     select.style.width=incoming['width'];
     select.style.textAlign=incoming['textAlign'];
-}
-
-
-function placeTextQuestionnaire(incoming){
-    if(incoming['id']==undefined){incoming['id']="randomID"}
-    if(incoming['text']==undefined){incoming['top']="Text Here"}
-    if(incoming['left']==undefined){incoming['left']="90px"}
-    if(incoming['top']==undefined){incoming['top']="50px"}
-    if(incoming['width']==undefined){incoming['width']="200px"}
-    if(incoming['fontSize']==undefined){incoming['fontSize']="150%"}
-    if(incoming['textAlign']==undefined){incoming['textAlign']="center"}
-    if(incoming['color']==undefined){incoming['color']="rgba(255,0,0,1)"}
-    var textDiv=createAndAddDiv(incoming["id"],"mainDiv")
-    textDiv.innerHTML=incoming['text'];
-    textDiv.style.top=incoming['top'];
-    textDiv.style.width=incoming['width'];
-    textDiv.style.fontSize=incoming['fontSize'];
-    textDiv.style.left=incoming['left'];
-    textDiv.style.textAlign=incoming["textAlign"];
-    textDiv.style.color=incoming["color"];
-    textDiv.style.position="absolute";
 }
 
