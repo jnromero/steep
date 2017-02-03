@@ -56,7 +56,6 @@ steepWebServer = imp.load_source('steepWebSockets', "modules/webServer.py")
 
 #load autoVersion module
 autoversion = imp.load_source('autoversion', "modules/auto-versioning.py")
-# autoversion.updateAutoVersion(config)
 
 #load websockets module
 steepWebSockets = imp.load_source('steepWebSockets', "modules/webSockets.py")

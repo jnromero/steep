@@ -7,13 +7,27 @@ import os
 import imp
 import os.path
 from shutil import copyfile
+import sys
 
+def makeFolderIfNeeded(fullPathToFolder):
+    if not os.path.exists(fullPathToFolder):
+        print("creating new folder",fullPathToFolder)
+        os.makedirs(fullPathToFolder)
 
-def writeBlankFile():
-    filename='../../html/auto-version/transformed.pickle'
-    file = open(filename,'wb')
-    pickle.dump({},file)
-    file.close() 
+def createAutoVersionFolderIfNeeded(config):
+    #create auto-version folder if needed.
+    avFolder=config['webServerRoot']+config['packageFolder']+'/html/auto-version/'
+    makeFolderIfNeeded(avFolder)
+    writeBlankTransformedFileIfNeeded(config)
+
+def writeBlankTransformedFileIfNeeded(config):
+    #create blank transformed file if needed.
+    filename=config['webServerRoot']+config['packageFolder']+'/html/auto-version/transformed.pickle'
+    if os.path.isfile(filename)==False: 
+        print("creating new auto-version file transformed.pickle")
+        file = open(filename,'wb')
+        pickle.dump({},file)
+        file.close() 
 
 def loadTransformedFile(config):
     filename=config['webServerRoot']+config['packageFolder']+'/html/auto-version/transformed.pickle'
@@ -26,19 +40,28 @@ def loadTransformedFile(config):
     file.close() 
     return transformedFiles
 
+def writeTransformedFile(config,transformedFiles):
+    filename=config['webServerRoot']+config['packageFolder']+'/html/auto-version/transformed.pickle'
+    file = open(filename,'wb')
+    pickle.dump(transformedFiles,file)
+    file.close() 
+
 def loadFileList(config):
+    #this loads the list of all files that need to be auto-versioned
     fileList = imp.load_source('fileList',config['webServerRoot']+config['packageFolder']+"/html/fileList.py")
     originalFiles=fileList.getOriginalFiles(config)
     return originalFiles
 
-def updateAutoVersion(config):
+def updateAutoVersion(config,updateAll):
+    createAutoVersionFolderIfNeeded(config)
     originalFiles=loadFileList(config)
     transformedFiles=loadTransformedFile(config)
-    transformedFiles=updateFilesIfNeeded(config,originalFiles,transformedFiles)
+    transformedFiles=updateFiles(config,originalFiles,transformedFiles,updateAll)
+    writeTransformedFile(config,transformedFiles)
     return transformedFiles
 
 
-def updateFilesIfNeeded(config,originalFiles,transformedFiles):
+def updateFiles(config,originalFiles,transformedFiles,updateAll):
     timeStamp=time.strftime("%Y%m%d-%H%M%S",time.localtime(time.time()))
     webServerRoot=config['webServerRoot']
     packageFolder=config['packageFolder']
@@ -48,7 +71,7 @@ def updateFilesIfNeeded(config,originalFiles,transformedFiles):
             extension = os.path.splitext(filename)[1].replace(".","")
             folderName="%s/%s"%(fileType.replace("/","_"),extension)
             update=0
-            if currentExperiment not in transformedFiles:
+            if fileType not in transformedFiles:
                 transformedFiles[fileType]={}
             if filename in transformedFiles[fileType]:
                 baseFile=webServerRoot+originalFiles[fileType][filename]
@@ -60,69 +83,31 @@ def updateFilesIfNeeded(config,originalFiles,transformedFiles):
                     update=1
             else:
                 update=1
+
+            #force update all files
+            if updateAll==1:
+                update=1
+
             if update==1:
                 #remove Old File
-                try:
-                    os.remove(webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename])
-                except:
-                    print("no old files to remove")
+                if fileType in transformedFiles:
+                    if filename in transformedFiles[fileType]:
+                        print(fileType,filename)
+                        try:
+                            print(webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename])
+                            os.remove(webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename])
+                        except:
+                            e = sys.exc_info()[0]
+                            print("ERROR: %s"% e )
+                            print("no old files to remove",fileType,filename)
 
                 #make folder if needed
                 thisAVFolder=webServerRoot+packageFolder+"/html/auto-version/%s/"%(folderName)
-                if not os.path.exists(thisAVFolder):
-                    os.makedirs(thisAVFolder)
+                makeFolderIfNeeded(thisAVFolder)
 
                 #copy original to auto-version
                 originalFilename=webServerRoot+originalFiles[fileType][filename]
                 transformedFiles[fileType][filename]="/%s/"%(folderName)+filename.replace(".","-"+timeStamp+".")
                 newFile=webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename]
                 copyfile(originalFilename,newFile)
-    return transformedFiles
-
-
-def updateAllAutoVersion(config):
-    print("updating All autoversion files")
-    originalFiles=loadFileList(config)
-    transformedFiles=loadTransformedFile(config)
-    transformedFiles=updateAllFiles(config,originalFiles,transformedFiles)
-    return transformedFiles
-
-
-def updateAllFiles(config,originalFiles,transformedFiles):
-    timeStamp=time.strftime("%Y%m%d-%H%M%S",time.localtime(time.time()))
-    webServerRoot=config['webServerRoot']
-    packageFolder=config['packageFolder']
-    currentExperiment=config['currentExperiment']
-    for fileType in ['common',currentExperiment]:
-        for filename in originalFiles[fileType]:
-            extension = os.path.splitext(filename)[1].replace(".","")
-            folderName="%s/%s"%(fileType.replace("/","_"),extension)
-            update=0
-            if currentExperiment not in transformedFiles:
-                transformedFiles[fileType]={}
-            update=1
-            if update==1:
-                #remove Old File
-                try:
-                    os.remove(webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename])
-                except:
-                    print("no old files to remove",filename)
-
-                #make folder if needed
-                thisAVFolder=webServerRoot+packageFolder+"/html/auto-version/%s/"%(folderName)
-                if not os.path.exists(thisAVFolder):
-                    os.makedirs(thisAVFolder)
-
-                #copy original to auto-version
-                originalFilename=webServerRoot+originalFiles[fileType][filename]
-                transformedFiles[fileType][filename]="/%s/"%(folderName)+filename.replace(".","-"+timeStamp+".")
-                newFile=webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename]
-                copyfile(originalFilename,newFile)
-
-
-    filename=webServerRoot+packageFolder+'/html/auto-version/transformed.pickle'
-    file = open(filename,'wb')
-    pickle.dump(transformedFiles,file)
-    file.close() 
-
     return transformedFiles
