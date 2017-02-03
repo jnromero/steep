@@ -157,6 +157,11 @@ function drawDataFileButton(msg){
   dataFileButton.innerHTML="Download Data File";
   dataFileButton.style.top=(85+60*msg['taskTable'].length)+"px";
   dataFileButton.href=msg['dataFileURL'];
+  clickButton("many","dataFileButton",downloadDataFile,msg['dataFileURL']);
+}
+
+function downloadDataFile(args){
+  window.location.href=args[0];
 }
 
 

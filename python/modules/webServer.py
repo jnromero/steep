@@ -84,6 +84,11 @@ class RequestHandler(Resource):
             request.setHeader("Content-Type","audio/mp4")
             thisFile=File(self.config['webServerRoot']+thisPath)
             return File.render_GET(thisFile,request)
+         elif ext==".pickle":         
+            #this causes file to be downloaded automatically rather than being opened in the browser.   
+            request.setHeader("Content-Disposition","attachment")
+            thisFile=File(self.config['webServerRoot']+thisPath)
+            return File.render_GET(thisFile,request)
          else:
             #print "getting file: "+self.config['webServerRoot']+fileFolder+filename
             thisFile=File(self.config['webServerRoot']+fileFolder+filename)
