@@ -92,9 +92,7 @@ def updateFiles(config,originalFiles,transformedFiles,updateAll):
                 #remove Old File
                 if fileType in transformedFiles:
                     if filename in transformedFiles[fileType]:
-                        print(fileType,filename)
                         try:
-                            print(webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename])
                             os.remove(webServerRoot+packageFolder+"/html/auto-version/"+transformedFiles[fileType][filename])
                         except:
                             e = sys.exc_info()[0]

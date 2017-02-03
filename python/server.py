@@ -65,10 +65,6 @@ from steepWebSockets import SteepWebSocketFactory
 steepMainServer = imp.load_source('steepMainServer', "modules/mainServer.py")
 from steepMainServer import SteepMainServer
 
-#load instructions module
-steepInstructions = imp.load_source('steepInstructions', "modules/instructions.py")
-from steepInstructions import SteepInstructions
-
 #load quiz module
 steepQuiz = imp.load_source('steepQuiz', "modules/quiz.py")
 from steepQuiz import SteepQuiz
@@ -98,10 +94,18 @@ if 'questionnaire' in config:
 class ExperimentInstructions():
    def __init__(self):
       "defin blank class in case not importing other"
+class SteepInstructions():
+   def __init__(self):
+      "defin blank class in case not importing other"
 if 'instructions' in config:
    #load experiment specific quiz module
    experimentInstructions = imp.load_source('experimentInstructions',config['webServerRoot']+config['currentExperiment']+"/files/instructions.py")
    from experimentInstructions import ExperimentInstructions
+   
+   #load instructions module
+   steepInstructions = imp.load_source('steepInstructions', "modules/instructions.py")
+   from steepInstructions import SteepInstructions
+
 
 
 #load monitor module

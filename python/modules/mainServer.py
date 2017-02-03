@@ -71,13 +71,20 @@ class SteepMainServer():
       if self.data['serverStatus']['acceptingClients']==0:
          print("Done Accepting Clients!")
          print("%s Clients Connected"%(len(self.data['subjectIDs'])))
-         self.setMatchings()
+         
+         #check to see if notAcceptingClientsAnymore is defined in experiment
+         notAcceptingClientsAnymore = getattr(self,"notAcceptingClientsAnymore",None)
+         if callable(notAcceptingClientsAnymore):
+            self.notAcceptingClientsAnymore()
+         else:
+            self.notAcceptingClientsAnymoreDefault()
       else:
          print("Accepting Clients Now!")
 
       self.monitorMessage()
 
-
+   def notAcceptingClientsAnymoreDefault(self):
+      print("define function notAcceptingClientsAnymore in experiments.py to perform matching after this button has been pressed.")
 
 
    def generateRandomString(self,size=8):

@@ -3,7 +3,6 @@
 def getOriginalFiles(config):
     packageFolder=config['packageFolder']
     currentExperiment=config['currentExperiment']
-    instructionsFolder=currentExperiment+config['instructionsFolder']
 
     files={}
     files['common']={}
@@ -33,7 +32,10 @@ def getOriginalFiles(config):
     files[currentExperiment]['config.js']=config["configJsURL"]
     files[currentExperiment]['experiment.css']=currentExperiment+"files/experiment.css"
     files[currentExperiment]['experiment.js']=currentExperiment+"files/experiment.js"
-    files[currentExperiment]['instructions.js']=instructionsFolder+"instructions.js"
+
+    if "instructionsFolder" in config:
+        instructionsFolder=currentExperiment+config['instructionsFolder']
+        files[currentExperiment]['instructions.js']=instructionsFolder+"instructions.js"
 
     return files
 
