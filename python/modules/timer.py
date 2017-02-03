@@ -23,6 +23,7 @@ class SteepTimerManager():
       args2=args[1:]
       if subjectID=="all":
          self.data['timer']=[time.time(),time.time(),duration]
+         print(self.data['timer'])
          if self.timerFunction.cancelled==0 and self.timerFunction.called==0:
             self.timerFunction.cancel()
          if len(args2)>1:

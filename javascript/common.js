@@ -177,7 +177,7 @@ function moveTimer(timerName){
         var pretty = makeTimePretty(timerSeconds);
         if(document.getElementById(timerName)!=null){
             document.getElementById(timerName).innerHTML=pretty;
-            window.timerCalls[timerName]=setTimeout(pf,1000);
+            window.timerCalls[timerName]=setTimeout(pf,100);
         }
         else{
             window.timerCalls[timerName]=setTimeout(pf,10);

@@ -30,7 +30,10 @@ except:
 if options.saveData=="False":
    serverStartString="tmp"
 #Add serverStartString to config file
-config=settings.defaultSettings(options.location,options.configFile,serverStartString)
+config=settings.setConfig(options.location)
+configFunctions = imp.load_source('configFunctions', "modules/configFunctions.py")
+config=configFunctions.setOtherFileLocations(config,serverStartString)
+configFunctions.writeJavascriptConfigFile(config,options.configFile)
 
 
 
