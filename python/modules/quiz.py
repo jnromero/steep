@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function,division,absolute_import   
 
 class SteepQuiz():
    def __init__(self):

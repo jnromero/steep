@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function,division,absolute_import   
 import sys
 import os
 import imp
@@ -35,8 +35,8 @@ class RequestHandler(Resource):
          print(restartString)
 
    def render_GET(self, request):
-      parsedURL=theURLparse.urlparse(request.uri.replace("//","/"))#scheme,netloc,path,query
-      thisPath=parsedURL.path.decode("utf-8").replace("//","/")
+      parsedURL=theURLparse.urlparse(request.uri.decode().replace("//","/"))#scheme,netloc,path,query
+      thisPath=parsedURL.path.replace("//","/")
       if thisPath=="/":
          ext=".py"
          filename="index.py"

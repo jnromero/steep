@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function,division,absolute_import   
 import pickle
 import string
 import random
@@ -7,7 +7,12 @@ import json
 import copy
 from twisted.internet import reactor
 from twisted.internet import task
-import urlparse
+import sys
+#compatibility for python 2 and and 3
+if sys.version_info >= (3,0):
+   import urllib.parse as theURLparse
+else:
+   import urlparse as theURLparse
 
 
 class SteepMainServer():
@@ -58,7 +63,7 @@ class SteepMainServer():
       pass
    def saveData(self):
       file = open(self.config['dataFilePath'],'wb')
-      pickle.dump(self.data,file)
+      pickle.dump(self.data,file, protocol=2)
       file.close() 
 
    def wakeUp(self):
@@ -96,7 +101,7 @@ class SteepMainServer():
    def getViewTypeAndSubjectID(self,message):
       fullURl=message['url']['href']
       pathName=message['url']['pathname']
-      queryParameters=urlparse.parse_qs(message['url']['search'][1:])#1: to eliminate ?
+      queryParameters=theURLparse.parse_qs(message['url']['search'][1:])#1: to eliminate ?
       #always generate new subjectID in demo
       if self.config['serverType']=="demoExperiment":
          if "subjectID" in queryParameters:

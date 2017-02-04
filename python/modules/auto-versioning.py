@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from __future__ import print_function
+from __future__ import print_function,division,absolute_import   
 import time
 import filecmp
 import pickle
@@ -26,24 +26,21 @@ def writeBlankTransformedFileIfNeeded(config):
     if os.path.isfile(filename)==False: 
         print("creating new auto-version file transformed.pickle")
         file = open(filename,'wb')
-        pickle.dump({},file)
+        pickle.dump({},file, protocol=2)
         file.close() 
+    return filename
 
 def loadTransformedFile(config):
-    filename=config['webServerRoot']+config['packageFolder']+'/html/auto-version/transformed.pickle'
-    if os.path.isfile(filename)==False: 
-        file = open(filename,'wb')
-        pickle.dump({},file)
-        file.close() 
+    filename=writeBlankTransformedFileIfNeeded(config)
     file = open(filename,'rb')
     transformedFiles=pickle.load(file)
     file.close() 
     return transformedFiles
 
 def writeTransformedFile(config,transformedFiles):
-    filename=config['webServerRoot']+config['packageFolder']+'/html/auto-version/transformed.pickle'
+    filename=writeBlankTransformedFileIfNeeded(config)
     file = open(filename,'wb')
-    pickle.dump(transformedFiles,file)
+    pickle.dump(transformedFiles,file, protocol=2)
     file.close() 
 
 def loadFileList(config):
