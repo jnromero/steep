@@ -44,23 +44,9 @@ function makeMonitorTable(msg){
       thisEntry.innerHTML=msg['table'][subjectIDs[s]][titles[k]];
     }
   }
-  // for(row=0;row<msg['table'].length;row++){
-  //   var thisRow = document.createElement("tr");
-  //   var cell = document.createElement("td");
-  //   cell.innerHTML=row+1;
-  //   thisRow.appendChild(cell);
-  //   for(col=0;col<msg['table'][row].length;col++){
-  //     var cell = document.createElement("td");
-  //     cell.innerHTML=msg['table'][row][col];
-  //     //var cellText = document.createTextNode(msg['table'][row][col]); 
-  //     //cell.appendChild(cellText);
-  //     thisRow.appendChild(cell);
-  //   }
-  // table.appendChild(thisRow);
-  // }
-
-  // document.getElementById('mainDiv').appendChild(table);
 }
+
+
 function sortMonitorTable(args){
   col=args[0];
   msg={'type':"sortMonitorTableMessage",'col':col};
@@ -78,15 +64,21 @@ function stopPythonServer(){
 }
 
 
+      // msg['taskList']=self.monitorTaskList
+      // msg['taskStatus']=self.data['taskStatus']
+
+
 function makeTaskTable(msg){
   drawAcceptingSwitch();
-  for(row=0;row<msg['taskTable'].length;row++){
-    var thisTask=msg['taskTable'][row].title;
-    if(thisTask=="Load Instructions"){
+  for(row=0;row<msg['taskList'].length;row++){
+    var thisTask=msg['taskList'][row];
+    var taskTitle=msg['taskStatus'][thisTask]['title'];
+    var taskStatus=msg['taskStatus'][thisTask]['status'];
+    if(taskTitle=="Load Instructions"){
       drawInstructionsController();
     }
     else{
-      drawGenericTask(msg['taskTable'][row],row);
+      drawGenericTask(row,thisTask,taskTitle,taskStatus);
     }
   }
 
@@ -133,20 +125,18 @@ function makeTaskTable(msg){
 }
 
 
-function drawGenericTask(msg,row){
-  var divName="taskDiv_"+msg.type;
+function drawGenericTask(row,thisTask,taskTitle,taskStatus){
+  var divName="taskDiv_"+thisTask;
   var thisDiv=createAndAddDiv(divName,"mainDiv");
   thisDiv.className="taskButton";
   thisDiv.style.top=(85+60*row)+"px";
-  thisDiv.innerHTML=msg.title;
-  console.log("!!!!!",divName);
-  console.log(msg);
-  if(msg.status=="Done"){
+  thisDiv.innerHTML=taskTitle;
+  if(taskStatus=="Done"){
       thisDiv.style.backgroundColor="rgba(0,255,0,.2)";
   }
   else{
       thisDiv.style.backgroundColor="rgba(255,0,0,.2)";
-      clickButton("many",divName,sendToServer,msg);
+      clickButton("many",divName,sendToServer,thisTask,taskTitle);
   }
 }
 
@@ -155,7 +145,7 @@ function drawDataFileButton(msg){
   var dataFileButton=createAndAddDiv("dataFileButton","mainDiv");
   dataFileButton.className="taskButton";
   dataFileButton.innerHTML="Download Data File";
-  dataFileButton.style.top=(85+60*msg['taskTable'].length)+"px";
+  dataFileButton.style.top=(85+60*msg['taskList'].length)+"px";
   dataFileButton.href=msg['dataFileURL'];
   clickButton("many","dataFileButton",downloadDataFile,msg['dataFileURL']);
 }
@@ -170,7 +160,7 @@ function drawStopServerButton(msg){
   var stopPythonServerButton=createAndAddDiv("stopPythonServerButton","mainDiv");
   stopPythonServerButton.className="taskButton";
   stopPythonServerButton.innerHTML="Stop Python Server";
-  stopPythonServerButton.style.top=(205+60*msg['taskTable'].length)+"px";
+  stopPythonServerButton.style.top=(205+60*msg['taskList'].length)+"px";
   clickButton("once","stopPythonServerButton",stopPythonServer);
 
 }
@@ -180,7 +170,7 @@ function drawRefreshAllButton(msg){
   var refreshAllButton=createAndAddDiv("refreshAllButton","mainDiv");
   refreshAllButton.className="taskButton";
   refreshAllButton.innerHTML="Refresh All Clients";
-  refreshAllButton.style.top=(145+60*msg['taskTable'].length)+"px";
+  refreshAllButton.style.top=(145+60*msg['taskList'].length)+"px";
   clickButton("once","refreshAllButton",refreshClient,"all");
     // var thisRow = document.createElement("tr");
   // var cell = document.createElement("td");
@@ -289,10 +279,11 @@ function confirmAction(m){
   return confirmed;
 }
 function sendToServer(args){
-  msg=args[0];
-  var confirmation=confirmAction("Are you sure you want to "+msg['title']+"??");
+  var thisTask=args[0];
+  var taskTitle=args[1];
+  var confirmation=confirmAction("Are you sure you want to "+taskTitle+"??");
   if(confirmation){
-    sock.send(JSON.stringify(msg));
+    sock.send(JSON.stringify({"type":thisTask}));
   }
 }
 
@@ -309,13 +300,8 @@ function refreshClient(args){
 
 
 function startIt(type){
-  if(window.taskTable!=undefined){
-    for(k=0;k<window.taskTable.length;k++){
-      if(window.taskTable[k]['type']==type){
-        sock.send(JSON.stringify(window.taskTable[k]));
-      }
-    }
-  }
+  msg={"type":type};
+  sock.send(JSON.stringify(msg));
 }
 
 
@@ -340,6 +326,7 @@ function getAutomatic(){
         setTimeout(resumeInstructions,timeDelay);        
       }   
       else{
+        console.log(username,"!!!!!!");
         var pf = partial(startIt,username);
         setTimeout(pf,timeDelay);        
       }

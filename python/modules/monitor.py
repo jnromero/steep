@@ -3,7 +3,9 @@ import json
 
 class monitorClass():
    def __init__(self):
-      #These next two functions should be in experiment.py because they are specific to each experiment
+      #This should be set in experiment.py
+      #self.monitorTaskList=['loadInstructions','startQuiz','startExperiment']
+      # self.data['taskList']=self.monitorTaskList
       self.monitorTasks()
       if 'monitorTableSortColumn' not in self.data:
          self.data['monitorTableSortColumn']=0
@@ -17,7 +19,8 @@ class monitorClass():
       msg={"type":"tableUpdate"}
       msg['table']=self.getMonitorTable()
       msg['serverStatus']=self.data['serverStatus']
-      msg['taskTable']=self.data['monitorTasks']
+      msg['taskList']=self.monitorTaskList
+      msg['taskStatus']=self.data['taskStatus']
       msg['dataFile']=self.config['dataFilePath']
       msg['dataFileURL']=self.config['dataFileURL']
       try:
@@ -81,35 +84,24 @@ class monitorClass():
       self.monitorMessage()
 
    def taskDone(self,message):
-      self.data['monitorTasks'][message['index']]['status']='Done'
+      task=message['type']
+      self.data['taskStatus'][task]['status']="Done"
       self.saveData()
       self.monitorMessage()
 
+
+   def taskToTitle(self,taskName):
+      title=""
+      for l in taskName:
+         if l.isupper():
+            title+=" "
+         title+=l
+      title=title.title()
+      return title
+
    def monitorTasks(self):
-
-      alreadyThere=[]
-      if 'monitorTasks' in self.data:
-         for k in self.data['monitorTasks']:
-            if k['type'] not in alreadyThere:
-               alreadyThere.append(k['type'])
-      else:
-         self.data['monitorTasks']=[]
-
-      taskList=[]
-      k=-1
-      for task in self.monitorTaskList: 
-         if task not in alreadyThere:  
-            k+=1
-            msg={}
-            msg['type']=task
-            title=""
-            for l in task:
-               if l.isupper():
-                  title+=" "
-               title+=l
-            title=title.title()
-            msg['title']=title
-            msg['status']=''
-            msg['index']=k
-            self.data['monitorTasks'].append(msg)
-
+      self.data['taskStatus']={}
+      for task in self.monitorTaskList:
+         self.data['taskStatus'][task]={}
+         self.data['taskStatus'][task]['status']=""
+         self.data['taskStatus'][task]['title']=self.taskToTitle(task)
