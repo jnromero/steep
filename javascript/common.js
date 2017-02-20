@@ -91,6 +91,15 @@ function isDivNotThere(divIN){
     return out;
 }
 
+
+function divExists(divIN){
+    var out=true;
+    if(document.getElementById(divIN)==null){
+        out=false;
+    }
+    return out;
+}
+
 function createDiv(id){
     deleteDiv(id);
     var thisDiv = document.createElement("div");
@@ -100,11 +109,6 @@ function createDiv(id){
 
 function createAndAddDiv(newDivID,parentDivID){
     thisDiv=createAndAddElement("div",newDivID,parentDivID)
-    // //console.log(newDivID,parentDivID);
-    // deleteDiv(newDivID);
-    // var thisDiv = document.createElement("div");
-    // thisDiv.id=newDivID;
-    // document.getElementById(parentDivID).appendChild(thisDiv);
     return thisDiv;
 }
 
@@ -117,6 +121,7 @@ function createAndAddElement(elementType,newElementID,parentElementID){
     }
     document.getElementById(parentElementID).appendChild(thisElement);
     return thisElement;
+
 }
 
 
@@ -219,7 +224,6 @@ function updateTimers(incoming){
   window.timers['selfTimer']=incoming['selfTimer'];
   window.timers['timerCheck']=(new Date()).getTime();
 }
-
 
 
 function messageManager(msg){

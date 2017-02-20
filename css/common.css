@@ -113,6 +113,15 @@ div{
   animation-timing-function: linear;
   animation-duration: 1s;
 }
+
+.arrowOpacity{
+  animation-name: opacityFade;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1s;
+}
+
+
 .arrow_box_left:after, .arrow_box_left:before {
   right: 100%;
   top: 50%;
@@ -195,6 +204,13 @@ div{
     0% {transform: translateX(0px);}
     50% {transform: translateX(20px);}
     100% {transform: translateX(0px);}
+}
+
+
+@keyframes opacityFade {
+    0% {opacity: 0;}
+    50% {opacity: 1;}
+    100% {opacity: 0;}
 }
 
 

@@ -1,4 +1,5 @@
 function tableUpdate(msg){
+  console.log("TABLE UPDATES@!!!!")
   window.serverStatus=msg['serverStatus'];
   window.lastTimeCheck=(new Date()).getTime();
   makeMonitorTable(msg);
@@ -64,6 +65,14 @@ function stopPythonServer(){
 }
 
 
+function restartPythonServer(){
+  var confirmation=confirmAction("Are you sure you want to restart the python server??  Only do this if you are done with the experiment or you have an error.  You might be able to restart, but only maybe.");
+  if(confirmation){
+    msg={'type':"restartPythonServer"};
+    sock.send(JSON.stringify(msg));
+  }
+}
+
       // msg['taskList']=self.monitorTaskList
       // msg['taskStatus']=self.data['taskStatus']
 
@@ -84,6 +93,7 @@ function makeTaskTable(msg){
 
   drawDataFileButton(msg);
   drawStopServerButton(msg);
+  drawRestartServerButton(msg);
   drawRefreshAllButton(msg);
 
   // var thisRow = document.createElement("tr");
@@ -165,6 +175,15 @@ function drawStopServerButton(msg){
 
 }
 
+
+function drawRestartServerButton(msg){
+  var stopPythonServerButton=createAndAddDiv("restartPythonServerButton","mainDiv");
+  stopPythonServerButton.className="taskButton";
+  stopPythonServerButton.innerHTML="Restart Python Server";
+  stopPythonServerButton.style.top=(265+60*msg['taskList'].length)+"px";
+  clickButton("once","restartPythonServerButton",restartPythonServer);
+
+}
 
 function drawRefreshAllButton(msg){
   var refreshAllButton=createAndAddDiv("refreshAllButton","mainDiv");

@@ -8,6 +8,7 @@ import copy
 from twisted.internet import reactor
 from twisted.internet import task
 import sys
+import os
 #compatibility for python 2 and and 3
 if sys.version_info >= (3,0):
    import urllib.parse as theURLparse
@@ -99,7 +100,7 @@ class SteepMainServer():
 
 
    def getViewTypeAndSubjectID(self,message):
-      fullURl=message['url']['href']
+      fullURL=message['url']['href']
       pathName=message['url']['pathname']
       queryParameters=theURLparse.parse_qs(message['url']['search'][1:])#1: to eliminate ?
       #always generate new subjectID in demo
@@ -107,14 +108,13 @@ class SteepMainServer():
          if "subjectID" in queryParameters:
             del queryParameters['subjectID']
 
-
-      if pathName=="/video.html":
+      if pathName.split("/")[-1]=="video.html":
          viewType="video"
          subjectID="video"
-      elif pathName=="/monitor.html":
+      elif pathName.split("/")[-1]=="monitor.html":
          viewType="monitor"
          subjectID="monitor"
-      elif pathName=="/client.html":
+      elif pathName.split("/")[-1]=="client.html":
          viewType="regular"
       else:
          viewType="unknown"
@@ -155,7 +155,6 @@ class SteepMainServer():
       [subjectID,viewType,urlParamsToAdd,queryParameters]=self.getViewTypeAndSubjectID(message)
       #set subject ID for client
       client.subjectID=subjectID
-
       if self.config['serverType']=="regularExperiment":
          if viewType=="monitor":
             print("New monitor client")
@@ -351,10 +350,15 @@ class SteepMainServer():
       print(message)
       return self.messageToId(msg,message['sid'],"send")
 
+
    def stopPythonServer(self,message,client):
       self.saveData()
       print("To Restart Use:\n")
       print(self.restartString)
       reactor.stop()
 
+   def restartPythonServer(self,message,client):
+      reactor.stop()
+      print("STarting a new python server")
+      os.execv(sys.executable, ['python'] + sys.argv)
 
