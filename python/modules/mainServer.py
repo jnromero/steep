@@ -359,6 +359,9 @@ class SteepMainServer():
 
    def restartPythonServer(self,message,client):
       reactor.stop()
-      print("STarting a new python server")
-      os.execv(sys.executable, ['python'] + sys.argv)
+      print("Starting a new python server")
+      string=sys.executable+" "+" ".join(sys.argv)
+      # print string
+      # os.system(string)
+      os.execv(sys.executable,[sys.executable.split("/")[-1]]+sys.argv)
 

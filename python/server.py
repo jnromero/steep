@@ -8,6 +8,10 @@ from twisted.internet import reactor
 from twisted.web.server import Site
 from autobahn.twisted.websocket import listenWS
 
+#python version
+print("Running STEEP server using python verion:"+sys.version)
+print("which python: "+sys.executable)
+
 #load options module
 optionsCommands = imp.load_source('optionsCommands', "modules/optionsCommands.py")
 options=optionsCommands.getOptions()
