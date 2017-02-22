@@ -30,7 +30,7 @@ class RequestHandler(Resource):
       self.config=config
       self.transformedFiles=autoVersion.updateAutoVersion(config,1)
       if debug=="False":
-         import logger
+         logger = imp.load_source('logger',"modules/logger.py")
          self.thisLogger=logger.TwistedLogger(config['webServerRoot']+config['dataFolder'])
          print(restartString)
 

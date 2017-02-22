@@ -96,7 +96,7 @@ function changeBackgroundColor(incoming){
     document.getElementById("mainDiv").style.backgroundColor=incoming['color'];
 }
 
-function placeText(incoming){
+function placeTextINstructions(incoming){
     var textDiv=createAndAddDiv(incoming["divid"],"mainDiv")
     textDiv.innerHTML=incoming['text'];
     textDiv.style.opacity="0";
