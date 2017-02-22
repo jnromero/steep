@@ -3,14 +3,21 @@ import sys
 import imp
 import time
 import webbrowser
+functions = imp.load_source('functions', "modules/functions.py")
 
 from twisted.internet import reactor
 from twisted.web.server import Site
 from autobahn.twisted.websocket import listenWS
 
+
 #python version
-print("Running STEEP server using python verion:"+sys.version)
-print("which python: "+sys.executable)
+functions.printColor("\n\n\t\tRunning")
+functions.printColor("STEEP","turquoise",['bold'])
+functions.printColor("server.\n\n\n")
+functions.printColor("Python version:","blue",["bold"])
+functions.printColor(sys.version+"\n","black")
+functions.printColor("Python executable:","blue",["bold"])
+functions.printColor(sys.executable+"\n\n","black")
 
 #load options module
 optionsCommands = imp.load_source('optionsCommands', "modules/optionsCommands.py")
@@ -21,8 +28,19 @@ if options.restart=="False":
    serverStartString=time.strftime("%Y%m%d-%H%M%S",time.localtime(time.time()))
 else:
    serverStartString=options.restart
-restartString=optionsCommands.printRestartString(serverStartString)
-print("!!!!!",restartString)
+
+#Save data to temporary file.  This avoids clutter
+if options.saveData=="False":
+   functions.printColor("Warning:","red",["background","flash"])
+   functions.printColor("Saving Data to TMP file, and potentially rewriting old tmp data.\n","red")
+   functions.printColor("This is fine if you are just testing.\n","red")
+   functions.printColor("Use '-s True' or remove '-s False' to save data to new folder.\n\n","red")
+   serverStartString="tmp"
+
+#print restart script
+restartString=optionsCommands.getRestartString(serverStartString)
+functions.printColor("To restart use:\n","green",['background'])
+functions.printColor(restartString+"\n\n","green",[''])
 
 #load the config file
 try:  
@@ -30,9 +48,6 @@ try:
 except:
    sys.exit("ERROR: Config file couldn't be loaded (probably not a python file).\n %s \nYou can see all options by running 'python server.py -h'"%(options.configFile))
 
-#Save data to temporary file.  This avoids clutter
-if options.saveData=="False":
-   serverStartString="tmp"
 #Add serverStartString to config file
 config=settings.setConfig(options.location)
 config['location']=options.location
@@ -44,10 +59,12 @@ configFunctions.writeJavascriptConfigFile(config,options.configFile)
 
 #Print server starting message
 if options.restart=="False":
-   print("SERVER RUNNING - %s!!!"%(serverStartString))
+   functions.printColor("Data File Name:","black",['bold'])
+   functions.printColor(serverStartString+"\n")
 else:
-   print("SERVER RESTARTING - %s!!!"%(serverStartString))
-print("current Experiment: "+config['currentExperiment'])
+   functions.printColor("SERVER RESTARTING - %s!!!"%(serverStartString),"red")
+functions.printColor("Current Experiment:","black",['bold'])
+functions.printColor(config['currentExperiment']+"\n\n")
 
 
 
@@ -129,7 +146,7 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       self.config=config
       self.options=options
       self.serverStartString=serverStartString
-      self.restartString=optionsCommands.printRestartString(self.serverStartString)
+      self.restartString=optionsCommands.getRestartString(self.serverStartString)
       SteepWebSocketFactory.__init__(self)
       SteepMainServer.__init__(self)
       SteepTimerManager.__init__(self)
