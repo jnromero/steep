@@ -50,6 +50,12 @@ except:
 
 #Add serverStartString to config file
 config=settings.setConfig(options.location)
+try:
+   locationSettings = imp.load_source('locationSettings','../locations/%s.py'%(options.location))
+   config=locationSettings.getLocation(config)
+except:
+   functions.printColor("Warning:","red",["background","flash"])
+   functions.printColor("Can't load location file ../locations/%s.py.\n"%(options.location),"red")
 config['location']=options.location
 configFunctions = imp.load_source('configFunctions', "modules/configFunctions.py")
 config=configFunctions.setOtherFileLocations(config,serverStartString)
