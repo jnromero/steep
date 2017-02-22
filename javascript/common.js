@@ -144,7 +144,7 @@ function clearAll(){
 function wakeUp(incoming){
 }
 
-function placeText(divid,text,top,fontSize,color,fadeTime){
+function placeTextOLD(divid,text,top,fontSize,color,fadeTime){
     console.log("Sdfsdf");
     thisDiv=createAndAddDiv(divid,"mainDiv");
     thisDiv.innerHTML=text;
@@ -160,6 +160,80 @@ function placeText(divid,text,top,fontSize,color,fadeTime){
         document.getElementById(divid).style.transition = "opacity "+fadeTime+"s ease";
     },50);
 }
+
+function placeText(incoming){
+    if(incoming['divid']==undefined){
+        incoming['divid']="randomDiv"+parseInt(Math.random()*10000000000);
+    }
+    if(incoming['top']==undefined){
+        incoming['top']="0px";
+    }
+    if(incoming['fontSize']==undefined){
+        incoming['fontSize']="100%";
+    }
+    if(incoming['width']==undefined){
+        incoming['width']="100%";
+    }
+    if(incoming['textAlign']==undefined){
+        incoming['textAlign']="center";
+    }
+    if(incoming['color']==undefined){
+        incoming['color']="black";
+    }
+    if(incoming['fadeTime']==undefined){
+        incoming['fadeTime']=".01";
+    }
+    if(incoming['height']==undefined){
+        incoming['height']="50px";
+    }
+    if(incoming['lineHeight']==undefined){
+        incoming['lineHeight']=incoming['height'];
+    }
+    if(incoming['backgroundColor']==undefined){
+        incoming['backgroundColor']="transparent";
+    }
+    if(incoming['parentDiv']==undefined){
+        incoming['parentDiv']="mainDiv";
+    }
+    if(incoming['text']==undefined){
+        incoming['text']="";
+    }
+    if(incoming['padding']==undefined){
+        incoming['padding']="0px";
+    }
+
+
+    var textDiv=createAndAddDiv(incoming["divid"],incoming['parentDiv']);
+    textDiv.innerHTML=incoming['text'];
+    textDiv.style.opacity="1";
+    textDiv.style.top=incoming['top'];
+    textDiv.style.width=incoming['width'];
+    textDiv.style.height=incoming['height'];
+    textDiv.style.lineHeight=incoming['lineHeight'];
+    textDiv.style.fontSize=incoming['fontSize'];
+    textDiv.style.left=incoming['left'];
+    textDiv.style.textAlign=incoming["textAlign"];
+    textDiv.style.color=incoming["color"];
+    textDiv.style.position="absolute";
+    if(incoming['borderLeft']!=undefined){
+        textDiv.style.borderLeft=incoming['borderLeft'];
+    }
+    if(incoming['borderRight']!=undefined){
+        textDiv.style.borderRight=incoming['borderRight'];
+    }
+    if(incoming['borderTop']!=undefined){
+        textDiv.style.borderTop=incoming['borderTop'];
+    }
+    if(incoming['borderBottom']!=undefined){
+        textDiv.style.borderBottom=incoming['borderBottom'];
+    }
+    if(incoming['border']!=undefined){
+        textDiv.style.border=incoming['border'];
+    }
+    textDiv.style.padding=incoming['padding'];
+    textDiv.style.backgroundColor=incoming['backgroundColor'];
+}
+
 
 
 function makeTimePretty(timeIN){
