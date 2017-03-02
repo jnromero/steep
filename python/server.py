@@ -10,15 +10,6 @@ from twisted.web.server import Site
 from autobahn.twisted.websocket import listenWS
 
 
-#python version
-functions.printColor("\n\n\t\tRunning")
-functions.printColor("STEEP","turquoise",['bold'])
-functions.printColor("server.\n\n\n")
-functions.printColor("Python version:","blue",["bold"])
-functions.printColor(sys.version+"\n","black")
-functions.printColor("Python executable:","blue",["bold"])
-functions.printColor(sys.executable+"\n\n","black")
-
 #load options module
 optionsCommands = imp.load_source('optionsCommands', "modules/optionsCommands.py")
 options=optionsCommands.getOptions()
@@ -29,24 +20,19 @@ if options.restart=="False":
 else:
    serverStartString=options.restart
 
-#Save data to temporary file.  This avoids clutter
-if options.saveData=="False":
-   functions.printColor("Warning:","red",["background","flash"])
-   functions.printColor("Saving Data to TMP file, and potentially rewriting old tmp data.\n","red")
-   functions.printColor("This is fine if you are just testing.\n","red")
-   functions.printColor("Use '-s True' or remove '-s False' to save data to new folder.\n\n","red")
-   serverStartString="tmp"
-
-#print restart script
-restartString=optionsCommands.getRestartString(serverStartString)
-functions.printColor("To restart use:\n","green",['background'])
-functions.printColor(restartString+"\n\n","green",[''])
-
 #load the config file
 try:  
    settings = imp.load_source('settings',options.configFile)
 except:
    sys.exit("ERROR: Config file couldn't be loaded (probably not a python file).\n %s \nYou can see all options by running 'python server.py -h'"%(options.configFile))
+
+#Save data to temporary file.  This avoids clutter
+if options.saveData=="False":
+   functions.printColor("Warning:\n","red",["background","flash"])
+   functions.printColor("Saving Data to TMP file, and potentially rewriting old tmp data.\n","red")
+   functions.printColor("This is fine if you are just testing.\n","red")
+   functions.printColor("Use '-s True' or remove '-s False' to save data to new folder.\n\n","red")
+   serverStartString="tmp"
 
 #Add serverStartString to config file
 config=settings.setConfig(options.location)
@@ -62,16 +48,53 @@ config=configFunctions.setOtherFileLocations(config,serverStartString)
 configFunctions.writeJavascriptConfigFile(config,options.configFile)
 
 
+#python version
+functions.printColor("\n----------------------------------------------------------\n\n","turquoise",['bold'])
+functions.printColor("                 Running")
+functions.printColor("STEEP","turquoise",['bold'])
+functions.printColor("server.")
+functions.printColor("\n","turquoise",['bold'])
+functions.printColor("\n----------------------------------------------------------\n\n","turquoise",['bold'])
+functions.printColor("Python info:\n","blue",["background"])
+functions.printColor("   Python version:","blue",["bold"])
+functions.printColor(sys.version.split("\n")[0]+"\n","black")
+functions.printColor("Python executable:","blue",["bold"])
+functions.printColor(sys.executable+"\n\n","black")
+functions.printColor("Current IP Addresses:\n","turquoise",["background"])
+import netifaces as ni
+for k in ni.interfaces():
+   ni.ifaddresses(k)
+   try:  
+      # print(ni.ifaddresses(k))
+      ip = ni.ifaddresses(k)[2][0]['addr']
+      functions.printColor("\t"+k+":","turquoise",["bold"])
+      functions.printColor(ip+"\n","black")
+      # print(k,ip)  # should print "192.168.100.37"
+   except:
+      "no address"
+functions.printColor("\n","black")
+
+
+#print restart script
+restartString=optionsCommands.getRestartString(serverStartString)
+functions.printColor("To restart use:\n","green",['background'])
+functions.printColor(restartString+"\n\n","green",[''])
 
 #Print server starting message
-if options.restart=="False":
-   functions.printColor("Data File Name:","black",['bold'])
-   functions.printColor(serverStartString+"\n")
-else:
-   functions.printColor("SERVER RESTARTING - %s!!!"%(serverStartString),"red")
-functions.printColor("Current Experiment:","black",['bold'])
-functions.printColor(config['currentExperiment']+"\n\n")
+if options.restart!="False":
+   functions.printColor("\nSERVER RESTARTING - %s!!!\n\n"%(serverStartString),"red",['background','flash'])
 
+
+functions.printColor("Config File Info:\n","gold",["background"])
+firstList=["currentExperiment","location","domain","serverPort","dataFileURL","serverType"]
+for k in firstList:
+   functions.printColor(" "*(20-len(k))+k+":","gold",['bold'])
+   functions.printColor("%s"%(config[k])+"\n")
+
+for k in config:
+   if k not in firstList:
+      functions.printColor(" "*(20-len(k))+k+":","gold",['bold'])
+      functions.printColor("%s"%(config[k])+"\n")
 
 
 
