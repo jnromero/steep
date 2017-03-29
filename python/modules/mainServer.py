@@ -31,7 +31,7 @@ class SteepMainServer():
          self.data={}
          self.data['config']=self.config
          self.data['subjectIDs']=[]
-         self.data['sessionTimeStamp']=self.serverStartString
+         self.data['sessionTimeStamp']=self.config['serverStartString']
          self.data['timer']=[0,0,0]
 
 
@@ -64,7 +64,8 @@ class SteepMainServer():
       pass
    def saveData(self):
       file = open(self.config['dataFilePath'],'wb')
-      pickle.dump(self.data,file, protocol=2)
+      #protocol for python 3 compatibility
+      pickle.dump(self.data,file,protocol=2)
       file.close() 
 
    def wakeUp(self):
@@ -112,6 +113,9 @@ class SteepMainServer():
          viewType="video"
          subjectID="video"
       elif pathName.split("/")[-1]=="monitor.html":
+         viewType="monitor"
+         subjectID="monitor"
+      elif pathName.split("/")[-1]=="console.html":
          viewType="monitor"
          subjectID="monitor"
       elif pathName.split("/")[-1]=="client.html":
@@ -180,7 +184,8 @@ class SteepMainServer():
                   msg={}
                   msg['type']="notAccepting"
                   msg["subjectIDs"]=[[x,self.data[x].connectionStatus] for x in self.data["subjectIDs"]]
-                  client.sendMessage(json.dumps(msg).encode('utf8'))
+                  self.messagePythonToJavascript(msg,client)
+
                   print("New Client Trying to Join: %s, not accepting anymore"%(subjectID))
             elif subjectID in self.data['subjectIDs']:
                print("reconnecting subject %s, %s"%(subjectID,self.data['serverStatus']['page']))
@@ -189,7 +194,7 @@ class SteepMainServer():
                   print("connectAnotherBrowser",subjectID)
                   msg={}
                   msg['type']="connectAnotherBrowser"
-                  self.clientsById[subjectID].sendMessage(json.dumps(msg).encode('utf8'))
+                  self.messagePythonToJavascript(msg,self.clientsById[subjectID])
                else:
                   self.clientsById[subjectID]=client
                print(self.data['serverStatus']['page'])
@@ -238,7 +243,6 @@ class SteepMainServer():
       thisSubject.ipAddress=""
       thisSubject.timer=[0,0,0]
       thisSubject.connectionStatus=""
-      self.subjectTimerFunctions[subjectID]=reactor.callLater(0,self.blank)
       self.data[subjectID]=thisSubject
       self.updateStatus(subjectID)
 
@@ -287,11 +291,15 @@ class SteepMainServer():
          self.messageToId(msg,sid,"send")
 
    def messageToId(self,msg,sid="all",output="send"):
-      msg['timer']=self.updateTimer(self.data['timer'])
+      msg['timers']={}
+      for timer in self.data["timers"]:
+         msg['timers'][timer]=self.updateTimer(self.data['timers'][timer])
       sids=self.getSubjectIDList(sid)
       msgs=[]
       for s in sids:
-         msg['selfTimer']=self.updateTimer(self.data[s].timer)
+         #msg['selfTimer']=self.updateTimer(self.data[s].timer)
+         if "subjectID" not in self.data[s].status:
+            self.data[s].status['subjectID']=s
          msg['status']=self.data[s].status
          if output=="send":
             self.sendMessageToClientByID(msg,s)
@@ -305,13 +313,14 @@ class SteepMainServer():
       if sid=="video":
          try:
             for client in self.videoClients:
-               client.sendMessage(json.dumps(msg).encode('utf8'))
+               self.messagePythonToJavascript(msg,client)
+
          except Exception as thisExept: 
             print(thisExept)
             print("can't send %s message to %s"%(msg['type'],sid))
       else:
          try:
-            self.clientsById[sid].sendMessage(json.dumps(msg).encode('utf8'))
+            self.messagePythonToJavascript(msg,self.clientsById[sid])
          except Exception as thisExept: 
             print(thisExept)
             print("can't send %s message to %s"%(msg['type'],sid))
@@ -319,20 +328,23 @@ class SteepMainServer():
 
    def customMessage(self,subjectID,msg,output="send"):
       #print "send message %s - %s"%(subjectID,msg['type'])
-      msg['timer']=self.updateTimer(self.data['timer'])
+      print("CURONETOM MESSAGE")
+      msg['timers']={}
+      for timer in self.data["timers"]:
+         msg['timers'][timer]=self.updateTimer(self.data['timers'][timer])
       if subjectID=="video":
          if output=="send":
             try:
                for client in self.videoClients:
-                  client.sendMessage(json.dumps(msg).encode('utf8'))
+                  self.messagePythonToJavascript(msg,client)
             except:
                print("can't send %s message to %s"%(msg['type'],subjectID))
       else:
-         msg['selfTimer']=self.updateTimer(self.data[subjectID].timer)
+         #msg['selfTimer']=self.updateTimer(self.data[subjectID].timer)
          msg['status']=self.data[subjectID].status
          if output=="send":
             try:
-               self.clientsById[subjectID].sendMessage(json.dumps(msg).encode('utf8'))
+               self.messagePythonToJavascript(msg,self.clientsById[subjectID])
             except:
                print("can't send %s message to %s"%(msg['type'],subjectID))
       if output=="return":

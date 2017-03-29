@@ -2,59 +2,156 @@ from __future__ import print_function,division,absolute_import
 import os
 from twisted.python import log
 import time
+import sys
+import pickle 
 
-#start the logger
-class TwistedLogger:
-   def __init__(self,folder):
-      self.folder=folder+"/logs/"
+
+class logCounter():
+   def __init__(self):
+      self.counter=0
       self.fileCount=1
-      self.filename=self.folder+"/%s.log"%(self.fileCount)
-      if not os.path.exists(self.folder):
-         os.makedirs(self.folder)
-      # file = open(self.filename,'w')
-      # file.close() 
-      log.startLogging(open(self.folder+'/fullLog.log', 'w'))#,setStdout=False)
-      log.addObserver(self.writeToFile)
+      self.totalCounter=0
+      self.currentTab=1
 
-   def writeToFile(self,this):
-      dateString=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(this['time']))
-      if 'log_namespace' not in this:
-         thisString=str(this)
-      elif this['isError']==1:
-         if 'log_text' in this:
-            thisString="<p class='stdErr consoleLine'>%s - %s</p>\n"%(dateString,this['log_text'].split("\n")[0])
-            for k in this['log_text'].split("\n")[1:]:
-               k=k.replace(" ","&nbsp;&nbsp;")
-               thisString=thisString+"<p class='stdErr subLine consoleLine'>%s</p>\n"%(k)
-         else:
-            thisString="<p class='stdErr consoleLine'>%s - %s</p>\n"%(dateString,this['log_io'])
-      elif this['log_namespace']=='stdout':
-         thisString="<p class='stdOut consoleLine'>%s - %s</p>\n"%(dateString,this['log_io'])
-      elif this['log_namespace']=='twisted.python.log':
-         thisString="<p class='stdTwisted consoleLine'>%s - %s</p>\n"%(dateString,this['log_io'])
-         thisString=thisString+str(this)
-         if this['log_io'].find("\"GET")>-1:
-            thisString=""
+   def increment(self):
+      self.counter+=1
+      self.totalCounter+=1
+      out=False
+      if self.counter>500:
+         self.fileCount+=1
+         self.counter=0
+         out=True
+      return out
 
+def createBlankFile(filename):
+   file = open(filename,'wb')
+   file.close() 
+
+
+def getFilenames(config,fileCount):
+   txtFile=config['logFolder']+"/txt/%s.txt"%(fileCount)
+   pickleFile=config['logFolder']+"/pickle/%s.pickle"%(fileCount)
+   return [txtFile,pickleFile]
+
+def newFiles(config,fileCount):
+   [txtFile,pickleFile]=getFilenames(config,fileCount)
+   createBlankFile(txtFile)
+   createBlankFile(pickleFile)
+   return [txtFile,pickleFile]
+
+class SteepLogger(object):
+   def __init__(self,stream,streamType,config,thisCounter,monitorMessage):
+      self.stream=stream
+      self.config=config
+      self.counter=thisCounter
+      self.type=streamType#stdErr or stdOut
+      self.monitorMessage=monitorMessage
+      [self.txtFile,self.pickleFile]=newFiles(self.config,self.counter.fileCount)
+      self.newLine()
+
+   def newLine(self):
+      self.currentLine=""
+
+   def write(self,obj,**kwargs):
+      #open files for appending
+      tFile = open(self.txtFile,'ab')
+      pFile = open(self.pickleFile,'ab')
+      #split into lines
+      lines=obj.split("\n")
+      if "type" in kwargs:
+         thisType=kwargs['type']
       else:
-         if "log_text" in this:
-            thisString="<p class='stdOther consoleLine'>%s - %s</p>\n"%(dateString,this['log_text'])
-         elif "log_format" in this:
-            thisString="<p class='stdOther consoleLine'>%s - %s</p>\n"%(dateString,this['log_format'])
-         else:
-            thisString="<p class='stdOther consoleLine'>%s - %s</p>\n"%(dateString,this['message'])
+         thisType=self.type
+      for k in range(len(lines)):
+         self.currentLine+=lines[k]
+         if k<len(lines)-1:
+            #write to text file
+            tFile.write(self.currentLine+"\n")
+            #write to pickle file ([type,line,linecounter,kwargs])
+            pickle.dump([thisType,self.currentLine.replace(" ","&nbsp;&nbsp;"),self.counter.totalCounter,kwargs],pFile,protocol=2)
+            #write to console
+            self.stream.write(thisType+" "*(15-len(thisType))+"   "+self.currentLine+"\n")
+            self.stream.flush()
+            self.currentLine=""
+            if self.counter.increment():
+               [self.txtFile,self.pickleFile]=newFiles(self.config,self.counter.fileCount)
+      tFile.close() 
+      pFile.close() 
+      self.monitorMessage()
+
+   def flush(self):
+      self.stream.flush()
 
 
-      file = open(self.filename,'a')
-      file.writelines(thisString)
-      file.close() 
 
-      file = open(self.filename,'r')
-      fileData=file.read()
-      file.close() 
-      if fileData.count("\n")>500:
-         self.fileCount=self.fileCount+1
-         self.filename=self.folder+"/%s.log"%(self.fileCount)
-         file = open(self.filename,'w')
-         file.close() 
-      self.log = open(self.filename, "a")
+# class SteepTwistedLogger(object):
+#    def __init__(self,config,thisCounter,monitorMessage):
+#       self.config=config
+#       self.counter=thisCounter
+#       self.monitorMessage=monitorMessage
+#       self.newLine()
+#       [self.txtFile,self.pickleFile]=getFilenames(config,self.counter.fileCount)
+
+#    def newLine(self):
+#       self.currentLine=""
+
+#    def write(self,obj,messageType,**kwargs):
+#       #open files for appending
+#       tFile = open(self.txtFile,'ab')
+#       pFile = open(self.pickleFile,'ab')
+#       #split into lines
+#       lines=obj.split("\n")
+#       print("sdfsdf",lines)
+#       for k in range(len(lines)):
+#          self.currentLine+=lines[k]
+#          if k<len(lines)-1:
+#             #write to text file
+#             tFile.write(self.currentLine+"\n")
+#             #write to pickle file ([type,line,linecounter,kwargs])
+#             pickle.dump([messageType,self.currentLine,self.counter.totalCounter,kwargs],pFile,protocol=2)
+#             #write to console
+#             sys.stdout.write(messageType+"   "+self.currentLine+"\n")
+#             self.currentLine=""
+#             if self.counter.increment():
+#                [self.txtFile,self.pickleFile]=newFiles(self.config,self.counter.fileCount)
+#       tFile.close() 
+#       pFile.close() 
+#       self.monitorMessage()
+
+#    def flush(self):
+#       self.stream.flush()
+
+
+
+
+def twistedObserver(eventDict):
+   kwargs={"type":"twisted"}
+   if 'log_namespace' not in eventDict:
+      sys.stdout.write(eventDict+"\n",**kwargs)
+   elif eventDict['isError']==1:
+      kwargs={"type":"twistedError"}
+      if 'log_text' in eventDict:
+         for k in eventDict['log_text'].split("\n"):
+            sys.stdout.write(k+"\n",**kwargs)
+      else:
+         sys.stdout.write(eventDict['log_io']+"\n",**kwargs)
+   elif eventDict['log_namespace']=='stdout':
+      sys.stdout.write(eventDict['log_io']+"\n",**kwargs)
+   elif eventDict['log_namespace']=='twisted.python.log':
+      if eventDict['log_io'].find("\"GET")==-1:
+         sys.stdout.write(eventDict['log_io']+"\n",**kwargs)
+
+   else:
+      if "log_text" in eventDict:
+         sys.stdout.write(eventDict['log_text']+"\n",**kwargs)
+      elif "log_format" in eventDict:
+         sys.stdout.write(eventDict['log_format']+"\n",**kwargs)
+      else:
+         sys.stdout.write(eventDict['message']+"\n",**kwargs)
+
+
+
+
+def log(text,**kwargs):
+   print(text)
+

@@ -1,14 +1,57 @@
-function tableUpdate(msg){
-  console.log("TABLE UPDATES@!!!!")
-  window.serverStatus=msg['serverStatus'];
-  window.lastTimeCheck=(new Date()).getTime();
-  makeMonitorTable(msg);
-  makeTaskTable(msg)
-}
+// function tableUpdate(msg){
+//   console.log("TABLE UPDATES@!!!!")
+//   window.serverStatus=msg['serverStatus'];
+//   window.lastTimeCheck=(new Date()).getTime();
+//   if(window.serverPage=="monitor"){
+//     makeMonitorTable(msg);
+//     makeTaskTable(msg);
+//   }
+// }
 
 
 
 function makeMonitorTable(msg){
+  var subjectIDs=msg['table']['subjectIDs'];
+  var titles=msg['table']['titles'];
+
+
+  var table=createAndAddElement("table","monitorTable","mainDivInside");
+
+
+  if(window.serverStatus['page']=="instructions"){
+    var captionRow=createAndAddElement("tr","monitorTableCaptionsRow","monitorTable");
+    var captionEntry=createAndAddElement("td","monitorTableCaptionsRowEntry","monitorTableCaptionsRow");
+    captionEntry.colSpan=titles.length;
+    captionEntry.innerHTML=window.serverStatus['instructions']['lastCaption'];
+
+    var instructionsStatusBar=createAndAddDiv("instructionsStatusBar","mainDivInside");
+    instructionsStatusBar.style.width=serverStatus['instructions']['time']*1250;
+  }
+  else{
+    deleteDiv("instructionsStatusBar");
+  }
+
+  var thisRow=createAndAddElement("tr","monitorTableHeaderRow","monitorTable");
+
+
+  for(k=0;k<titles.length;k++){
+    var thisHeader=createAndAddElement("th","monitorTableHeader_"+k,"monitorTableHeaderRow");
+    thisHeader.innerHTML=titles[k];
+    clickButton("many","monitorTableHeader_"+k,sortMonitorTable,k);
+  }
+
+  for(var s=0;s<subjectIDs.length;s++){
+    var thisRow=createAndAddElement("tr","monitorTableRow_"+s,"monitorTable");
+    for(var k=0;k<titles.length;k++){
+      var thisEntry=createAndAddElement("td","monitorTableEntry_"+s+"-"+k,"monitorTableRow_"+s);
+      thisEntry.innerHTML=msg['table'][subjectIDs[s]][titles[k]];
+    }
+  }
+}
+
+
+
+function makeMonitorTableOld(msg){
   var subjectIDs=msg['table']['subjectIDs'];
   var titles=msg['table']['titles'];
 
@@ -137,7 +180,7 @@ function makeTaskTable(msg){
 
 function drawGenericTask(row,thisTask,taskTitle,taskStatus){
   var divName="taskDiv_"+thisTask;
-  var thisDiv=createAndAddDiv(divName,"mainDiv");
+  var thisDiv=createAndAddDiv(divName,"mainDivInside");
   thisDiv.className="taskButton";
   thisDiv.style.top=(85+60*row)+"px";
   thisDiv.innerHTML=taskTitle;
@@ -152,12 +195,12 @@ function drawGenericTask(row,thisTask,taskTitle,taskStatus){
 
 
 function drawDataFileButton(msg){
-  var dataFileButton=createAndAddDiv("dataFileButton","mainDiv");
+  var dataFileButton=createAndAddDiv("dataFileButton","mainDivInside");
   dataFileButton.className="taskButton";
-  dataFileButton.innerHTML="Download Data File";
+  dataFileButton.innerHTML="Download Data Folder (.zip)";
   dataFileButton.style.top=(85+60*msg['taskList'].length)+"px";
-  dataFileButton.href=msg['dataFileURL'];
-  clickButton("many","dataFileButton",downloadDataFile,msg['dataFileURL']);
+  dataFileButton.href=msg['dataFolderURL'];
+  clickButton("many","dataFileButton",downloadDataFile,msg['dataFolderURL']);
 }
 
 function downloadDataFile(args){
@@ -167,7 +210,7 @@ function downloadDataFile(args){
 
 
 function drawStopServerButton(msg){
-  var stopPythonServerButton=createAndAddDiv("stopPythonServerButton","mainDiv");
+  var stopPythonServerButton=createAndAddDiv("stopPythonServerButton","mainDivInside");
   stopPythonServerButton.className="taskButton";
   stopPythonServerButton.innerHTML="Stop Python Server";
   stopPythonServerButton.style.top=(205+60*msg['taskList'].length)+"px";
@@ -177,7 +220,7 @@ function drawStopServerButton(msg){
 
 
 function drawRestartServerButton(msg){
-  var stopPythonServerButton=createAndAddDiv("restartPythonServerButton","mainDiv");
+  var stopPythonServerButton=createAndAddDiv("restartPythonServerButton","mainDivInside");
   stopPythonServerButton.className="taskButton";
   stopPythonServerButton.innerHTML="Restart Python Server";
   stopPythonServerButton.style.top=(265+60*msg['taskList'].length)+"px";
@@ -186,7 +229,7 @@ function drawRestartServerButton(msg){
 }
 
 function drawRefreshAllButton(msg){
-  var refreshAllButton=createAndAddDiv("refreshAllButton","mainDiv");
+  var refreshAllButton=createAndAddDiv("refreshAllButton","mainDivInside");
   refreshAllButton.className="taskButton";
   refreshAllButton.innerHTML="Refresh All Clients";
   refreshAllButton.style.top=(145+60*msg['taskList'].length)+"px";
@@ -207,7 +250,7 @@ function toggleAcceptingSwitch(){
 }
 
 function drawAcceptingSwitch(){
-  var acceptingButton=createAndAddDiv("acceptingButton","mainDiv");
+  var acceptingButton=createAndAddDiv("acceptingButton","mainDivInside");
   clickButton("once","acceptingButton",toggleAcceptingSwitch);
   if(window.serverStatus['acceptingClients']==0){
     acceptingButton.innerHTML="Not Accepting Clients"
@@ -253,7 +296,7 @@ function monitorEndInstructions(){
 // }
 
 function drawInstructionsController(){
-  var loadInstructionsButton=createAndAddDiv("loadInstructionsButton","mainDiv");
+  var loadInstructionsButton=createAndAddDiv("loadInstructionsButton","mainDivInside");
   if(window.serverStatus['instructions']['loaded']==0 && window.serverStatus['instructions']['finished']==0){
     loadInstructionsButton.innerHTML="Load Instructions";
     clickButton("once","loadInstructionsButton",loadInstructions);

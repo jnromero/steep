@@ -2,9 +2,10 @@ from __future__ import print_function,division,absolute_import
 import sys
 import imp
 import time
+import shutil
+import os
 import webbrowser
 functions = imp.load_source('functions', "modules/functions.py")
-
 from twisted.internet import reactor
 from twisted.web.server import Site
 from autobahn.twisted.websocket import listenWS
@@ -20,21 +21,18 @@ if options.restart=="False":
 else:
    serverStartString=options.restart
 
+#Save data to temporary file.  This avoids clutter
+if options.saveData=="False":
+   serverStartString="tmp"
+
 #load the config file
 try:  
    settings = imp.load_source('settings',options.configFile)
 except:
    sys.exit("ERROR: Config file couldn't be loaded (probably not a python file).\n %s \nYou can see all options by running 'python server.py -h'"%(options.configFile))
 
-#Save data to temporary file.  This avoids clutter
-if options.saveData=="False":
-   functions.printColor("Warning:\n","red",["background","flash"])
-   functions.printColor("Saving Data to TMP file, and potentially rewriting old tmp data.\n","red")
-   functions.printColor("This is fine if you are just testing.\n","red")
-   functions.printColor("Use '-s True' or remove '-s False' to save data to new folder.\n\n","red")
-   serverStartString="tmp"
 
-#Add serverStartString to config file
+#set Location for config
 config=settings.setConfig(options.location)
 try:
    locationSettings = imp.load_source('locationSettings','../locations/%s.py'%(options.location))
@@ -43,60 +41,106 @@ except:
    functions.printColor("Warning:","red",["background","flash"])
    functions.printColor("Can't load location file ../locations/%s.py.\n"%(options.location),"red")
 config['location']=options.location
+
+
+
+#Add serverStartString to config file
+config['serverStartString']=serverStartString
+
+#Add server reStartString to config file
+restartString=optionsCommands.getRestartString(config)
+config['restartString']=restartString
+
+
 configFunctions = imp.load_source('configFunctions', "modules/configFunctions.py")
-config=configFunctions.setOtherFileLocations(config,serverStartString)
+config=configFunctions.setOtherFileLocations(config)
 configFunctions.writeJavascriptConfigFile(config,options.configFile)
 
 
+#blank function place holder for furutre monitor message that will be used to update console page on demand
+def testFunction():
+   "sdfsdf"
+logger = imp.load_source('logger',"modules/logger.py")
+thisLogCounter= logger.logCounter()
+sys.stdout = logger.SteepLogger(sys.stdout,"stdout",config,thisLogCounter,testFunction)
+sys.stderr = logger.SteepLogger(sys.stderr,"stderr",config,thisLogCounter,testFunction)
+
+from twisted.python.log import startLogging,addObserver
+#This removes regular twisted messages from the console
+startLogging(open(config['twistedLogFile'], 'w'),setStdout=False)
+#this send all those twisted messages to the logger.twistedObserver function to be parsed and sent to stdout.
+addObserver(logger.twistedObserver)
+log=sys.stdout.write
+
+
+#Print TMP data file warning
+if options.saveData=="False":
+   kwargs={"color":"rgba(150,0,0,1)","backgroundColor":"rgba(255,0,0,.1)","left":"0px","width":"300px","height":"40px","fontSize":"200%","textAlign":"right"}   
+   log("Warning:\n",**kwargs)
+   kwargs={"color":"rgba(150,0,0,1)","backgroundColor":"rgba(255,0,0,.1)","left":"320px","width":"1100px","fontSize":"200%","textAlign":"left","height":"40px","sameLine":"True"}   
+   log("Saving Data to TMP file, and potentially rewriting old tmp data.\n",**kwargs)
+   kwargs['sameLine']='False'
+   log("This is fine if you are just testing.\n",**kwargs)
+   log("Use '-s True' or remove '-s False' to save data to new folder.\n",**kwargs)
+
+
 #python version
-functions.printColor("\n----------------------------------------------------------\n\n","turquoise",['bold'])
-functions.printColor("                 Running")
-functions.printColor("STEEP","turquoise",['bold'])
-functions.printColor("server.")
-functions.printColor("\n","turquoise",['bold'])
-functions.printColor("\n----------------------------------------------------------\n\n","turquoise",['bold'])
-functions.printColor("Python info:\n","blue",["background"])
-functions.printColor("   Python version:","blue",["bold"])
-functions.printColor(sys.version.split("\n")[0]+"\n","black")
-functions.printColor("Python executable:","blue",["bold"])
-functions.printColor(sys.executable+"\n\n","black")
-functions.printColor("Current IP Addresses:\n","turquoise",["background"])
+kwargs={"color":"blue","backgroundColor":"rgba(0,0,255,.1)","textAlign":"center","fontSize":"300%","height":"100px"}
+log("Running STEEP server.\n",**kwargs)
+kwargs={"color":"black","backgroundColor":"rgba(255,255,0,.1)","left":"0px","width":"300px","height":"40px","fontSize":"200%","textAlign":"right"}   
+log("Python info:\n",**kwargs)
+kwargs={"color":"black","backgroundColor":"rgba(255,255,0,.1)","left":"300px","width":"300px","height":"40px","fontSize":"200%","textAlign":"right","sameLine":"True"}   
+log("\tPython version:\n",**kwargs)
+kwargs={"color":"orange","backgroundColor":"rgba(255,255,0,.1)","left":"620px","width":"780px","height":"40px","fontSize":"200%","textAlign":"left","sameLine":"True"}   
+log(sys.version.split("\n")[0]+"\n",**kwargs)
+kwargs={"color":"black","backgroundColor":"rgba(255,255,0,.1)","left":"300px","width":"300px","height":"40px","fontSize":"200%","textAlign":"right","sameLine":"False"}   
+log("\tPython executable:\n",**kwargs)
+kwargs={"color":"orange","backgroundColor":"rgba(255,255,0,.1)","left":"620px","width":"780px","height":"40px","fontSize":"200%","textAlign":"left","sameLine":"True"}   
+log(sys.executable+"\n\n",**kwargs)
+kwargs={"color":"black","backgroundColor":"rgba(255,0,255,.1)","left":"0px","width":"300px","height":"40px","fontSize":"200%","textAlign":"right"}   
+log("Current IP Addresses:\n",**kwargs)
 import netifaces as ni
+sameLine="True"
 for k in ni.interfaces():
    ni.ifaddresses(k)
    try:  
       # print(ni.ifaddresses(k))
       ip = ni.ifaddresses(k)[2][0]['addr']
-      functions.printColor("\t"+k+":","turquoise",["bold"])
-      functions.printColor(ip+"\n","black")
-      # print(k,ip)  # should print "192.168.100.37"
+      kwargs={"color":"black","backgroundColor":"rgba(255,0,255,.1)","left":"200px","width":"300px","height":"40px","fontSize":"200%","textAlign":"right","sameLine":sameLine}   
+      log("%s:\n"%(k),**kwargs)
+      kwargs={"color":"red","backgroundColor":"rgba(255,0,255,.1)","left":"520px","width":"780px","height":"40px","fontSize":"200%","textAlign":"left","sameLine":"True"}   
+      log("%s\n"%(ip),**kwargs)
+      sameLine='False'
    except:
       "no address"
-functions.printColor("\n","black")
 
 
 #print restart script
-restartString=optionsCommands.getRestartString(serverStartString)
-functions.printColor("To restart use:\n","green",['background'])
-functions.printColor(restartString+"\n\n","green",[''])
+kwargs={"color":"black","backgroundColor":"rgba(0,255,0,.1)","left":"0px","width":"300px","height":"50px","fontSize":"200%","textAlign":"right"}   
+log("To restart the server use:\n",**kwargs)
+kwargs={"color":"black","backgroundColor":"rgba(0,255,0,.1)","left":"0px","width":"100%","height":"50px","fontSize":"200%","textAlign":"center","userSelect":"all"}   
+log(restartString+"\n",**kwargs)
 
 #Print server starting message
 if options.restart!="False":
-   functions.printColor("\nSERVER RESTARTING - %s!!!\n\n"%(serverStartString),"red",['background','flash'])
+   log("\nSERVER RESTARTING - %s!!!\n\n"%(serverStartString),**kwargs)
 
 
-functions.printColor("Config File Info:\n","gold",["background"])
+kwargs={"color":"blue","backgroundColor":"rgba(0,0,255,.1)","left":"0px","width":"300px","height":"40px","fontSize":"200%","textAlign":"right"}   
+log("Config File Info:\n",**kwargs)
 firstList=["currentExperiment","location","domain","serverPort","dataFileURL","serverType"]
 for k in firstList:
-   functions.printColor(" "*(20-len(k))+k+":","gold",['bold'])
-   functions.printColor("%s"%(config[k])+"\n")
+   kwargs={"color":"black","backgroundColor":"rgba(0,0,255,.1)","left":"0px","width":"200px","fontSize":"150%","textAlign":"right"}   
+   log("%s:  \n"%(k),**kwargs)
+   kwargs={"color":"blue","backgroundColor":"rgba(0,0,255,.1)","left":"200px","width":"1200px","fontSize":"150%","textAlign":"left","sameLine":"True"}   
+   log("%s\n"%(config[k]),**kwargs)
 
 for k in config:
    if k not in firstList:
-      functions.printColor(" "*(20-len(k))+k+":","gold",['bold'])
-      functions.printColor("%s"%(config[k])+"\n")
-
-
+      kwargs={"color":"black","backgroundColor":"rgba(0,0,255,.1)","left":"0px","width":"200px","fontSize":"150%","textAlign":"right"}   
+      log("%s:  \n"%(k),**kwargs)
+      kwargs={"color":"blue","backgroundColor":"rgba(0,0,255,.1)","left":"200px","width":"1200px","fontSize":"150%","textAlign":"left","sameLine":"True"}   
+      log("%s\n"%(config[k]),**kwargs)
 
 
 #load the experiment file
@@ -104,6 +148,14 @@ experimentFile=config['webServerRoot']+config['currentExperiment']+"/files/exper
 experiment = imp.load_source('experiment', experimentFile)
 from experiment import experimentClass
 from experiment import subjectClass
+
+#copy experiment file for later viewing
+dataFolderFiles=config['webServerRoot']+config['dataFolder']+"/files/"
+if not os.path.exists(dataFolderFiles):
+   os.makedirs(dataFolderFiles)
+shutil.copyfile(experimentFile,dataFolderFiles+"/experiment.py")
+shutil.copyfile(experimentFile.replace(".py",".js"),dataFolderFiles+"/experiment.js")
+shutil.copyfile(experimentFile.replace(".py",".css"),dataFolderFiles+"/experiment.css")
 
 #load webServer module
 steepWebServer = imp.load_source('steepWebSockets', "modules/webServer.py")
@@ -133,7 +185,9 @@ class ExperimentQuiz():
       "defin blank class in case not importing other"
 if 'quiz' in config:
    #load experiment specific quiz module
-   experimentQuiz = imp.load_source('experimentQuiz',config['webServerRoot']+config['currentExperiment']+"/files/quiz.py")
+   experimentQuizFile=config['webServerRoot']+config['currentExperiment']+"/files/quiz.py"
+   experimentQuiz = imp.load_source('experimentQuiz',experimentQuizFile)
+   shutil.copyfile(experimentQuizFile,dataFolderFiles+"/quiz.py")
    from experimentQuiz import ExperimentQuiz
 
 
@@ -142,7 +196,9 @@ class ExperimentQuestionnaire():
       "defin blank class in case not importing other"
 if 'questionnaire' in config:
    #load experiment specific questionnaire module
-   experimentQuestionnaire = imp.load_source('experimentQuestionnaire',config['webServerRoot']+config['currentExperiment']+"/files/questionnaire.py")
+   experimentQuestionnaireFile=config['webServerRoot']+config['currentExperiment']+"/files/questionnaire.py"
+   experimentQuestionnaire = imp.load_source('experimentQuestionnaire',experimentQuestionnaireFile)
+   shutil.copyfile(experimentQuestionnaireFile,dataFolderFiles+"/questionnaire.py")
    from experimentQuestionnaire import ExperimentQuestionnaire
 
 class ExperimentInstructions():
@@ -153,7 +209,9 @@ class SteepInstructions():
       "defin blank class in case not importing other"
 if 'instructions' in config:
    #load experiment specific quiz module
-   experimentInstructions = imp.load_source('experimentInstructions',config['webServerRoot']+config['currentExperiment']+"/files/instructions.py")
+   experimentInstructionsFile=config['webServerRoot']+config['currentExperiment']+"/files/instructions.py"
+   experimentInstructions = imp.load_source('experimentInstructions',experimentInstructionsFile)
+   shutil.copyfile(experimentInstructionsFile,dataFolderFiles+"/instructions.py")
    from experimentInstructions import ExperimentInstructions
    
    #load instructions module
@@ -170,12 +228,15 @@ from steepMonitor import monitorClass
 steepTimer = imp.load_source('steepTimer', "modules/timer.py")
 from steepTimer import SteepTimerManager
 
+
+
 class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepQuiz,ExperimentQuiz,SteepTimerManager,ExperimentInstructions,ExperimentQuestionnaire):
-   def __init__(self,config,options,serverStartString):
+   def __init__(self,config,options,log,thisLogCounter):
+      self.logCounter=thisLogCounter
+      self.log=log
       self.config=config
       self.options=options
-      self.serverStartString=serverStartString
-      self.restartString=optionsCommands.getRestartString(self.serverStartString)
+      self.restartString=optionsCommands.getRestartString(self.config)
       SteepWebSocketFactory.__init__(self)
       SteepMainServer.__init__(self)
       SteepTimerManager.__init__(self)
@@ -188,15 +249,16 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       ExperimentQuiz.__init__(self)
       ExperimentInstructions.__init__(self)
       ExperimentQuestionnaire.__init__(self)
-
+      sys.stdout.monitorMessage=self.monitorMessage
+      sys.stderr.monitorMessage=self.monitorMessage
 
 if __name__ == '__main__':
    #websockets
-   factory = SteepServerClass(config,options,serverStartString)
+   factory = SteepServerClass(config,options,log,thisLogCounter)
    listenWS(factory)
 
    #webserver
-   resource = steepWebServer.RequestHandler(config,options.debug,restartString)
+   resource = steepWebServer.RequestHandler(config,options.debug,restartString,thisLogCounter)
    factory = Site(resource)
    reactor.listenTCP(resource.config['serverPort'], factory)
 

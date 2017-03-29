@@ -18,15 +18,30 @@ window.onload = function() {
     }
     sock.onclose = function(e) {
       console.log("disconnected");
-      if(pageName!="monitor.html"){
-        deleteDiv("mainDiv");
-        var mainDiv=createDiv("mainDiv");
-        $("body").prepend(mainDiv);
-        genericScreen('Connection to server lost.  <br>  <input type="button" value="Reconnect" onClick="window.location.href=window.location.href">');
-      }
-      else{
-        document.getElementById("mainDiv").style.backgroundColor="rgba(255,0,0,.1)";
-      }
+      placeText({
+        "divid":"disconnectedDiv",
+        "width":"100%",
+        "height":"100%",
+        "fontSize":"125%",
+        "backgroundColor":"rgba(255,200,200,.8)",
+      });
+      placeText({
+        "parentDiv":"disconnectedDiv",
+        "text":'Connection to server lost.  <br>  <input type="button" value="Reconnect" onClick="window.location.href=window.location.href">',
+        "top":"25%",
+        "height":"250%",
+        "fontSize":"225%",
+        "backgroundColor":"rgba(255,0,0,0)",
+      });
+      // if(pageName!="monitor.html"){
+      //   deleteDiv("mainDiv");
+      //   var mainDiv=createDiv("mainDiv");
+      //   $("body").prepend(mainDiv);
+      //   genericScreen('Connection to server lost.  <br>  <input type="button" value="Reconnect" onClick="window.location.href=window.location.href">');
+      // }
+      // else{
+      //   document.getElementById("mainDiv").style.backgroundColor="rgba(255,0,0,.1)";
+      // }
       //alert("Connection closed (wasClean = " + e.wasClean + ", code = " + e.code + ", reason = '" + e.reason + "')");
       // sock = null;
       // var message={"type":"closeConnection","subjectID":window.subjectID,"viewType":window.viewType};

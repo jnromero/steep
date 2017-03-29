@@ -3,6 +3,7 @@ import sys
 import os
 import imp
 import pickle
+import shutil
 if sys.version_info >= (3,0):
    import urllib.parse as theURLparse
 else:
@@ -12,6 +13,7 @@ from twisted.web.resource import Resource
 from twisted.web.static import File
 
 autoVersion = imp.load_source('autoVersion',"modules/auto-versioning.py")
+functions = imp.load_source('functions', "modules/functions.py")
 
 
 #Get value from url key function
@@ -20,23 +22,21 @@ def getValueFromQueryKey(query,key):
    for k in query.split("&"):
       this=k.split("=")
       if this[0]==key:
-         number=int(this[1])
+         number=this[1]
    return number
 
 #Handle HTTP requests
 class RequestHandler(Resource):
    isLeaf = True
-   def __init__(self,config,debug,restartString):
+   def __init__(self,config,debug,restartString,thisLogCounter):
+      self.thisCounter=thisLogCounter
       self.config=config
       self.transformedFiles=autoVersion.updateAutoVersion(config,1)
-      if debug=="False":
-         logger = imp.load_source('logger',"modules/logger.py")
-         self.thisLogger=logger.TwistedLogger(config['webServerRoot']+config['dataFolder'])
-         print(restartString)
 
    def render_GET(self, request):
       parsedURL=theURLparse.urlparse(request.uri.decode().replace("//","/"))#scheme,netloc,path,query
       thisPath=parsedURL.path.replace("//","/")
+      root,ext=os.path.splitext(thisPath)
       if thisPath=="/":
          ext=".py"
          filename="index.py"
@@ -48,11 +48,20 @@ class RequestHandler(Resource):
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
       elif thisPath in ["/console.html"]:
-         thisPage=getValueFromQueryKey(parsedURL.query,"page")
-         if thisPage=="":
-            thisPage=self.thisLogger.fileCount
+         try:
+            thisPage=int(getValueFromQueryKey(parsedURL.query,"page"))
+         except:
+            "thisPage isn't integer"
+            thisPage=""
+         if thisPage=="" or thisPage=="current":
+            try:
+               thisPage=self.thisCounter.fileCount
+            except:
+               thisPage=1
+
          self.logURL=self.config['domain']+self.config['dataFolder']+"/logs/%s.log"%(thisPage)
          self.currentLogTab=thisPage
+         self.thisCounter.currentTab=thisPage
          ext=".py"
          filename=thisPath.replace(".html",".py").replace("/","")
          fileFolder=self.config['packageFolder']+"/html/"
@@ -68,11 +77,31 @@ class RequestHandler(Resource):
          if filename=="favicon.ico":
             fullPath=self.config['webServerRoot']+self.config['packageFolder']+"/html/triangle.png"
 
-      if os.path.isfile(fullPath):
+      if ext==".zip":
+         #will download the data file for ANY zip extension.
+         dataFolder=self.config['webServerRoot']+self.config['dataFolder']
+         outputName=self.config['webServerRoot']+self.config['currentExperiment']+"/data/"+self.config['serverStartString']
+         fullPath=outputName+".zip"
+         print("creating zip file ",fullPath," for data folder ",dataFolder)
+         shutil.make_archive(outputName,'zip',dataFolder)
+         filename=self.config['serverStartString']+".zip"
+         #this causes file to be downloaded automatically rather than being opened in the browser.   
+         request.setHeader("Content-Disposition","attachment")
+         thisFile=File(fullPath)
+         # os.remove(fullPath)
+         return File.render_GET(thisFile,request)
+      elif os.path.isfile(fullPath):
          if filename=="console.py":
+            serverPage=getValueFromQueryKey(parsedURL.query,"serverPage")
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))
             thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
-            output=thisPage.getPage(self.config,self.logURL,self.thisLogger.fileCount,self.currentLogTab)
+            self.transformedFiles=autoVersion.updateAutoVersion(self.config,0)
+            output=thisPage.getPage(self.config,self.transformedFiles,self.logURL,self.thisCounter.fileCount,self.currentLogTab,serverPage)
+
+            # try:
+            #    output=thisPage.getPage(self.config,self.logURL,self.thisLogger.fileCount,self.currentLogTab)
+            # except:
+            #    output="Logger Turned Off"
             return output.encode('utf-8')
          elif ext==".py":
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))            

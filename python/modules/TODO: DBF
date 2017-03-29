@@ -1,0 +1,20 @@
+TODO: DBF
+
+make quiz summary screen.
+proceedd at different pace
+
+
+
+
+change payoffs from 1s and 2s
+edit data folder location
+
+
+
+TODO 
+
+Automatic start in No Change
+totalPayoff 0 in first periods
+
+
+steepy;python server.py -c ../../strategyChoiceReplicateDBF/files/myConfig.py -l webf -d True

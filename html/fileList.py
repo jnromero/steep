@@ -14,8 +14,10 @@ def getOriginalFiles(config):
     files['common']['video.js']=packageFolder+"javascript/video.js"
     files['common']['instructions.js']=packageFolder+"javascript/instructions.js"
     files['common']['monitor.js']=packageFolder+"javascript/monitor.js"
+    files['common']['index.js']=packageFolder+"javascript/index.js"
     files['common']['questionnaire.js']=packageFolder+"javascript/questionnaire.js"
     files['common']['quiz.js']=packageFolder+"javascript/quiz.js"
+    files['common']['console.js']=packageFolder+"javascript/console.js"
 
     files['common']['simulateMouse.css']=packageFolder+"javascript/simulateMouse/simulateMouse.css"
     files['common']['simulateMouse.js']=packageFolder+"javascript/simulateMouse/simulateMouse.js"

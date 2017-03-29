@@ -1,0 +1,12 @@
+changes to be made:
+
+- Move options to config
+- put version of steep in config, and store all
+- group different types
+- Add buttons to console for different error types.
+
+
+
+Changes made:
+- Capture twisted errrors on log 
+- Update console automatically

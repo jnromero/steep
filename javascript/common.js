@@ -6,6 +6,59 @@ var partial = function (func /*, 0..n args */) {
     };
 };
 
+
+function runServerFunction(args){
+    var message={"type":args[0]};
+    sendMessage(message);
+}
+
+
+function hoverDiv(divId,incoming){
+    var oldStyle=[]
+    for(k in incoming){
+        if(incoming[k]!=undefined){
+            oldStyle[k]=document.getElementById(divId).style[k];
+        }
+        else{
+            oldStyle[k]="";
+        }
+    }
+    document.getElementById(divId).addEventListener("mouseover", function(){
+        for(k in incoming){
+            document.getElementById(divId).style[k]=incoming[k];
+        }
+    });
+    document.getElementById(divId).addEventListener("mouseout", function(){
+        for(k in incoming){
+            document.getElementById(divId).style[k]=oldStyle[k];
+        }
+    });
+}
+
+
+function hoverDivChangeOtherDiv(divIdHover,divIdChange,incoming){
+    var oldStyle=[]
+    for(k in incoming){
+        if(incoming[k]!=undefined){
+            oldStyle[k]=document.getElementById(divIdChange).style[k];
+        }
+        else{
+            oldStyle[k]="";
+        }
+    }
+    document.getElementById(divIdHover).addEventListener("mouseover", function(){
+        for(k in incoming){
+            document.getElementById(divIdChange).style[k]=incoming[k];
+        }
+    });
+    document.getElementById(divIdHover).addEventListener("mouseout", function(){
+        for(k in incoming){
+            document.getElementById(divIdChange).style[k]=oldStyle[k];
+        }
+    });
+}
+
+
 //clickButton("many","makeChoiceButton",makeChoiceButtonClicked,27);
 function clickButton(buttonType, divID, func) {
   var args = Array.prototype.slice.call(arguments,3);
@@ -19,6 +72,49 @@ function clickButton(buttonType, divID, func) {
   });
 }
 
+
+
+
+function keyNameToKeyCode(keyName){
+  if(keyName=="left"){var keyCode=37;}
+  else if(keyName=="right"){var keyCode=39;}
+  else if(keyName=="up"){var keyCode=38;}
+  else if(keyName=="down"){var keyCode=40;}
+  else{var keyCode=-111111;}
+  return keyCode
+}
+
+window.keyDownListeners=[]
+function pressKey(buttonType,key,func) {
+  removePressKeyListener(key);
+  var keyCode=keyNameToKeyCode(key);
+
+  var args = Array.prototype.slice.call(arguments,3);
+  var functionToRun = partial(func,args);
+  var removeListener = partial(removePressKeyListener,key);
+  window.keyDownListeners[key]=function(e){
+    if (event.keyCode == keyCode) {
+        if (buttonType=="once"){removeListener();}
+        functionToRun();
+    }
+  }
+  document.addEventListener("keyup",window.keyDownListeners[key],false);
+}
+
+function removePressKeyListener(key) {
+  document.removeEventListener("keyup",window.keyDownListeners[key]);
+}
+
+
+
+function removeListeners(divID) {
+    var element=document.getElementById(divID);
+    var clone = element.cloneNode();
+    while (element.firstChild) {
+      clone.appendChild(element.lastChild);
+    }
+    element.parentNode.replaceChild(clone, element);
+}
 
 function refreshMyPage(){
     console.log("ref");
@@ -169,7 +265,7 @@ function placeText(incoming){
         incoming['top']="0px";
     }
     if(incoming['fontSize']==undefined){
-        incoming['fontSize']="100%";
+        incoming['fontSize']="";
     }
     if(incoming['width']==undefined){
         incoming['width']="100%";
@@ -184,13 +280,13 @@ function placeText(incoming){
         incoming['fadeTime']=".01";
     }
     if(incoming['height']==undefined){
-        incoming['height']="50px";
+        incoming['height']="";
     }
     if(incoming['lineHeight']==undefined){
         incoming['lineHeight']=incoming['height'];
     }
     if(incoming['backgroundColor']==undefined){
-        incoming['backgroundColor']="transparent";
+        incoming['backgroundColor']="";
     }
     if(incoming['parentDiv']==undefined){
         incoming['parentDiv']="mainDiv";
@@ -198,12 +294,26 @@ function placeText(incoming){
     if(incoming['text']==undefined){
         incoming['text']="";
     }
+    if(incoming['opacity']==undefined){
+        incoming['opacity']="";
+    }
     if(incoming['padding']==undefined){
-        incoming['padding']="0px";
+        incoming['padding']="";
+    }
+    if(incoming['paddingLeft']==undefined){
+        incoming['paddingLeft']="";
+    }
+
+    if(incoming['userSelect']==undefined){
+        incoming['userSelect']="none";//none for no selection or all for easy selection
+    }
+    if(incoming['className']==undefined){
+        incoming['className']="";//none for no selection or all for easy selection
     }
 
 
     var textDiv=createAndAddDiv(incoming["divid"],incoming['parentDiv']);
+    textDiv.className=incoming["className"];
     textDiv.innerHTML=incoming['text'];
     textDiv.style.opacity="1";
     textDiv.style.top=incoming['top'];
@@ -215,6 +325,8 @@ function placeText(incoming){
     textDiv.style.textAlign=incoming["textAlign"];
     textDiv.style.color=incoming["color"];
     textDiv.style.position="absolute";
+    textDiv.style.opacity=incoming["opacity"];
+    textDiv.style.userSelect=incoming['userSelect'];
     if(incoming['borderLeft']!=undefined){
         textDiv.style.borderLeft=incoming['borderLeft'];
     }
@@ -230,6 +342,7 @@ function placeText(incoming){
     if(incoming['border']!=undefined){
         textDiv.style.border=incoming['border'];
     }
+    textDiv.style.paddingLeft=incoming['paddingLeft'];
     textDiv.style.padding=incoming['padding'];
     textDiv.style.backgroundColor=incoming['backgroundColor'];
 }
@@ -279,6 +392,7 @@ function genericScreen(message){
     createAndAddDiv("genericScreenInside","genericScreen")
     createAndAddDiv("genericScreenText","genericScreenInside")
     document.getElementById("genericScreenText").innerHTML=message;
+    placeText({"text":window.state['subjectID'],"fontSize":"20px","top":"20px","left":"20px","width":"300px","textAlign":"left"});
 }
 
 
@@ -293,9 +407,9 @@ function multipleMessages(incoming){
 
 
 function updateTimers(incoming){
-  window.timers={};
-  window.timers['timer']=incoming['timer'];
-  window.timers['selfTimer']=incoming['selfTimer'];
+  console.log(incoming)
+  window.timers=incoming['timers'];
+  if(window.timers==undefined){window.timers={};}
   window.timers['timerCheck']=(new Date()).getTime();
 }
 

@@ -111,11 +111,11 @@ body{
 
 .consoleLine{
   font-family: Inconsolata;
-  font-size: 24px;
+  font-size: 14px;
   font-style: normal;
   font-variant: normal;
   font-weight: 500;
-  line-height: 30px;
+  line-height: 20px;
   width:30000px;
   overflow-x: scroll;
 }

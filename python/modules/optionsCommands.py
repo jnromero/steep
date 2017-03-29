@@ -32,7 +32,8 @@ def getOptions():
    return options
 
 
-def getRestartString(serverStartString):
+def getRestartString(config):
+   serverStartString=config['serverStartString']
    #Print the restart server string
    if "-r" in sys.argv:
       this=sys.argv

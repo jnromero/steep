@@ -1,6 +1,6 @@
 from __future__ import print_function,division,absolute_import   
 import json
-
+import pickle
 class monitorClass():
    def __init__(self):
       #This should be set in experiment.py
@@ -14,6 +14,24 @@ class monitorClass():
       self.updateMonitorTableEntries()
 
    #Monitor Stuff
+
+
+   def getCurrentConsoleLines(self):
+      currentTab=self.logCounter.currentTab
+      thisFile=self.config['logFolder']+"/pickle/%s.pickle"%(currentTab)
+      file = open(thisFile,'rb')
+      out=[]
+      while 3<4:
+         try:
+            data=pickle.load(file)
+            out.append(data)
+         except:
+            # print(sys.exc_info()[0])
+            break
+      file.close() 
+
+      return out#json.dumps(out).encode('utf8')
+
    def monitorMessage(self):
       self.updateMonitorTableEntries()
       msg={"type":"tableUpdate"}
@@ -23,6 +41,9 @@ class monitorClass():
       msg['taskStatus']=self.data['taskStatus']
       msg['dataFile']=self.config['dataFilePath']
       msg['dataFileURL']=self.config['dataFileURL']
+      msg['dataFolderURL']=self.config['dataFolderURL']
+      msg['consoleLines']=self.getCurrentConsoleLines()
+      msg['timers']={}
       try:
          for client in self.monitorClients:
             client.sendMessage(json.dumps(msg).encode('utf8'))
