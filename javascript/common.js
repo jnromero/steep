@@ -303,6 +303,9 @@ function placeText(incoming){
     if(incoming['paddingLeft']==undefined){
         incoming['paddingLeft']="";
     }
+    if(incoming['zIndex']==undefined){
+        incoming['zIndex']="";
+    }
 
     if(incoming['userSelect']==undefined){
         incoming['userSelect']="none";//none for no selection or all for easy selection
@@ -326,6 +329,7 @@ function placeText(incoming){
     textDiv.style.color=incoming["color"];
     textDiv.style.position="absolute";
     textDiv.style.opacity=incoming["opacity"];
+    textDiv.style.zIndex=incoming["zIndex"];
     textDiv.style.userSelect=incoming['userSelect'];
     if(incoming['borderLeft']!=undefined){
         textDiv.style.borderLeft=incoming['borderLeft'];

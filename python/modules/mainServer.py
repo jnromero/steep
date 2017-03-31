@@ -104,6 +104,7 @@ class SteepMainServer():
       fullURL=message['url']['href']
       pathName=message['url']['pathname']
       queryParameters=theURLparse.parse_qs(message['url']['search'][1:])#1: to eliminate ?
+      urlParamsToAdd={}
       #always generate new subjectID in demo
       if self.config['serverType']=="demoExperiment":
          if "subjectID" in queryParameters:
@@ -120,16 +121,17 @@ class SteepMainServer():
          subjectID="monitor"
       elif pathName.split("/")[-1]=="client.html":
          viewType="regular"
+         for k in range(1,1000):
+            subjectID="subject%s"%(k)
+            if subjectID not in self.data['subjectIDs']:
+               break
       else:
          viewType="unknown"
          subjectID="unknown"
 
-      urlParamsToAdd={}
       if "subjectID" in queryParameters:#always generate new subjectID for demo
          subjectID=queryParameters["subjectID"][0]
       else:
-         subjectID=self.generateRandomString(8)
-         subjectID="subject%s"%(len(self.data['subjectIDs']))
          urlParamsToAdd["subjectID"]=subjectID
       if "viewType" in queryParameters:
          viewType=queryParameters["viewType"][0]
