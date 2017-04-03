@@ -411,7 +411,6 @@ function multipleMessages(incoming){
 
 
 function updateTimers(incoming){
-  console.log(incoming)
   window.timers=incoming['timers'];
   if(window.timers==undefined){window.timers={};}
   window.timers['timerCheck']=(new Date()).getTime();
@@ -420,7 +419,7 @@ function updateTimers(incoming){
 
 function messageManager(msg){
   var incoming = JSON.parse(msg);
-  console.log(incoming['type'])
+  // console.log(incoming['type'])
   window.state=incoming['status'];
   updateTimers(incoming);
   //http://stackoverflow.com/questions/359788/how-to-execute-a-javascript-function-when-i-have-its-name-as-a-string

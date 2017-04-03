@@ -45,6 +45,11 @@ class SteepWebSocketFactory(WebSocketServerFactory,):
    def register(self, client):
       if client not in self.clients:
          self.clients.append(client)
+      # try:
+      #    self.data[client.subjectID].connectionStatus='connected'
+      #    self.monitorMessage()
+      # except:
+      #    "do nothing"
    def unregister(self, client):
       if client in self.clients:
          self.clients.remove(client)
