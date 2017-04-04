@@ -15,6 +15,14 @@ class monitorClass():
 
    #Monitor Stuff
 
+   def sendMessageToMonitorClients(self,msg):
+      try:
+         for client in self.monitorClients:
+            client.sendMessage(json.dumps(msg).encode('utf8'))
+      except Exception as thisExept: 
+         print(thisExept)
+         print("can't send message to monitor")
+
    def monitorMessage(self):
       self.updateMonitorTable()
       self.updateTaskTable()
@@ -24,13 +32,8 @@ class monitorClass():
       msg={"type":"updateMonitorTable"}
       msg['table']=self.getMonitorTable()
       msg['serverStatus']=self.data['serverStatus']
-      try:
-         for client in self.monitorClients:
-            client.sendMessage(json.dumps(msg).encode('utf8'))
-      except Exception as thisExept: 
-         print(thisExept)
-         print("can't send message to monitor")
-
+      self.sendMessageToMonitorClients(msg)
+      
    def updateTaskTable(self):
       msg={"type":"updateTaskTable"}
       msg['taskList']=self.monitorTaskList
@@ -39,12 +42,7 @@ class monitorClass():
       msg['dataFile']=self.config['dataFilePath']
       msg['dataFileURL']=self.config['dataFileURL']
       msg['dataFolderURL']=self.config['dataFolderURL']
-      try:
-         for client in self.monitorClients:
-            client.sendMessage(json.dumps(msg).encode('utf8'))
-      except Exception as thisExept: 
-         print(thisExept)
-         print("can't send message to monitor")
+      self.sendMessageToMonitorClients(msg)
 
    def toggleAcceptingSwitch(self,message,client):
       self.data['serverStatus']['acceptingClients']=1-self.data['serverStatus']['acceptingClients']
