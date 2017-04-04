@@ -40,12 +40,12 @@ def newFiles(config,fileCount):
    return [txtFile,pickleFile]
 
 class SteepLogger(object):
-   def __init__(self,stream,streamType,config,thisCounter,monitorMessage):
+   def __init__(self,stream,streamType,config,thisCounter,consoleMessage):
       self.stream=stream
       self.config=config
       self.counter=thisCounter
       self.type=streamType#stdErr or stdOut
-      self.monitorMessage=monitorMessage
+      self.consoleMessage=consoleMessage
       [self.txtFile,self.pickleFile]=newFiles(self.config,self.counter.fileCount)
       self.newLine()
 
@@ -77,7 +77,7 @@ class SteepLogger(object):
                [self.txtFile,self.pickleFile]=newFiles(self.config,self.counter.fileCount)
       tFile.close() 
       pFile.close() 
-      self.monitorMessage()
+      self.consoleMessage()
 
    def flush(self):
       self.stream.flush()

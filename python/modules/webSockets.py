@@ -75,4 +75,6 @@ class SteepWebSocketFactory(WebSocketServerFactory,):
          self.videoClients.remove(client)
       elif client in self.monitorClients:
          self.monitorClients.remove(client)
+      elif client in self.consoleClients:
+         self.consoleClients.remove(client)
 

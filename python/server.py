@@ -249,8 +249,8 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       ExperimentQuiz.__init__(self)
       ExperimentInstructions.__init__(self)
       ExperimentQuestionnaire.__init__(self)
-      sys.stdout.monitorMessage=self.monitorMessage
-      sys.stderr.monitorMessage=self.monitorMessage
+      sys.stdout.consoleMessage=self.consoleMessage
+      sys.stderr.consoleMessage=self.consoleMessage
 
 if __name__ == '__main__':
    #websockets

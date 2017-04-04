@@ -8,8 +8,8 @@ class SteepTimerManager():
       #Cannot Pickle these!!
       self.timerFunctions={}
 
-   def cancelTimerFunction(self,subjectID):
-      self.initializeTimer(subjectID,0)
+   def cancelTimerFunction(self,timerName):
+      self.initializeTimer(timerName,0)
 
    # self.initializeTimer("all",self.data['preStageLengths'][self.data['currentMatch']],self.startMatch)
    # #self.initializeTimer(sid,5,self.pleaseMakeChoice,sid)

@@ -24,133 +24,6 @@ function getColor(outputType){
   return [background,text]
 }
 
-function goToPageNewTab(args){
-  window.open(args[0],"_blank");
-}
-
-
-
-
-
-
-function drawNewPageLinks(){
-    placeText({
-      "text":"New Page Links",
-      "top":"225px",
-      "left":"0px",
-      "width":"100px",
-      "height":"25px",
-      "fontSize":"100%",
-      "color":'black',
-    });
-
-    placeText({
-      "text":"New Client",
-      "divid":"clientButton",
-      "top":"250px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      "fontSize":"125%",
-      "color":'blue',
-      "border":"1px solid rgba(0,0,0,.1)",
-    });
-    placeText({
-      "text":"Video",
-      "divid":"videoButton",
-      "top":"300px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      "fontSize":"125%",
-      "color":'blue',
-      "border":"1px solid rgba(0,0,0,.1)",
-    });
-  clickButton("many","clientButton",goToPageNewTab,window.config['domain']+"/client.html");
-  clickButton("many","videoButton",goToPageNewTab,window.config['domain']+"/video.html");
-  var hoverInfo={"border":"1px solid blue","backgroundColor":"rgba(0,0,255,.2)"};
-  hoverDiv("clientButton",hoverInfo)
-  hoverDiv("videoButton",hoverInfo)
-}
-
-
-
-
-function drawPageTabs(){
-    placeText({
-      "text":"Server Links",
-      "divid":"server2Button",
-      "top":"25px",
-      "left":"0px",
-      "width":"100px",
-      "height":"25px",
-      "fontSize":"100%",
-      "color":"black"
-    });
-
-
-    placeText({
-      "text":"Server Info",
-      "divid":"serverButton",
-      "top":"50px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      "fontSize":"125%",
-      "border":"1px solid rgba(0,0,0,.1)",
-      "color":"green"
-    });
-
-    placeText({
-      "text":"Monitor",
-      "divid":"monitorButton",
-      "top":"100px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      "fontSize":"125%",
-      "border":"1px solid rgba(0,0,0,.1)",
-      "color":"green"
-    });
-
-    placeText({
-      "text":"Console",
-      "divid":"consoleButton",
-      "top":"150px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      //"backgroundColor":"rgba(0,255,0,.05)",
-      "fontSize":"125%",
-      "border":"1px solid rgba(0,0,0,.1)",
-      "color":"green"
-    });
-  clickButton("many","serverButton",goToPage,window.config['domain']+"/console.html?serverPage=server");
-  clickButton("many","monitorButton",goToPage,window.config['domain']+"/console.html?serverPage=monitor");
-  clickButton("many","consoleButton",goToPage,window.config['domain']+"/console.html?serverPage=console");
-
-  document.getElementById(window.serverPage+"Button").style.backgroundColor='rgba(0,255,0,.1)';
-  var hoverInfo={"border":"1px solid green","backgroundColor":"rgba(0,255,0,.2)"};
-  hoverDiv("serverButton",hoverInfo)
-  hoverDiv("monitorButton",hoverInfo)
-  hoverDiv("consoleButton",hoverInfo)
-
-}
-
-
-function drawMainDivInside(){
-  placeText({
-    "divid":"mainDivInside",
-    "top":"0px",
-    "left":"100px",
-    "width":"1500px",
-    "height":"901px",
-    "border":"1px solid rgba(0,0,0,.1)",
-  });
-  document.getElementById("mainDivInside").style.overflowY = "scroll";
-}
-
-
 function drawConsoleLines(){
   var currentY=0;
   var lineHeight=0;
@@ -319,72 +192,17 @@ function drawConsoleTabs(){
     hoverDiv("lastPageTab",hoverInfo)
 
 
-  // for(var k=0;k<window.totalPages;k++){
-  //   var y=250+50*Math.floor(k/2);
-  //   var x=50*(k%2);
-  //   placeText({
-  //     "divid":"tab"+(k+1),
-  //     "text":k+1,
-  //     "fontSize":"200%",
-  //     "color":"blue",
-  //     "top":y+"px",
-  //     "left":x+"px",
-  //     "width":"50px",
-  //     "height":"50px",
-  //     "border":"1px solid rgba(0,0,0,.1)"
-  //   });
-  //   clickButton("many","tab"+(k+1),goToPage,window.config['domain']+"/console.html?serverPage=console&page="+(k+1));
-  // }
-  // document.getElementById("tab"+(window.currentTab)).style.backgroundColor='rgba(0,0,255,.1)';
-  // document.getElementById("mainDiv").style.overflowY = "scroll";
 }
 
 
-function goToPage(args){
-  window.location.href=args[0];
-}
-
-var possiblePages=["server","monitor","console"];
-if(possiblePages.indexOf(window.serverPage)<0){
-  window.serverPage="server";
-}
-
-// drawPageTabs();
-// drawMainDivInside();
-// if(window.serverPage=="console"){
-//   drawConsoleLines();
-//   drawConsoleTabs();
-//   document.getElementById("mainDivInside").scrollTop= (0,20000);
-// }
-// else if(window.serverPage=="server"){
-//   drawServerInfo();
-//   drawConfigInfo();
-//   drawNewPageLinks();
-// }
-
-
-function tableUpdate(msg){
+function consoleLinesUpdate(msg){
   clearAll();
-  console.log("TABLE UPDATES@!!!!")
-  window.serverStatus=msg['serverStatus'];
-  window.lastTimeCheck=(new Date()).getTime();
-  drawPageTabs();
+  drawPageTabs("console");
   drawMainDivInside();
-  if(window.serverPage=="console"){
-    window.consoleLines=msg['consoleLines'];
-    drawConsoleLines();
-    drawConsoleTabs();
-    document.getElementById("mainDivInside").scrollTop= (0,20000);
-  }
-  else if(window.serverPage=="server"){
-    drawConfigInfo();
-    drawNewPageLinks();
-    drawServerInfo();
-  }
-  else if(window.serverPage=="monitor"){
-    makeMonitorTable(msg);
-    makeTaskTable(msg);
-  }
+  window.consoleLines=msg['consoleLines'];
+  drawConsoleLines();
+  drawConsoleTabs();
+  document.getElementById("mainDivInside").scrollTop= (0,20000);
 }
 
 

@@ -139,42 +139,6 @@ function makeTaskTable(msg){
   drawRestartServerButton(msg);
   drawRefreshAllButton(msg);
 
-  // var thisRow = document.createElement("tr");
-  // var cell = document.createElement("td");
-  // cell.colSpan="3";
-  // cell.align="center";
-  // var str = msg['dataFile'];
-  // var dataFileURL = msg['dataFileURL'];
-
-  // var res = str.substring(8);
-  // console.log(res);
-  // var str2 = window.location.href;
-  // console.log(str2);
-  // //str2 = str2.substring(0, str2.length - 10);
-  // cell.innerHTML="<a href=\""+dataFileURL+"\">Data File</a>";
-  // thisRow.appendChild(cell);
-  // table.appendChild(thisRow);
-
-  // var thisRow = document.createElement("tr");
-  // var cell = document.createElement("td");
-  // cell.colSpan="3";
-  // cell.align="center";
-  // cell.innerHTML="<a href='/console.html'>Console</a>";
-  // thisRow.appendChild(cell);
-  // table.appendChild(thisRow);
-
-  // var thisRow = document.createElement("tr");
-  // var cell = document.createElement("td");
-  // cell.colSpan="3";
-  // cell.align="center";
-  // cell.innerHTML="<a href='javascript:void(0)' onclick='refreshClient(\"all\");'>Refresh All</a>";
-  // thisRow.appendChild(cell);
-  // table.appendChild(thisRow);
-
-
-  // document.getElementById('mainDiv').appendChild(table);
-  // document.getElementById('myonoffswitch').addEventListener("click",changeAccepting,{});
-  // toggleAcceptingSwitch();
 }
 
 
@@ -397,3 +361,19 @@ function getAutomatic(){
 }
 
 getAutomatic();
+
+
+drawPageTabs("monitor");
+drawMainDivInside();
+function updateMonitorTable(msg){
+  window.serverStatus=msg['serverStatus'];
+  window.lastTimeCheck=(new Date()).getTime();
+  makeMonitorTable(msg);
+}
+
+function updateTaskTable(msg){
+  window.serverStatus=msg['serverStatus'];
+  makeTaskTable(msg);
+}
+
+

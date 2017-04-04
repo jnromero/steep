@@ -25,6 +25,7 @@ class SteepMainServer():
       self.clients=[]
       self.videoClients=[]
       self.monitorClients=[]
+      self.consoleClients=[]
       self.clientsById={}
       if self.options.restart=="False":
          #store all data here
@@ -73,22 +74,6 @@ class SteepMainServer():
       msg['type']='wakeUp'
       return self.messageToId(msg,"all","send")
 
-   def toggleAcceptingSwitch(self,message,client):
-      self.data['serverStatus']['acceptingClients']=1-self.data['serverStatus']['acceptingClients']
-      if self.data['serverStatus']['acceptingClients']==0:
-         print("Done Accepting Clients!")
-         print("%s Clients Connected"%(len(self.data['subjectIDs'])))
-         
-         #check to see if notAcceptingClientsAnymore is defined in experiment
-         notAcceptingClientsAnymore = getattr(self,"notAcceptingClientsAnymore",None)
-         if callable(notAcceptingClientsAnymore):
-            self.notAcceptingClientsAnymore()
-         else:
-            self.notAcceptingClientsAnymoreDefault()
-      else:
-         print("Accepting Clients Now!")
-
-      self.monitorMessage()
 
    def notAcceptingClientsAnymoreDefault(self):
       print("define function notAcceptingClientsAnymore in experiments.py to perform matching after this button has been pressed.")
@@ -117,8 +102,8 @@ class SteepMainServer():
          viewType="monitor"
          subjectID="monitor"
       elif pathName.split("/")[-1]=="console.html":
-         viewType="monitor"
-         subjectID="monitor"
+         viewType="console"
+         subjectID="console"
       elif pathName.split("/")[-1]=="client.html":
          viewType="regular"
          for k in range(1,1000):
@@ -165,6 +150,11 @@ class SteepMainServer():
          if viewType=="monitor":
             print("New monitor client")
             self.monitorClients.append(client)
+            self.updateTaskTable()
+         elif viewType=="console":
+            print("New console client")
+            self.consoleClients.append(client)
+            self.consoleMessage()
          elif viewType=="video":
             print("New video client")
             self.videoClients.append(client)
@@ -330,7 +320,6 @@ class SteepMainServer():
 
    def customMessage(self,subjectID,msg,output="send"):
       #print "send message %s - %s"%(subjectID,msg['type'])
-      print("CURONETOM MESSAGE")
       msg['timers']={}
       for timer in self.data["timers"]:
          msg['timers'][timer]=self.updateTimer(self.data['timers'][timer])
@@ -378,4 +367,31 @@ class SteepMainServer():
       # print string
       # os.system(string)
       os.execv(sys.executable,[sys.executable.split("/")[-1]]+sys.argv)
+
+   def consoleMessage(self):
+      msg={"type":"consoleLinesUpdate"}
+      msg['consoleLines']=self.getCurrentConsoleLines()
+      try:
+         for client in self.consoleClients:
+            client.sendMessage(json.dumps(msg).encode('utf8'))
+      except Exception as thisExept: 
+         print(thisExept)
+         print("can't send message to console")
+
+   def getCurrentConsoleLines(self):
+      currentTab=self.logCounter.currentTab
+      thisFile=self.config['logFolder']+"/pickle/%s.pickle"%(currentTab)
+      file = open(thisFile,'rb')
+      out=[]
+      while 3<4:
+         try:
+            data=pickle.load(file)
+            out.append(data)
+         except:
+            # print(sys.exc_info()[0])
+            break
+      file.close() 
+
+      return out#json.dumps(out).encode('utf8')
+
 

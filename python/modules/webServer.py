@@ -37,12 +37,13 @@ class RequestHandler(Resource):
       parsedURL=theURLparse.urlparse(request.uri.decode().replace("//","/"))#scheme,netloc,path,query
       thisPath=parsedURL.path.replace("//","/")
       root,ext=os.path.splitext(thisPath)
-      if thisPath=="/":
+      if thisPath=="/" or thisPath=="":
+         print(thisPath+"SDFSDFSf")
          ext=".py"
-         filename="index.py"
+         filename="/serverInfo.py"
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
-      elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html"]:
+      elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html","/serverInfo.html"]:
          ext=".py"
          filename=thisPath.replace(".html",".py").replace("/","")
          fileFolder=self.config['packageFolder']+"/html/"
@@ -76,7 +77,6 @@ class RequestHandler(Resource):
          fullPath=self.config['webServerRoot']+fileFolder+filename
          if filename=="favicon.ico":
             fullPath=self.config['webServerRoot']+self.config['packageFolder']+"/html/triangle.png"
-
       if ext==".zip":
          #will download the data file for ANY zip extension.
          dataFolder=self.config['webServerRoot']+self.config['dataFolder']
@@ -92,16 +92,10 @@ class RequestHandler(Resource):
          return File.render_GET(thisFile,request)
       elif os.path.isfile(fullPath):
          if filename=="console.py":
-            serverPage=getValueFromQueryKey(parsedURL.query,"serverPage")
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))
             thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
             self.transformedFiles=autoVersion.updateAutoVersion(self.config,0)
-            output=thisPage.getPage(self.config,self.transformedFiles,self.logURL,self.thisCounter.fileCount,self.currentLogTab,serverPage)
-
-            # try:
-            #    output=thisPage.getPage(self.config,self.logURL,self.thisLogger.fileCount,self.currentLogTab)
-            # except:
-            #    output="Logger Turned Off"
+            output=thisPage.getPage(self.config,self.transformedFiles,self.thisCounter.fileCount,self.currentLogTab)
             return output.encode('utf-8')
          elif ext==".py":
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))            

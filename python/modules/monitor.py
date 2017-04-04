@@ -15,35 +15,15 @@ class monitorClass():
 
    #Monitor Stuff
 
-
-   def getCurrentConsoleLines(self):
-      currentTab=self.logCounter.currentTab
-      thisFile=self.config['logFolder']+"/pickle/%s.pickle"%(currentTab)
-      file = open(thisFile,'rb')
-      out=[]
-      while 3<4:
-         try:
-            data=pickle.load(file)
-            out.append(data)
-         except:
-            # print(sys.exc_info()[0])
-            break
-      file.close() 
-
-      return out#json.dumps(out).encode('utf8')
-
    def monitorMessage(self):
+      self.updateMonitorTable()
+      self.updateTaskTable()
+
+   def updateMonitorTable(self):
       self.updateMonitorTableEntries()
-      msg={"type":"tableUpdate"}
+      msg={"type":"updateMonitorTable"}
       msg['table']=self.getMonitorTable()
       msg['serverStatus']=self.data['serverStatus']
-      msg['taskList']=self.monitorTaskList
-      msg['taskStatus']=self.data['taskStatus']
-      msg['dataFile']=self.config['dataFilePath']
-      msg['dataFileURL']=self.config['dataFileURL']
-      msg['dataFolderURL']=self.config['dataFolderURL']
-      msg['consoleLines']=self.getCurrentConsoleLines()
-      msg['timers']={}
       try:
          for client in self.monitorClients:
             client.sendMessage(json.dumps(msg).encode('utf8'))
@@ -51,6 +31,38 @@ class monitorClass():
          print(thisExept)
          print("can't send message to monitor")
 
+   def updateTaskTable(self):
+      msg={"type":"updateTaskTable"}
+      msg['taskList']=self.monitorTaskList
+      msg['taskStatus']=self.data['taskStatus']
+      msg['serverStatus']=self.data['serverStatus']
+      msg['dataFile']=self.config['dataFilePath']
+      msg['dataFileURL']=self.config['dataFileURL']
+      msg['dataFolderURL']=self.config['dataFolderURL']
+      try:
+         for client in self.monitorClients:
+            client.sendMessage(json.dumps(msg).encode('utf8'))
+      except Exception as thisExept: 
+         print(thisExept)
+         print("can't send message to monitor")
+
+   def toggleAcceptingSwitch(self,message,client):
+      self.data['serverStatus']['acceptingClients']=1-self.data['serverStatus']['acceptingClients']
+      if self.data['serverStatus']['acceptingClients']==0:
+         print("Done Accepting Clients!")
+         print("%s Clients Connected"%(len(self.data['subjectIDs'])))
+         
+         #check to see if notAcceptingClientsAnymore is defined in experiment
+         notAcceptingClientsAnymore = getattr(self,"notAcceptingClientsAnymore",None)
+         if callable(notAcceptingClientsAnymore):
+            self.notAcceptingClientsAnymore()
+         else:
+            self.notAcceptingClientsAnymoreDefault()
+      else:
+         print("Accepting Clients Now!")
+
+      self.monitorMessage()
+      self.updateTaskTable()
 
    def updateMonitorTableEntries(self):
       extra=[
@@ -108,6 +120,7 @@ class monitorClass():
       task=message['type']
       self.data['taskStatus'][task]['status']="Done"
       self.saveData()
+      self.updateTaskTable()
       self.monitorMessage()
 
 

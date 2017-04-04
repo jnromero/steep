@@ -257,7 +257,7 @@ function placeTextOLD(divid,text,top,fontSize,color,fadeTime){
     },50);
 }
 
-function placeText(incoming){
+function placeTextNewButStillOld(incoming){
     if(incoming['divid']==undefined){
         incoming['divid']="randomDiv"+parseInt(Math.random()*10000000000);
     }
@@ -353,6 +353,42 @@ function placeText(incoming){
 
 
 
+
+function placeText(incoming){
+    if(incoming['divid']==undefined){
+        incoming['divid']="randomDiv"+parseInt(Math.random()*10000000000);
+    }
+    if(incoming['parentDiv']==undefined){
+        incoming['parentDiv']="mainDiv";
+    }
+    var textDiv=createAndAddDiv(incoming["divid"],incoming['parentDiv']);
+
+    if(incoming['height']==undefined){
+        incoming['height']="50px";
+    }
+    if(incoming['lineHeight']==undefined){
+        incoming['lineHeight']=incoming['height'];
+    }
+    if(incoming['className']==undefined){
+        incoming['className']="";//none for no selection or all for easy selection
+    }
+    if(incoming['text']==undefined){
+        incoming['text']="";//none for no selection or all for easy selection
+    }
+
+    textDiv.className="placedText "+incoming["className"];
+    textDiv.innerHTML=incoming['text'];
+
+    var toNotSet=["text","className","parentDiv","divid"]
+    for(var k in incoming){
+        if(toNotSet.indexOf(k)==-1){
+            textDiv.style[k]=incoming[k];
+        }
+    }
+}
+
+
+
 function makeTimePretty(timeIN){
     var m=Math.floor(timeIN/60);
     var s=Math.floor(timeIN-m*60);
@@ -419,7 +455,6 @@ function updateTimers(incoming){
 
 function messageManager(msg){
   var incoming = JSON.parse(msg);
-  // console.log(incoming['type'])
   window.state=incoming['status'];
   updateTimers(incoming);
   //http://stackoverflow.com/questions/359788/how-to-execute-a-javascript-function-when-i-have-its-name-as-a-string

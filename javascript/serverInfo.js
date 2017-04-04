@@ -221,13 +221,13 @@ function drawConfigInfo(){
 
   var first=["location","currentExperiment","packageFolder","domain","webServerRoot","dataFolder","serverType"]
   var second=[]
-  for(k in window.config){
+  for(var k in window.config){
       if(first.indexOf(k)==-1){
         second.push(k)
       }
   }
   var all=first.concat(second);
-  for(k in myArray){
+  for(var k in myArray){
     thisColor="black"
     if(first.indexOf(myArray[k][1])>-1){
       thisColor="red";
@@ -262,6 +262,13 @@ function drawConfigInfo(){
 
 
 
+
+clearAll();
+drawPageTabs("server");
+drawMainDivInside();
+drawServerInfo();
+drawConfigInfo();
+drawNewPageLinks();
 
 
 
