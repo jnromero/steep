@@ -582,10 +582,14 @@ class SteepInstructions():
    def drawInstructionsTimer(self,sid="all",output="send"):
       msg={}
       msg['type']='drawInstructionsTimer'
-      if self.config['serverType']=="regularExperiment":
-         msg['whichTimer']="timer"         
-      elif self.config['serverType']=="demoExperiment":
-         msg['whichTimer']="selfTimer"
+      if sid=="allPlusVideo":
+         msg['whichTimer']="all"      
+      else:
+         msg['whichTimer']=sid      
+      # if self.config['serverType']=="regularExperiment":
+      #    msg['whichTimer']="all"         
+      # elif self.config['serverType']=="demoExperiment":
+      #    msg['whichTimer']="selfTimer"
       return self.messageToId(msg,sid,output)
 
 
@@ -594,10 +598,14 @@ class SteepInstructions():
       msg['type']='setCaptions'
       msg['caption']=caption
       msg['length']=self.instructionsLength
-      if self.config['serverType']=="regularExperiment":
-         msg['whichTimer']="timer"         
-      elif self.config['serverType']=="demoExperiment":
-         msg['whichTimer']="selfTimer"
+      if sid=="allPlusVideo":
+         msg['whichTimer']="all"      
+      else:
+         msg['whichTimer']=sid      
+      # if self.config['serverType']=="regularExperiment":
+      #    msg['whichTimer']="all"         
+      # elif self.config['serverType']=="demoExperiment":
+      #    msg['whichTimer']="selfTimer"
       return self.messageToId(msg,sid,output)
 
    def displayCaption(self,sid="all"):

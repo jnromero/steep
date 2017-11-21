@@ -19,7 +19,7 @@ class SteepQuiz():
       self.data['serverStatus']['page']="quiz"
       for sid in self.data['subjectIDs']:
          self.startQuizForSubject(sid)
-      self.data['monitorTasks'][message['index']]['status']='Done'
+      #self.data['monitorTasks'][message['index']]['status']='Done'
       self.monitorMessage()
 
 

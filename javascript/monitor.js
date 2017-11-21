@@ -25,7 +25,7 @@ function makeMonitorTable(msg){
     captionEntry.innerHTML=window.serverStatus['instructions']['lastCaption'];
 
     var instructionsStatusBar=createAndAddDiv("instructionsStatusBar","mainDivInside");
-    instructionsStatusBar.style.width=serverStatus['instructions']['time']*1250;
+    instructionsStatusBar.style.width=serverStatus['instructions']['time']*1170;
   }
   else{
     deleteDiv("instructionsStatusBar");
