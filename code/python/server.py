@@ -41,7 +41,9 @@ for a,b in zip(experimentDirectory.split("/"),steepDirectory.split("/")):
       break
 config['currentExperiment']="/"+experimentDirectory.replace(config['webServerRoot'],"")+"/"
 config['packageFolder']="/"+steepDirectory.replace(config['webServerRoot'],"")+"/"
+print(config)
 
+raw_input() 
 try:
    locationSettings = imp.load_source('locationSettings',steepDirectory+'/locations/%s.py'%(options.location))
    if options.location=="local":
@@ -53,6 +55,10 @@ except Exception as ex:
    functions.printColor("Can't load location file %s/locations/%s.py.\n"%(steepDirectory,options.location),"red")
    functions.printColor("Exception was: "+str(ex),"red")
 config['location']=options.location
+
+
+print(config)
+raw_input() 
 
 #Add serverStartString to config file
 config['serverStartString']=serverStartString
