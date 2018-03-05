@@ -12,10 +12,6 @@ else:
 from twisted.web.resource import Resource
 from twisted.web.static import File
 
-autoVersion = imp.load_source('autoVersion',"modules/auto-versioning.py")
-functions = imp.load_source('functions', "modules/functions.py")
-
-
 #Get value from url key function
 def getValueFromQueryKey(query,key):
    number=""
@@ -31,7 +27,6 @@ class RequestHandler(Resource):
    def __init__(self,config,debug,restartString,thisLogCounter):
       self.thisCounter=thisLogCounter
       self.config=config
-      self.transformedFiles=autoVersion.updateAutoVersion(config,1)
 
    def render_GET(self, request):
       parsedURL=theURLparse.urlparse(request.uri.decode().replace("//","/"))#scheme,netloc,path,query
@@ -94,14 +89,12 @@ class RequestHandler(Resource):
          if filename=="console.py":
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))
             thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
-            self.transformedFiles=autoVersion.updateAutoVersion(self.config,0)
-            output=thisPage.getPage(self.config,self.transformedFiles,self.thisCounter.fileCount,self.currentLogTab)
+            output=thisPage.getPage(self.config,self.thisCounter.fileCount,self.currentLogTab)
             return output.encode('utf-8')
          elif ext==".py":
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))            
             thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
-            self.transformedFiles=autoVersion.updateAutoVersion(self.config,0)
-            output=thisPage.getPage(self.config,self.transformedFiles)
+            output=thisPage.getPage(self.config)
             return output.encode('utf-8')
          elif ext==".m4a":
             request.setHeader("Content-Type","audio/mp4")

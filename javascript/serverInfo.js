@@ -84,6 +84,7 @@ function drawServerInfo(){
 
 
   var y=150;
+  if(window.ipAddresses==undefined){window.ipAddresses=[["0","Error Getting IP (server is still running fine)"]];}
   for(var k=0;k<window.ipAddresses.length;k++){
     placeText({
       "parentDiv":"serverInfoContainer",
@@ -137,10 +138,9 @@ function drawServerInfo(){
     "top":y+"px",
   });
 
-
   placeText({
     "parentDiv":"serverInfoContainer",
-    "text":"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe -kiosk --no-default-browser-check --disk-cache-size=1 --media-cache-size=1 "+window['domain']+"/client.html",
+    "text":"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe -kiosk --no-default-browser-check --disk-cache-size=1 --media-cache-size=1 "+window.config['domain']+"/client.html",
     "fontSize":"20%",
     "color":"black",
     "height":"50px",
@@ -148,7 +148,8 @@ function drawServerInfo(){
     "left":"270px",
     "textAlign":"left",
     "top":(y)+"px",
-    "userSelect":"all",
+    "userSelect":"text",
+    "zIndex":"9999",
   });
   y+=50;
 
@@ -175,7 +176,7 @@ function drawServerInfo(){
     "left":"270px",
     "textAlign":"left",
     "top":(y)+"px",
-    "userSelect":"all",
+    "userSelect":"text",
   });
 
 

@@ -86,7 +86,12 @@ class monitorClass():
          for item in self.data['monitorTableInfo']:
             string=item[0]
             value=item[1]
+            if len(item)>2:
+               formating=item[2]
+            else:
+               formating="%s"
             try:
+               formatString="'tableData[sid][\'formating\']=formating'".replace("formating",formating)
                exec('tableData[sid][\'%s\']=%s'%(string,value))
             except:
                exec('tableData[sid][\'%s\']="NA"'%(string))

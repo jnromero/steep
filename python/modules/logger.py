@@ -4,6 +4,7 @@ from twisted.python import log
 import time
 import sys
 import pickle 
+from builtins import bytes
 
 
 class logCounter():
@@ -66,7 +67,7 @@ class SteepLogger(object):
          self.currentLine+=lines[k]
          if k<len(lines)-1:
             #write to text file
-            tFile.write(self.currentLine+"\n")
+            tFile.write(bytes(self.currentLine+"\n", encoding="UTF-8"))
             #write to pickle file ([type,line,linecounter,kwargs])
             pickle.dump([thisType,self.currentLine.replace(" ","&nbsp;&nbsp;"),self.counter.totalCounter,kwargs],pFile,protocol=2)
             #write to console

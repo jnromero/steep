@@ -49,6 +49,7 @@ class SteepInstructions():
       if timeIN>self.instructionsLength:
          timeIN=0
 
+      print("DMO");
       msgs=[]
 
       msgList=self.loadInstructionsOnClient(sid,"return")
@@ -76,6 +77,7 @@ class SteepInstructions():
 
       self.initializeTimer(sid,self.instructionsLength)
       self.data[sid].timer=[time.time(),time.time()-timeIN,self.instructionsLength]
+      print(self.data[sid].timer)
       kwargs={"sid":sid}
 
       [taskMsgs,index,timeToNext]=self.catchUpTasks(sid,timeIN)
@@ -150,6 +152,7 @@ class SteepInstructions():
       
       #draw instructions timer
       msgList=self.drawInstructionsTimer(sid,"return")
+      msgList=self.drawInstructionsTimer("allPlusVideo","return")
       msgs+=msgList
 
 
@@ -272,6 +275,8 @@ class SteepInstructions():
       msg['divName']=divName
       msg['anchor']=anchor
       msg['delay']=delay
+      print(sid,output)
+      print("Cursordown")
       return self.messageToId(msg,sid,output)
 
    def mouseSequence(self,sequence,sid="all",output="send"):

@@ -67,10 +67,13 @@ function drawCaptionOverlay(incoming){
 
 
 function setCaptions(incoming){
+    var captions=document.getElementById('captions');
     captions.innerHTML=incoming['caption'];
     window.thisTimerName=incoming['whichTimer'];
     moveTimer(window.thisTimerName); 
-    document.getElementById("audioHolder").currentTime = incoming['length']-window.timers[window.thisTimerName];
+    var currentTime=incoming['length']-window.timers[window.thisTimerName];
+    if(isNaN(currentTime)){currentTime=0;}
+    document.getElementById("audioHolder").currentTime = currentTime;
 }
 
 
@@ -135,6 +138,7 @@ function clearAllInstructions(){
     $("body").prepend(mainDiv);
     $("#mainDiv").prepend(cursorDiv);
     $("#mainDiv").prepend(captionOverlay);
+    var captions=document.getElementById('captions');
 }
 
 

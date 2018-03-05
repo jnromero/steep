@@ -1,6 +1,6 @@
 function showQuestionnaire(subjectID,payoff){
     clearAll();
-    makeDropdown("genderSelect",100,[['male',"Male"],['female','Female']]);
+    makeDropdown("genderSelect2",100,[['male',"Male"],['female','Female']]);
     makeDropdown("ageSelect",175,[['16',"Under 17"],['17','17'],['18','18'],['19','19'],['20','20'],['21','21'],['22','22'],['23','23'],['24','24'],['25','25'],['26','Over 25']]);
     makeDropdown("majorSelect",250,[['economics',"Economics"],['business','Other Business'],['engineering','Engineering'],['science','Science'],['other','Other']]);
     makeDropdown("yearSelect",325,[['1',"1"],['2','2'],['3','3'],['4','4'],['5','5'],['6','6+']]);
@@ -131,6 +131,7 @@ function makeTextTitle(incoming){
 
 
 function makeDropdown(incoming){
+    console.log("sdfsdf",incoming);
     if(incoming['left']==undefined){incoming['left']="400px"}
     if(incoming['fontSize']==undefined){incoming['fontSize']="150%"}
     if(incoming['width']==undefined){incoming['width']="200px"}

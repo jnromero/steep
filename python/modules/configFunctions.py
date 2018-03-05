@@ -26,9 +26,8 @@ def setOtherFileLocations(config):
 
 	return config
 
-def writeJavascriptConfigFile(config,configFile):
-	string="//Config File Location: %s\n"%(configFile)
-	string=string+"window.config=%s;"%(config)
+def writeJavascriptConfigFile(config):
+	string="window.config=%s;"%(config)
 	string=string.replace(",",",\n\t")
 	file = open(config['webServerRoot']+config['configJsURL'],'w')
 	file.writelines(string)

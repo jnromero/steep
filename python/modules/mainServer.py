@@ -64,11 +64,10 @@ class SteepMainServer():
    def blank(self):
       pass
    def saveData(self):
-      file = open(self.config['dataFilePath'],'wb')
-      #protocol for python 3 compatibility
-      pickle.dump(self.data,file,protocol=2)
-      file.close() 
-
+      with open(self.config['dataFilePath'],'wb') as f:
+         #protocol for python 3 compatibility
+         pickle.dump(self.data,f,protocol=2)
+         
    def wakeUp(self):
       msg={}
       msg['type']='wakeUp'

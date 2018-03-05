@@ -190,7 +190,9 @@ function drawCursorOverlay(incoming){
     var cursorOverlay = createAndAddDiv("cursorOverlay","mainDiv")
     cursorOverlay.style.zIndex = "599900";
 }
-
+function deleteCursorOverlay(incoming){
+    deleteDiv("cursorOverlay");
+}
 
 
 
