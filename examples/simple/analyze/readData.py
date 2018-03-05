@@ -1,3 +1,5 @@
+import imp
+experiment = imp.load_source('experiment',"../files/experiment.py")
 from experiment import subjectClass
 import pickle 
 
@@ -8,4 +10,4 @@ data=pickle.load(file)
 file.close() 
 
 for sid in data['subjectIDs']:
-   print data[sid]
+   print sid,data[sid].choices
