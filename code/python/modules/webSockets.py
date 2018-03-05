@@ -12,6 +12,11 @@ class SteepWebSocketProtocol(WebSocketServerProtocol):
    def onMessage(self, payload, isBinary):
       if not isBinary:
          msg = json.loads(payload.decode('utf8'))
+         try:
+            sid=client.subjectID
+         except:
+            sid="sidNotSet"
+         msg["sid"]=sid
          self.factory.messageJavascriptToPython(msg,self)
 
 class SteepWebSocketFactory(WebSocketServerFactory,):
@@ -19,28 +24,30 @@ class SteepWebSocketFactory(WebSocketServerFactory,):
       WebSocketServerFactory.__init__(self)
       self.port=self.config["webSocketPort"]
       self.protocol = SteepWebSocketProtocol
-      file = open(self.config['messageLogFile'],'ab')
-      file.close() 
+      self.messageLogFile = open(self.config['messageLogFile'],'wb')
+      self.messageLogFile.close()
+      self.messageLogFile = open(self.config['messageLogFile'],'ab')
 
    def messageJavascriptToPython(self,message,client):
       #automatically run the function self.message['type'](message,client) when that message is received
-      self.writeToMessageLog(message,client,"from")
+      self.writeToMessageLog(message,"from")
       eval("self.%s(%s,%s)"%(message['type'],'message','client'))
 
    def messagePythonToJavascript(self,message,client):
-      self.writeToMessageLog(message,client,"to")
-      client.sendMessage(json.dumps(message).encode('utf8'))
-   
-   def writeToMessageLog(self,message,client,direction):
       try:
          sid=client.subjectID
       except:
          sid="sidNotSet"
-      dataToWrite=[direction,sid,time.time(),message]
-      file = open(self.config['messageLogFile'],'ab')
+      message['sid']=sid
+      self.writeToMessageLog(message,"to")
+      client.sendMessage(json.dumps(message).encode('utf8'))
+   
+   def writeToMessageLog(self,message,direction):
+      dataToWrite=[direction,time.time(),message]
+      # file = open(self.config['messageLogFile'],'ab')
       #protocol for python 3 compatibility
-      pickle.dump(dataToWrite,file,protocol=2)
-      file.close() 
+      pickle.dump(dataToWrite,self.messageLogFile,protocol=2)
+      # file.close() 
 
    def register(self, client):
       if client not in self.clients:
