@@ -132,7 +132,9 @@ class subjectClass():
 
 if __name__ == "__main__":
    import imp
-   server = imp.load_source('server', "/Users/jnr/Dropbox/Sites/jnromero.com/Experiments/steep/code/python/server.py")
-
+   filename="../../../code/python/server.py"
+   completePathToServerDotPyFile=os.path.abspath(filename) 
+   server = imp.load_source('server',completePathToServerDotPyFile)
+   #python experiment.py -l local -o True -s False
 
 
