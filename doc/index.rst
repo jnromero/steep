@@ -9,11 +9,51 @@ Look how easy it is to use:
     # Get your stuff done
     project.do_stuff()
 
+Requirements
+--------
+
+:python: STEEP can be used with recent versions of either python 2 or python 3.  To install python on a mac, I recommend using the installation via homebrew (http://brew.sh/).  For windows, I recommend anaconda (https://www.continuum.io/downloads).  To check to see if python is installed, you can type
+
+
+
+    .. code-block:: python
+       :emphasize-lines: 3,5
+
+       def some_function():
+           interesting = False
+           print 'This line is highlighted.'
+           print 'This one is not...'
+           print '...but this one is.'
+
+   python --version
+in terminal in mac or the command prompt in windows, and you should get an output that looks like "Python 2.7.10"
+?
+1
+Python 2.7.10
+After python is installed, you need to install the following packages (you can use the pip python installer)
+twisted - this is used for the networking enginehttps://twistedmatrix.com/
+?
+1
+pip install twisted
+autobahn - this is used for websockets http://autobahn.ws/
+?
+1
+pip install autobahn
+
+
+
 Features
 --------
 
 - Be awesome
 - Make things faster
+
+.. code-block:: python
+   :caption: this.py
+   :name: this-py
+
+   print 'Explicit is better than implicit.'
+
 
 Installation
 ------------

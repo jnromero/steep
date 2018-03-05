@@ -88,6 +88,7 @@
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">STEEP - Simple Toolboox for Experimental Economics Programs</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#contribute">Contribute</a></li>
@@ -166,12 +167,53 @@
 <div>import project
 # Get your stuff done
 project.do_stuff()</div></blockquote>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">python:</th><td class="field-body"><p class="first">STEEP can be used with recent versions of either python 2 or python 3.  To install python on a mac, I recommend using the installation via homebrew (<a class="reference external" href="http://brew.sh/">http://brew.sh/</a>).  For windows, I recommend anaconda (<a class="reference external" href="https://www.continuum.io/downloads">https://www.continuum.io/downloads</a>).  To check to see if python is installed, you can type</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">some_function</span><span class="p">():</span>
+    <span class="n">interesting</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="hll">    <span class="k">print</span> <span class="s1">&#39;This line is highlighted.&#39;</span>
+</span>    <span class="k">print</span> <span class="s1">&#39;This one is not...&#39;</span>
+<span class="hll">    <span class="k">print</span> <span class="s1">&#39;...but this one is.&#39;</span>
+</span></pre></div>
+</div>
+</div></blockquote>
+<p class="last">python &#8211;version</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>in terminal in mac or the command prompt in windows, and you should get an output that looks like &#8220;Python 2.7.10&#8221;
+?
+1
+Python 2.7.10
+After python is installed, you need to install the following packages (you can use the pip python installer)
+twisted - this is used for the networking enginehttps://twistedmatrix.com/
+?
+1
+pip install twisted
+autobahn - this is used for websockets http://autobahn.ws/
+?
+1
+pip install autobahn</p>
+</div>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Be awesome</li>
 <li>Make things faster</li>
 </ul>
+<div class="literal-block-wrapper container" id="this-py">
+<div class="code-block-caption"><span class="caption-text">this.py</span><a class="headerlink" href="#this-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span> <span class="s1">&#39;Explicit is better than implicit.&#39;</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
