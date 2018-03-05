@@ -69,8 +69,8 @@ class RequestHandler(Resource):
             ext=".py"
          fileFolder=thisPath.replace(filename,"")
          fullPath=self.config['webServerRoot']+fileFolder+filename
-         # if filename=="favicon.ico":
-         #    fullPath=self.config['webServerRoot']+self.config['packageFolder']+"/html/triangle.png"
+         if filename=="favicon.ico":
+            fullPath=self.config['webServerRoot']+self.config['packageFolder']+"/html/triangle.png"
       if ext==".zip":
          #will download the data file for ANY zip extension.
          dataFolder=self.config['webServerRoot']+self.config['dataFolder']
