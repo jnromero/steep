@@ -108,11 +108,13 @@ def twistedObserver(eventDict):
       if 'log_text' in eventDict:
          for k in eventDict['log_text'].split("\n"):
             sys.stdout.write(k+"\n",**kwargs)
-      else:
+      elif 'log_io' in eventDict:
          sys.stdout.write(eventDict['log_io']+"\n",**kwargs)
+      else:
+         sys.stdout.write(str(eventDict)+"\n",**kwargs)
    elif eventDict['log_namespace']=='stdout':
       sys.stdout.write(eventDict['log_io']+"\n",**kwargs)
-   elif eventDict['log_namespace']=='twisted.python.log':
+   elif eventDict['log_namespace']=='twisted.python.log' and 'log_io' in eventDict:
       if eventDict['log_io'].find("\"GET")==-1:
          sys.stdout.write(eventDict['log_io']+"\n",**kwargs)
 

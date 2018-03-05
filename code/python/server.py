@@ -235,9 +235,6 @@ from steepMonitor import monitorClass
 steepTimer = imp.load_source('steepTimer', steepDirectory+"/python/modules/timer.py")
 from steepTimer import SteepTimerManager
 
-
-print("Sdsdf")
-
 class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepQuiz,ExperimentQuiz,SteepTimerManager,ExperimentInstructions,ExperimentQuestionnaire):
    def __init__(self,config,options,log,thisLogCounter):
       self.logCounter=thisLogCounter

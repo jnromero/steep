@@ -59,7 +59,7 @@ class SteepMainServer():
 
       #Send wake up message to client every 2 minutes to avoid timeout
       self.wakingCall = task.LoopingCall(self.wakeUp)
-      self.wakingCall.start(120)
+      self.wakingCall.start(120,now=False)#now=false doesn't run now, but starts after 120 seconds
 
    def blank(self):
       pass
