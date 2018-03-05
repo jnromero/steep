@@ -3,46 +3,47 @@ import pickle
 import sys 
 import json
 import netifaces as ni
+import imp
 
-def getPage(config,tf):
+
+def getPage(config):
+	pf = imp.load_source('pf', config['webServerRoot']+config['packageFolder']+"/html/pageFunctions.py")
 	thisVersion=sys.version.split("\n")[0]
 	thisVersion=thisVersion.replace("\"","'")
 	string=""
-	string+="window.pythonVersion=\"%s\";\n"%(thisVersion)
-	string+="window.pythonExecutable=\"%s\";"%(sys.executable)
+	string+="\n\nwindow.pythonVersion=\"%s\";\n"%(thisVersion)
+	string+="window.pythonExecutable=\"%s\";\n"%(sys.executable)
 	ips=[]
 	for k in ni.interfaces():
 		ni.ifaddresses(k)
 		try:  
 			ip = ni.ifaddresses(k)[2][0]['addr']
 			ips.append(["%s"%(k),"%s"%(ip)])
-		except:
+		except Exception as e: 
+			# print("error getting ips",str(e))
 			"no address"
-	string+="window.ipAddresses=%s;"%(ips)
 
-
-	currentExperiment=config['currentExperiment']
-	packageFolder=config['packageFolder']
-	domain=config['domain']
-
+	ips=[[str(y.encode("utf-8")) for y in x] for x in ips]
+	string+="window.ipAddresses=%s;\n"%(ips)
+	files=pf.getFiles(config)
 
 
 	this=''
 	this+='<html>\n'
 	this+='\t<head>\n'
 	this+='\t\t<title>STEEP: Monitor</title>\n'
-	this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['jquery.js'])
-	this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf[currentExperiment]['config.js'])
-	this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['common.js'])
-	this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['monitorGeneral.js'])
-	this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s" />\n'%(domain,packageFolder,tf['common']['switch.css'])
-	this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s" />\n'%(domain,packageFolder,tf['common']['monitor.css'])
-	this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s" />\n'%(domain,packageFolder,tf['common']['common.css'])
+	this+=pf.javascriptLine(files['common']['jquery.js'])
+	this+=pf.javascriptLine(files["exp"]['config.js'])
+	this+=pf.javascriptLine(files['common']['common.js'])
+	this+=pf.javascriptLine(files['common']['monitorGeneral.js'])
+	this+=pf.cssLine(files['common']['switch.css'])
+	this+=pf.cssLine(files['common']['monitor.css'])
+	this+=pf.cssLine(files['common']['common.css'])
 	this+='\t</head>\n'
 	this+='\t<body>\n'
 	this+='\t\t<div id="mainDiv"></div>\n'
-	this+='\t\t\t<script type="text/javascript">%s</script>\n'%(string)
-	this+='\t\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['serverInfo.js'])
+	this+='\t\t\t<script type="text/javascript">%s;</script>\n'%(string)
+	this+=pf.javascriptLine(files['common']['serverInfo.js'])
 	this+='\t<body>\n'
 	this+='</html>'
 

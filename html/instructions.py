@@ -1,28 +1,27 @@
 #!/usr/bin/python
+import imp
 
-def getPage(config,tf):
-    currentExperiment=config['currentExperiment']
-    packageFolder=config['packageFolder']
-    domain=config['domain']
-
+def getPage(config):
+    pf = imp.load_source('pf', config['webServerRoot']+config['packageFolder']+"/html/pageFunctions.py")
+    files=pf.getFiles(config)
     this=''
     this+='<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Traditional//EN">\n'
     this+='<html id="everything">\n'
     this+='\t<head>\n'
-    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['jquery.js'])
-    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf[currentExperiment]['config.js'])
-    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['common.js'])
-    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf['common']['instructions.css'])
-    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf['common']['common.css'])
-    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf['common']['simulateMouse.css'])
-    this+='\t\t<link rel="stylesheet" type="text/css" href="%s/%s/html/auto-version/%s"/>\n'%(domain,packageFolder,tf[currentExperiment]['experiment.css'])
+    this+=pf.javascriptLine(files['common']['jquery.js'])
+    this+=pf.javascriptLine(files["exp"]['config.js'])
+    this+=pf.javascriptLine(files['common']['common.js'])
+    this+=pf.cssLine(files['common']['instructions.css'])
+    this+=pf.cssLine(files['common']['common.css'])
+    this+=pf.cssLine(files['common']['simulateMouse.css'])
+    this+=pf.cssLine(files['exp']['experiment.css'])
     this+='\t</head>\n'
     this+='\t<body>\n'
-    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['simulateMouse.js'])
-    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['video.js'])
-    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf[currentExperiment]['experiment.js'])
-    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf['common']['instructions.js'])
-    this+='\t\t<script type="text/javascript" src="%s/%s/html/auto-version/%s"></script>\n'%(domain,packageFolder,tf[currentExperiment]['instructions.js'])
+    this+=pf.javascriptLine(files['common']['simulateMouse.js'])
+    this+=pf.javascriptLine(files['common']['video.js'])
+    this+=pf.javascriptLine(files['exp']['experiment.js'])
+    this+=pf.javascriptLine(files['common']['instructions.js'])
+    this+=pf.javascriptLine(files['exp']['instructions.js'])
     this+='\t</body>\n'
     this+='</html>'
 
