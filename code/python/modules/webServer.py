@@ -33,7 +33,6 @@ class RequestHandler(Resource):
       thisPath=parsedURL.path.replace("//","/")
       root,ext=os.path.splitext(thisPath)
       if thisPath=="/" or thisPath=="":
-         print(thisPath+"SDFSDFSf")
          ext=".py"
          filename="/serverInfo.py"
          fileFolder=self.config['packageFolder']+"/html/"

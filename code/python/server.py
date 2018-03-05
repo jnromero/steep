@@ -41,6 +41,9 @@ for a,b in zip(experimentDirectory.split("/"),steepDirectory.split("/")):
       break
 config['currentExperiment']="/"+experimentDirectory.replace(config['webServerRoot'],"")+"/"
 config['packageFolder']="/"+steepDirectory.replace(config['webServerRoot'],"")+"/"
+print(config)
+
+raw_input() 
 try:
    locationSettings = imp.load_source('locationSettings',steepDirectory+'/locations/%s.py'%(options.location))
    if options.location=="local":
@@ -54,6 +57,8 @@ except Exception as ex:
 config['location']=options.location
 
 
+print(config)
+raw_input() 
 
 #Add serverStartString to config file
 config['serverStartString']=serverStartString
@@ -67,20 +72,13 @@ configFunctions = imp.load_source('configFunctions', steepDirectory+"/python/mod
 config=configFunctions.setOtherFileLocations(config)
 configFunctions.writeJavascriptConfigFile(config)
 
-print("Sdsdf")
-print("Sdsdf")
-
 #blank function place holder for furutre monitor message that will be used to update console page on demand
 def testFunction():
    "sdfsdf"
 logger = imp.load_source('logger',steepDirectory+"/python/modules/logger.py")
 thisLogCounter= logger.logCounter()
 sys.stdout = logger.SteepLogger(sys.stdout,"stdout",config,thisLogCounter,testFunction)
-print("Sdsdf")
 sys.stderr = logger.SteepLogger(sys.stderr,"stderr",config,thisLogCounter,testFunction)
-
-
-print("Sdsdf")
 
 from twisted.python.log import startLogging,addObserver
 #This removes regular twisted messages from the console
