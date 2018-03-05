@@ -5,14 +5,19 @@ import time
 import shutil
 import os
 import webbrowser
-functions = imp.load_source('functions', "modules/functions.py")
+#This is the name of the directory of the module that imported this module
+experimentDirectory=os.path.abspath(os.path.dirname(os.path.abspath(sys.modules['__main__'].__file__))+"/../")
+#this is the name of the directory that contains the folder containgin this file, in other words: ../
+steepDirectory=os.path.abspath(os.path.dirname(os.path.abspath(os.path.realpath(__file__)))+"/../")
+
+functions = imp.load_source('functions', steepDirectory+"/python/modules/functions.py")
 from twisted.internet import reactor
 from twisted.web.server import Site
 from autobahn.twisted.websocket import listenWS
 
 
 #load options module
-optionsCommands = imp.load_source('optionsCommands', "modules/optionsCommands.py")
+optionsCommands = imp.load_source('optionsCommands', steepDirectory+"/python/modules/optionsCommands.py")
 options=optionsCommands.getOptions()
 
 #get server Start Time String.  This is used for log and data files
@@ -25,21 +30,27 @@ else:
 if options.saveData=="False":
    serverStartString="tmp"
 
-#load the config file
-try:  
-   settings = imp.load_source('settings',options.configFile)
-except:
-   sys.exit("ERROR: Config file couldn't be loaded (probably not a python file).\n %s \nYou can see all options by running 'python server.py -h'"%(options.configFile))
-
-
 #set Location for config
-config=settings.setConfig(options.location)
+config={}
+config['location']=options.location
+config['webServerRoot']=""
+for a,b in zip(experimentDirectory.split("/"),steepDirectory.split("/")):
+   if a==b:
+      config['webServerRoot']+=a+"/"
+   else:
+      break
+config['currentExperiment']="/"+experimentDirectory.replace(config['webServerRoot'],"")+"/"
+config['packageFolder']="/"+steepDirectory.replace(config['webServerRoot'],"")+"/"
 try:
-   locationSettings = imp.load_source('locationSettings','../locations/%s.py'%(options.location))
-   config=locationSettings.getLocation(config)
-except:
+   locationSettings = imp.load_source('locationSettings',steepDirectory+'/locations/%s.py'%(options.location))
+   if options.location=="local":
+      config=locationSettings.getLocation(config,options.ipAddress)#can add ip address if running local.
+   else:
+      config=locationSettings.getLocation(config)
+except Exception as ex:
    functions.printColor("Warning:","red",["background","flash"])
-   functions.printColor("Can't load location file ../locations/%s.py.\n"%(options.location),"red")
+   functions.printColor("Can't load location file %s/locations/%s.py.\n"%(steepDirectory,options.location),"red")
+   functions.printColor("Exception was: "+str(ex),"red")
 config['location']=options.location
 
 
@@ -52,18 +63,24 @@ restartString=optionsCommands.getRestartString(config)
 config['restartString']=restartString
 
 
-configFunctions = imp.load_source('configFunctions', "modules/configFunctions.py")
+configFunctions = imp.load_source('configFunctions', steepDirectory+"/python/modules/configFunctions.py")
 config=configFunctions.setOtherFileLocations(config)
-configFunctions.writeJavascriptConfigFile(config,options.configFile)
+configFunctions.writeJavascriptConfigFile(config)
 
+print("Sdsdf")
+print("Sdsdf")
 
 #blank function place holder for furutre monitor message that will be used to update console page on demand
 def testFunction():
    "sdfsdf"
-logger = imp.load_source('logger',"modules/logger.py")
+logger = imp.load_source('logger',steepDirectory+"/python/modules/logger.py")
 thisLogCounter= logger.logCounter()
 sys.stdout = logger.SteepLogger(sys.stdout,"stdout",config,thisLogCounter,testFunction)
+print("Sdsdf")
 sys.stderr = logger.SteepLogger(sys.stderr,"stderr",config,thisLogCounter,testFunction)
+
+
+print("Sdsdf")
 
 from twisted.python.log import startLogging,addObserver
 #This removes regular twisted messages from the console
@@ -111,9 +128,10 @@ for k in ni.interfaces():
       kwargs={"color":"red","backgroundColor":"rgba(255,0,255,.1)","left":"520px","width":"780px","height":"40px","fontSize":"200%","textAlign":"left","sameLine":"True"}   
       log("%s\n"%(ip),**kwargs)
       sameLine='False'
-   except:
-      "no address"
-
+   except:# Exception,e: 
+      "do nothing"
+      #print("no address",str(e))
+      
 
 #print restart script
 kwargs={"color":"black","backgroundColor":"rgba(0,255,0,.1)","left":"0px","width":"300px","height":"50px","fontSize":"200%","textAlign":"right"}   
@@ -144,7 +162,7 @@ for k in config:
 
 
 #load the experiment file
-experimentFile=config['webServerRoot']+config['currentExperiment']+"/files/experiment.py"
+experimentFile=experimentDirectory+"/files/experiment.py"
 experiment = imp.load_source('experiment', experimentFile)
 from experiment import experimentClass
 from experiment import subjectClass
@@ -158,21 +176,18 @@ shutil.copyfile(experimentFile.replace(".py",".js"),dataFolderFiles+"/experiment
 shutil.copyfile(experimentFile.replace(".py",".css"),dataFolderFiles+"/experiment.css")
 
 #load webServer module
-steepWebServer = imp.load_source('steepWebSockets', "modules/webServer.py")
-
-#load autoVersion module
-autoversion = imp.load_source('autoversion', "modules/auto-versioning.py")
+steepWebServer = imp.load_source('steepWebSockets', steepDirectory+"/python/modules/webServer.py")
 
 #load websockets module
-steepWebSockets = imp.load_source('steepWebSockets', "modules/webSockets.py")
+steepWebSockets = imp.load_source('steepWebSockets', steepDirectory+"/python/modules/webSockets.py")
 from steepWebSockets import SteepWebSocketFactory
 
 #load mainServer module
-steepMainServer = imp.load_source('steepMainServer', "modules/mainServer.py")
+steepMainServer = imp.load_source('steepMainServer', steepDirectory+"/python/modules/mainServer.py")
 from steepMainServer import SteepMainServer
 
 #load quiz module
-steepQuiz = imp.load_source('steepQuiz', "modules/quiz.py")
+steepQuiz = imp.load_source('steepQuiz', steepDirectory+"/python/modules/quiz.py")
 from steepQuiz import SteepQuiz
 
 #load questionnaire module
@@ -215,20 +230,21 @@ if 'instructions' in config:
    from experimentInstructions import ExperimentInstructions
    
    #load instructions module
-   steepInstructions = imp.load_source('steepInstructions', "modules/instructions.py")
+   steepInstructions = imp.load_source('steepInstructions', steepDirectory+"/python/modules/instructions.py")
    from steepInstructions import SteepInstructions
 
 
 
 #load monitor module
-steepMonitor = imp.load_source('steepMonitor', "modules/monitor.py")
+steepMonitor = imp.load_source('steepMonitor', steepDirectory+"/python/modules/monitor.py")
 from steepMonitor import monitorClass
 
 #load timer module
-steepTimer = imp.load_source('steepTimer', "modules/timer.py")
+steepTimer = imp.load_source('steepTimer', steepDirectory+"/python/modules/timer.py")
 from steepTimer import SteepTimerManager
 
 
+print("Sdsdf")
 
 class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepQuiz,ExperimentQuiz,SteepTimerManager,ExperimentInstructions,ExperimentQuestionnaire):
    def __init__(self,config,options,log,thisLogCounter):
@@ -252,19 +268,20 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       sys.stdout.consoleMessage=self.consoleMessage
       sys.stderr.consoleMessage=self.consoleMessage
 
-if __name__ == '__main__':
-   #websockets
-   factory = SteepServerClass(config,options,log,thisLogCounter)
-   listenWS(factory)
 
-   #webserver
-   resource = steepWebServer.RequestHandler(config,options.debug,restartString,thisLogCounter)
-   factory = Site(resource)
-   reactor.listenTCP(resource.config['serverPort'], factory)
 
-   if options.openBrowser=="True":
-      url = 'http://localhost:%s'%(resource.config['serverPort'])
-      webbrowser.open(url)
+#websockets
+factory = SteepServerClass(config,options,log,thisLogCounter)
+listenWS(factory)
 
-   reactor.run()
+#webserver
+resource = steepWebServer.RequestHandler(config,options.debug,restartString,thisLogCounter)
+factory = Site(resource)
+reactor.listenTCP(resource.config['serverPort'], factory)
+
+if options.openBrowser=="True":
+   url = 'http://localhost:%s'%(resource.config['serverPort'])
+   webbrowser.open(url)
+
+reactor.run()
 
