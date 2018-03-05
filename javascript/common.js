@@ -474,6 +474,20 @@ function runFunctionFromString(functionName){
     }
 }
 
+function statusManager(){
+  thisStatus=window.state;
+  if(runFunctionFromString(thisStatus["page"])==false){
+      if(thisStatus[0]==-1){
+        message="Loading...";
+        genericScreen(message);
+      }
+      else if(thisStatus["page"]=="generic"){
+        clearAll();
+        genericScreen(thisStatus["message"]);
+      }
+  }
+}
+
 function updateStatus(msg) {
     statusManager();
 }
