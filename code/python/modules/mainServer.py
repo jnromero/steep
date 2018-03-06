@@ -19,7 +19,8 @@ else:
 class SteepMainServer():
    def __init__(self):
       self.setPreliminaries()
-
+      self.lastConsoleMessageTime=time.time()
+      self.nextConsoleCall=0
    def setPreliminaries(self):
       #All Clients 
       self.clients=[]
@@ -153,6 +154,7 @@ class SteepMainServer():
          elif viewType=="console":
             print("New console client")
             self.consoleClients.append(client)
+            self.lastConsoleMessageTime=time.time()-10#this ensures a page refresh
             self.consoleMessage()
          elif viewType=="video":
             print("New video client")
@@ -368,28 +370,36 @@ class SteepMainServer():
       os.execv(sys.executable,[sys.executable.split("/")[-1]]+sys.argv)
 
    def consoleMessage(self):
-      msg={"type":"consoleLinesUpdate"}
-      msg['consoleLines']=self.getCurrentConsoleLines()
-      try:
-         for client in self.consoleClients:
-            client.sendMessage(json.dumps(msg).encode('utf8'))
-      except Exception as thisExept: 
-         print(thisExept)
-         print("can't send message to console")
-
+      #this ensures that we won't get memory leak from too many console messages
+      if time.time()-self.lastConsoleMessageTime>.1:
+         if self.nextConsoleCall!=0:
+            if self.nextConsoleCall.cancelled==0 and self.nextConsoleCall.called==0:
+               self.nextConsoleCall.cancel()
+         self.nextConsoleCall=0
+         self.lastConsoleMessageTime=time.time()
+         msg={"type":"consoleLinesUpdate"}
+         msg['consoleLines']=self.getCurrentConsoleLines()
+         try:
+            for client in self.consoleClients:
+               client.sendMessage(json.dumps(msg).encode('utf8'))
+         except Exception as thisExept: 
+            # print("can't send message to console"+thisExept)
+            pass
+      else:
+         if self.nextConsoleCall==0:
+            self.nextConsoleCall=reactor.callLater(.1,self.consoleMessage)
    def getCurrentConsoleLines(self):
       currentTab=self.logCounter.currentTab
       thisFile=self.config['logFolder']+"/pickle/%s.pickle"%(currentTab)
-      file = open(thisFile,'rb')
-      out=[]
-      while 3<4:
-         try:
-            data=pickle.load(file)
-            out.append(data)
-         except:
-            # print(sys.exc_info()[0])
-            break
-      file.close() 
+      with open(thisFile,'rb') as file:
+         out=[]
+         while 3<4:
+            try:
+               data=pickle.load(file)
+               out.append(data)
+            except:
+               # print(sys.exc_info()[0])
+               break
 
       return out#json.dumps(out).encode('utf8')
 

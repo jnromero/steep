@@ -68,7 +68,7 @@ configFunctions.writeJavascriptConfigFile(config)
 
 #blank function place holder for furutre monitor message that will be used to update console page on demand
 def testFunction():
-   "sdfsdf"
+   pass
 logger = imp.load_source('logger',steepDirectory+"/python/modules/logger.py")
 thisLogCounter= logger.logCounter()
 sys.stdout = logger.SteepLogger(sys.stdout,"stdout",config,thisLogCounter,testFunction)
@@ -256,7 +256,6 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       ExperimentQuestionnaire.__init__(self)
       sys.stdout.consoleMessage=self.consoleMessage
       sys.stderr.consoleMessage=self.consoleMessage
-
 
 
 #websockets

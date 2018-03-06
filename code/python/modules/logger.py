@@ -49,22 +49,6 @@ class SteepLogger(object):
       self.consoleMessage=consoleMessage
       [self.txtLogFilename,self.pickleLogFilename]=newFiles(self.config,self.counter.fileCount)
       self.newLine()
-      self.openLogFilesForAppending()
-
-
-   def closeLogFilesFromAppending(self):
-      try:
-         self.txtLogFile.close()
-      except:
-         "txt log file not open"
-      try:
-         self.pickleLogFilename.close()
-      except:
-         "pickle log file not open"
-   def openLogFilesForAppending(self):
-      self.txtLogFile=open(self.txtLogFilename,'ab')
-      self.pickleLogFile=open(self.pickleLogFilename,'ab')
-
 
    def newLine(self):
       self.currentLine=""
@@ -81,18 +65,18 @@ class SteepLogger(object):
          self.currentLine+=lines[k]
          if k<len(lines)-1:
             #write to text file
-            self.txtLogFile.write(bytes(self.currentLine+"\n", encoding="UTF-8"))
+            with open(self.txtLogFilename,'ab') as f:
+               f.write(bytes(self.currentLine+"\n", encoding="UTF-8"))
             #write to pickle file ([type,line,linecounter,kwargs])
-            pickle.dump([thisType,self.currentLine.replace(" ","&nbsp;&nbsp;"),self.counter.totalCounter,kwargs],self.pickleLogFile,protocol=2)
+            with open(self.pickleLogFilename,'ab') as f:
+               pickle.dump([thisType,self.currentLine.replace(" ","&nbsp;&nbsp;"),self.counter.totalCounter,kwargs],f,protocol=2)
             #write to console
             self.stream.write(thisType+" "*(15-len(thisType))+"   "+self.currentLine+"\n")
             self.stream.flush()
             self.currentLine=""
             if self.counter.increment():
                print("Incrementing, and Creating New Log Files")
-               self.closeLogFilesFromAppending()
                [self.txtLogFilename,self.pickleLogFilename]=newFiles(self.config,self.counter.fileCount)
-               self.openLogFilesForAppending()
       self.consoleMessage()
 
    def flush(self):

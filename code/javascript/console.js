@@ -181,10 +181,10 @@ function drawConsoleTabs(){
 
     var nextTab=Math.min(window.currentTab+1,window.totalPages);
     var previousTab=Math.max(window.currentTab-1,1);
-    clickButton("many","firstPageTab",goToPage,window.config['domain']+"/console.html?serverPage=console&page=1");
-    clickButton("many","previousPageTab",goToPage,window.config['domain']+"/console.html?serverPage=console&page="+previousTab);
-    clickButton("many","nextPageTab",goToPage,window.config['domain']+"/console.html?serverPage=console&page="+nextTab);
-    clickButton("many","lastPageTab",goToPage,window.config['domain']+"/console.html?serverPage=console&page=current");
+    clickButton("many","firstPageTab",goToPage,window.config['domain']+"/console.html?page=1");
+    clickButton("many","previousPageTab",goToPage,window.config['domain']+"/console.html?page="+previousTab);
+    clickButton("many","nextPageTab",goToPage,window.config['domain']+"/console.html?page="+nextTab);
+    clickButton("many","lastPageTab",goToPage,window.config['domain']+"/console.html?page=current");
     var hoverInfo={"border":"1px solid blue","backgroundColor":"rgba(0,0,255,.2)"};
     hoverDiv("firstPageTab",hoverInfo)
     hoverDiv("previousPageTab",hoverInfo)
@@ -194,8 +194,12 @@ function drawConsoleTabs(){
 
 }
 
+function consoleLinesNoUpdate(msg){
+  console.log("consoleLinesNoUpdate")
+}
 
 function consoleLinesUpdate(msg){
+  console.log("update")
   clearAll();
   drawPageTabs("console");
   drawMainDivInside();
