@@ -6,7 +6,7 @@ import os
 class experimentClass():
    # - the dictionary self.data will be stored automatically every 10 seconds.
    # - store data in self.data[subjectID] which is a Subject class (defined below)
-   # - send messages like self.customMessage(subjectID,msg)
+   # - send messages like self.messageToId(msg,subjectID)
    # - list of all subjects at self.data['subjectIDs']
    def __init__(self):
       # initialize the class
@@ -22,7 +22,7 @@ class experimentClass():
       msg={}
       msg['payoffVariable']=2
       msg['type']="sendParameters"
-      self.customMessage(sid,msg)
+      self.messageToId(msg,sid)
 
    def notAcceptingClientsAnymore(self):
       #This is run when you stop accepting clients.  This is where you might want to do your random matching, or randomly determine parameters for the experiment.
