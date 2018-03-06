@@ -1,6 +1,7 @@
 from __future__ import print_function,division,absolute_import   
 import json
 import pickle
+import time
 class monitorClass():
    def __init__(self):
       #This should be set in experiment.py
@@ -12,7 +13,6 @@ class monitorClass():
          self.data['monitorTableSortType']=0
          self.data['monitorTableInfo']="none"#
       self.updateMonitorTableEntries()
-
    #Monitor Stuff
 
    def sendMessageToMonitorClients(self,msg):
@@ -23,9 +23,8 @@ class monitorClass():
          print(thisExept)
          print("can't send message to monitor")
 
-   def monitorMessage(self):
-      self.updateMonitorTable()
-      self.updateTaskTable()
+
+   #def monitorMessage(self): in mainServer.py so that it can use reactor.
 
    def updateMonitorTable(self):
       self.updateMonitorTableEntries()

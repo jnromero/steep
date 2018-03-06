@@ -21,6 +21,8 @@ class SteepMainServer():
       self.setPreliminaries()
       self.lastConsoleMessageTime=time.time()
       self.nextConsoleCall=0
+      self.lastMonitorMessageSent=time.time()
+      self.nextMonitorCall=0
    def setPreliminaries(self):
       #All Clients 
       self.clients=[]
@@ -402,5 +404,23 @@ class SteepMainServer():
                break
 
       return out#json.dumps(out).encode('utf8')
+
+   def monitorMessage(self):
+      #update at most 10 times per second
+      if time.time()-self.lastMonitorMessageSent>.1:
+         if self.nextMonitorCall!=0:
+            if self.nextMonitorCall.cancelled==0 and self.nextMonitorCall.called==0:
+               self.nextMonitorCall.cancel()
+         self.nextMonitorCall=0
+         self.lastMonitorMessageSent=time.time()
+         self.updateMonitorTable()
+         self.updateTaskTable()
+      else:
+         #this ensures that there will be one last monitor message if a lot are received all at the same time
+         if self.nextMonitorCall==0:
+            try:
+               self.nextMonitorCall=reactor.callLater(.1,self.monitorMessage)
+            except Exception as e:
+               self.nextMonitorCall=0
 
 
