@@ -101,7 +101,7 @@ class experimentClass():
       # messageToId(self,msg,sid="all",output="send"):
       for sid in self.data['subjectIDs']:
          self.data[sid].status={"page":"postMatch","stage":"noChoices"}
-      self.updateStatus(sid,"all")
+         self.updateStatus(sid)
       
 
    def experimentSpecificMonitorTableEntries(self):
