@@ -88,10 +88,15 @@
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">STEEP - Simple Toolboox for Experimental Economics Programs</a><ul>
-<li><a class="reference internal" href="#requirements">Requirements</a></li>
-<li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#contribute">Contribute</a></li>
+<li><a class="reference internal" href="#running-a-simple-experiment">Running a Simple Experiment</a></li>
+<li><a class="reference internal" href="#structure-of-an-experiment">Structure of an Experiment</a></li>
+<li><a class="reference internal" href="#subject-ids">Subject IDs</a></li>
+<li><a class="reference internal" href="#sending-messages">Sending Messages</a><ul>
+<li><a class="reference internal" href="#server-to-client">Server to Client</a></li>
+<li><a class="reference internal" href="#client-to-server">Client to Server</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#support">Support</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 </ul>
@@ -161,72 +166,106 @@
             
   <div class="section" id="steep-simple-toolboox-for-experimental-economics-programs">
 <h1>STEEP - Simple Toolboox for Experimental Economics Programs<a class="headerlink" href="#steep-simple-toolboox-for-experimental-economics-programs" title="Permalink to this headline">¶</a></h1>
-<p>Steep is a minimal framework that allows for interaction between a python server and web browser clients (via javascript) via websockets.  Steep is simple, and doesn&#8217;t have a lot of built in features, which allows for a lot of flexibility.</p>
-<p>Look how easy it is to use:</p>
-<blockquote>
-<div>import project
-# Get your stuff done
-project.do_stuff()</div></blockquote>
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>Steep is a minimal framework that allows for interaction between a python server and web browser clients (via javascript) via websockets.  Steep is simple, and doesn&#8217;t have a lot of built in features, which allows for a lot of flexibility.  Experimenters can then use the plethora of online resources dedicated to programing of webapps using CSS and Javascript.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">python:</th><td class="field-body"><p class="first">STEEP can be used with recent versions of either python 2 or python 3.  To install python on a mac, I recommend using the installation via homebrew (<a class="reference external" href="http://brew.sh/">http://brew.sh/</a>).  For windows, I recommend anaconda (<a class="reference external" href="https://www.continuum.io/downloads">https://www.continuum.io/downloads</a>).  To check to see if python is installed, you can type</p>
-<blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">some_function</span><span class="p">():</span>
-    <span class="n">interesting</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="hll">    <span class="k">print</span> <span class="s1">&#39;This line is highlighted.&#39;</span>
-</span>    <span class="k">print</span> <span class="s1">&#39;This one is not...&#39;</span>
-<span class="hll">    <span class="k">print</span> <span class="s1">&#39;...but this one is.&#39;</span>
-</span></pre></div>
-</div>
-</div></blockquote>
-<p class="last">python &#8211;version</p>
-</td>
+<tr class="field-odd field"><th class="field-name">python:</th><td class="field-body">STEEP can be used with recent versions of either python 2 or python 3.  To install python on a Mac, I recommend using the installation via homebrew (<a class="reference external" href="http://brew.sh/">http://brew.sh/</a>), although you can also just use the default installed version.  For Windows, I recommend anaconda (<a class="reference external" href="https://www.continuum.io/downloads">https://www.continuum.io/downloads</a>).  To check to see if python is installed, you can type</td>
+</tr>
+<tr class="field-even field"><th class="field-name">twisted:</th><td class="field-body">Twisted is an open source networking engine, more info at <a class="reference external" href="https://twistedmatrix.com/">https://twistedmatrix.com/</a>.  This can be installed with pip using &#8220;pip install twisted&#8221;</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">autobahn:</th><td class="field-body">Autobahn is an open source WebSocket implementation, more info at <a class="reference external" href="http://autobahn.ws/">http://autobahn.ws/</a>.  This can be installed with pip using &#8220;pip install autobahn&#8221;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">STEEP:</th><td class="field-body">The latest version of STEEP can be downloaded from github via the following link: <a class="reference external" href="https://github.com/jnromero/steep/releases/latest">https://github.com/jnromero/steep/releases/latest</a></td>
 </tr>
 </tbody>
 </table>
-<p>in terminal in mac or the command prompt in windows, and you should get an output that looks like &#8220;Python 2.7.10&#8221;
-?
-1
-Python 2.7.10
-After python is installed, you need to install the following packages (you can use the pip python installer)
-twisted - this is used for the networking enginehttps://twistedmatrix.com/
-?
-1
-pip install twisted
-autobahn - this is used for websockets http://autobahn.ws/
-?
-1
-pip install autobahn</p>
 </div>
-<div class="section" id="features">
-<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Be awesome</li>
-<li>Make things faster</li>
-</ul>
-<div class="literal-block-wrapper container" id="this-py">
-<div class="code-block-caption"><span class="caption-text">this.py</span><a class="headerlink" href="#this-py" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span> <span class="s1">&#39;Explicit is better than implicit.&#39;</span>
+<div class="section" id="running-a-simple-experiment">
+<h2>Running a Simple Experiment<a class="headerlink" href="#running-a-simple-experiment" title="Permalink to this headline">¶</a></h2>
+<p>Once you have installed the above requirements, you can run a simple experiment.  Assume that you put the STEEP folder at the following path: /path/to/steep/. Navigate to the directory /path/to/steep/examples/simple/files/ (this can be done in terminal on a Mac or or the command prompt on Windows) by typing:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">cd /path/to/steep/examples/simple/files/</span>
 </pre></div>
 </div>
+<p>Then you can run the server by running the following command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">python experiment.py -l local</span>
+</pre></div>
 </div>
+<p>Once the server is running, you can open the monitor at <a class="reference external" href="http://localhost:24921/monitor.html">http://localhost:24921/monitor.html</a> and several clients at <a class="reference external" href="http://localhost:24921/client.html">http://localhost:24921/client.html</a>.  In this experiment, every client is in the same group, and they have a button to click.  Once the total number of clicks for all subjects is greater than 10, then a new match starts. For a further description of this simple experiment see Description of Simple Experiment.</p>
 </div>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>Install $project by running:</p>
+<div class="section" id="structure-of-an-experiment">
+<h2>Structure of an Experiment<a class="headerlink" href="#structure-of-an-experiment" title="Permalink to this headline">¶</a></h2>
+<p>A STEEP experiment is programmed in three files:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">experiment.css:</th><td class="field-body">This file contains style information for the interface.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">experiment.js:</th><td class="field-body">This file contains javascript code.  In this file you will have function such as &#8220;drawGame&#8221; that will draw the interface for the subjects. You will also have function such as &#8220;makeChoice&#8221; which will select a choice for the subject and contact the server.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">experiment.py:</th><td class="field-body">This file is the main server file.  This file controls every aspect of the experiment, such as making the matchings between subjects, aggregating subjects choices, calculating payoffs, etc.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="subject-ids">
+<h2>Subject IDs<a class="headerlink" href="#subject-ids" title="Permalink to this headline">¶</a></h2>
+<p>When a new client connects to a STEEP server, it is automatically assigned a subjectID.  The default behavior is to call subjects &#8220;subject1&#8221;, &#8220;subject2&#8221;, and so on as they join the experiment.</p>
+</div>
+<div class="section" id="sending-messages">
+<h2>Sending Messages<a class="headerlink" href="#sending-messages" title="Permalink to this headline">¶</a></h2>
+<p>The main functionality of STEEP is to provide a simple way for experimenters to set up a connection between a python server and web clients in a way that will be accessible and useful for running economics experiments.  Therefore, the most important and basic feature of STEEP is sending messages.  There are two types of messages: client to server and server to client.</p>
+<div class="section" id="server-to-client">
+<h3>Server to Client<a class="headerlink" href="#server-to-client" title="Permalink to this headline">¶</a></h3>
+<p>Since the server is a python server, the server to client messages are sent from python using code as follows:</p>
 <blockquote>
-<div>install project</div></blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">msg</span><span class="o">=</span><span class="p">{}</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;updatePeriodPayoffs&quot;</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;payoffs&#39;</span><span class="p">]</span><span class="o">=</span><span class="mf">2.25</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">26</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">messageToId</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="s2">&quot;subject1&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="contribute">
-<h2>Contribute<a class="headerlink" href="#contribute" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Issue Tracker: github.com/$project/$project/issues</li>
-<li>Source Code: github.com/$project/$project</li>
-</ul>
+</div></blockquote>
+<p>This code will send the message to the client with subjectID &#8220;subject1&#8221;.  All messages must be a dictionary and have a &#8220;type&#8221; key.  This example message has a &#8220;type&#8221; key of &#8220;updatePeriodPayoffs&#8221;.  When the client receives this message, it will automatically run a javascript function with the name of the &#8220;type&#8221; key.  So if a client receives the above message, then it would run a function like this:</p>
+<blockquote>
+<div><div class="highlight-javacript"><div class="highlight"><pre><span></span>function updatePeriodPayoffs(msg){
+   document.getElementById(&quot;periodPayoff&quot;).innerHTML=msg[&#39;payoffs&#39;];
+   document.getElementById(&quot;currentPeriod&quot;).innerHTML=msg[&#39;period&#39;];
+}
+</pre></div>
+</div>
+</div></blockquote>
+<p>The javascript function will have access to the entire msg dictionary, so any relevant information that the server needs to communicate to the client can be put in this dictionary.</p>
+</div>
+<div class="section" id="client-to-server">
+<h3>Client to Server<a class="headerlink" href="#client-to-server" title="Permalink to this headline">¶</a></h3>
+<p>Since the client is sending messages with javascript to a python server, the client to server messages are sent from javascript using code as follows:</p>
+<blockquote>
+<div><div class="highlight-javacript"><div class="highlight"><pre><span></span>msg={}
+msg[&#39;type&#39;]=&quot;makeChoice&quot;
+msg[&#39;choice&#39;]=&quot;c&quot;;
+msg[&#39;period&#39;]=45;
+sendMessage(msg);
+</pre></div>
+</div>
+</div></blockquote>
+<p>This code will send the message to the python server.  All messages must be a dictionary and have a &#8220;type&#8221; key.  This example message has a &#8220;type&#8221; key of &#8220;makeChoice&#8221;.  When the server receives this message, it will automatically run a python function with the name of the &#8220;type&#8221; key.  So if the server receives the above message, then it would run a function like this:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">makeChoice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">msg</span><span class="p">):</span>
+   <span class="n">subjectID</span><span class="o">=</span><span class="n">msg</span><span class="p">[</span><span class="s1">&#39;subjectID&#39;</span><span class="p">]</span>
+   <span class="n">thisPeriod</span><span class="o">=</span><span class="n">msg</span><span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">]</span>
+   <span class="n">thisChoice</span><span class="o">=</span><span class="n">msg</span><span class="p">[</span><span class="s1">&#39;choice&#39;</span><span class="p">]</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">subjectID</span><span class="p">]</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="n">thisPeriod</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">thisChoice</span><span class="p">,</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The python function will have access to the entire msg dictionary, so any relevant information that the client needs to communicate to the server can be put in this dictionary.  In addition, the &#8220;subjectID&#8221; key will be added to the msg dictionary automatically so that the server can identify which client the message came from.</p>
+</div>
 </div>
 <div class="section" id="support">
 <h2>Support<a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h2>
@@ -235,7 +274,7 @@ We have a mailing list located at: <a class="reference external" href="mailto:pr
 </div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
-<p>The project is licensed under the BSD license.</p>
+<p>The project is licensed under the MIT license.</p>
 </div>
 </div>
 
