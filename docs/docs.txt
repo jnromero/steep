@@ -1,0 +1,11 @@
+*Overview
+
+Steep is a minimal framework that allows for interaction between a server (python) and web browser clients (javascript/html/css) via websockets.  Steep is simple, and doesn't have a lot of built in features, which allows for flexibility.  Experimenters can then use the plethora of online resources dedicated to programing of webapps using CSS and Javascript.
+
+*Installation
+
+In order to test STEEP, the following four things must be downloaded/installed:
+    python - STEEP can be used with recent versions of either python 2 or python 3.  To install python on a Mac, I recommend using the installation via homebrew (http://brew.sh/), although you can also just use the default installed version.  For Windows, I recommend anaconda (https://www.continuum.io/downloads).  To check to see if python is installed, you can type
+    twisted - Twisted is an open source networking engine, more info at https://twistedmatrix.com/.  This can be installed with pip using "pip install twisted".
+    autobahn - Autobahn is an open source WebSocket implementation, more info at http://autobahn.ws/.  This can be installed with pip using "pip install autobahn".
+    STEEP - The latest version of STEEP can be downloaded from github via the following link: https://github.com/jnromero/steep/releases/latest

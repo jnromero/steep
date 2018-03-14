@@ -1,0 +1,243 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shCore.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushJScript.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushCss.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushPython.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushPlain.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushBash.js"></script>
+    <link href="syntaxhighlighter_3.0.83/styles/shCore.css" rel="stylesheet" type="text/css" />
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="syntaxhighlighter_3.0.83/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div id="mainDiv">
+        <div id="sidebar">
+            <ul>
+                <li><a href="#Overview">Overview</a></li>
+                <li><a href="#Requirements">Requirements</a></li>
+                <li><a href="#Running">Running a simple experiment</a></li>
+                <li><a href="#Description">Description of simple experiment</a></li>
+            </ul>
+        </div>
+        <div id="container">
+            <A NAME="Overview">
+                <h1 class="title">Overview</h1>
+                STEEP - Simple Toolbox for Experimental Economics Programming is a minimal framework that allows for interaction between a python server and web browser clients (via javascript).  STEEP is simple, and doesn't have a lot of built in features, which allows for a lot of flexibility.
+            <A NAME="Requirements">
+                <h1 class="title">Requirements</h1>
+                <ul>
+                    <li> python 2.7</li>
+                    <ul>
+                        <li>For mac, I recommend using the installation via homebrew (<a href="http://brew.sh/">http://brew.sh/</a>).</li>
+                        <ul>
+                            <li> To install homebrew type this in terminal: </li>
+                            <pre class="brush: plain">/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</pre>
+                            <li>Then to install python:</li>
+                            <pre class="brush: plain">brew install python</pre>
+                        </ul>
+                        <li>For windows, I know people use anaconda (<a href="https://www.continuum.io/downloads">https://www.continuum.io/downloads</a>).
+                            <li>To check to see if python is installed, you can type
+                                <pre class="brush: plain">python --version</pre> in terminal in mac or the command prompt in windows, and you should get an output that looks like "Python 2.7.10"
+                                <pre class="brush: plain">Python 2.7.10</pre>
+                    </ul>
+                    <li>After python is installed, you need to install the following packages (you can use the pip python installer)</li>
+                    <ul>
+                        <li>twisted - this is used for the networking engine<a href="https://twistedmatrix.com/">https://twistedmatrix.com/</a></li>
+                        <pre class="brush: plain">pip install twisted</pre>
+                        <li>autobahn - this is used for websockets <a href="http://autobahn.ws/">http://autobahn.ws/</a></li>
+                        <pre class="brush: plain">pip install autobahn</pre>
+                    </ul>
+                </ul>
+                <!-- Finally, to actually run the highlighter, you need to include this JS on your page -->
+                <script type="text/javascript">
+                SyntaxHighlighter.all()
+                </script>
+                <A NAME="Running">
+                    <h1 class="title">Running a simple experiment</h1>
+                    <ul>
+                        <li>This will tell you how to run a simple experiment. In the experiment, each client of the experiment will have a button. Once the button has been pressed 10 times (counting all client's presses), it will move on to the next match.
+                            <li>Download the zip folder containing <a href="https://github.com/jnromero/steep/releases">steep</a> and the <a href="https://github.com/jnromero/simple/releases">simple experiment</a>. 1. The steep folder is where all of the main files reside, these should probably not be edited. 2. the simple experiment folder is an example of an experiment. The main setup to run experiments requires you to have the steep folder and the experiment folder. The example experiment folder is "simple". For example, you may have the following folder structure:
+                            </li>
+                            <pre class="brush: plain">
+/Users/myUsername/experiments/steep
+/Users/myUsername/experiments/simple
+</pre>
+                            <li>Once you have the folders set up like this, you will need to edit the file in "/Users/myUsername/experiments/simple/config.py" so the the beginning looks like this:
+                                <pre class="brush: python">
+#!/usr/bin/python
+
+import pickle
+import os
+scriptPath=os.path.dirname(os.path.realpath(__file__))
+
+def defaultSettings(location,configFile,serverStartString):
+    config={}
+
+    config['packageFolder']="/steep/"
+    config['currentExperiment']="/simple/"
+    config['screenServerPort']=1234
+
+    if location=="myComputer":
+        config['webServerRoot']="/Users/myUsername/experiments/"
+        config['serverType']="regularExperiment"    
+        config['serverPort']=2345
+        config['webSocketPort']=3456
+        ip="localhost"
+        config["domain"]="http://"+ip+":"+str(config['serverPort'])
+        config["websocketURL"]="ws://"+ip+":"+str(config['webSocketPort'])
+        config["screenServer"]="http://"+ip+":"+str(config['screenServerPort'])
+    # elif location=="labComputer":
+    #   config['webServerRoot']="/Users/labAdmin/myUsername/experiments/"
+    #   config['serverType']="regularExperiment"    
+    #   config['serverPort']=4567
+    #   config['webSocketPort']=5678
+    #   ip="12.345.67.89"
+    #   config["domain"]="http://"+ip+":"+str(config['serverPort'])
+    #   config["websocketURL"]="ws://"+ip+":"+str(config['webSocketPort'])
+    #   config["screenServer"]="http://"+ip+":"+str(config['screenServerPort'])
+</pre> Pretty much the only line that you will need to edit line 15, where you will put your path. On a Mac, it will look something like:
+                                <pre class="brush: python">config['webServerRoot']="/Users/myUsername/experiments/"</pre> On windows it might look something like:
+                                <pre class="brush: python">config['webServerRoot']="C:/Users/myUsername/experiments/"</pre> Note that for windows, you will keep the slashes as forward slashes, and not the backslashes that windows typically uses.
+                            </li>
+                            <li>You also need to make sure that the path on line 15 plus the path on line 10 is where you put the STEEP folder (/Users/myUsername/experiments/steep/ in this example) and the path on line 15 plus the path on line 11 is where you put the "simple" folder (/Users/myusername/experiments/simple/ in this example).  Note that a path with multiple slashes is fine (/Users//myusername///experiments///simple).
+                                <li>Once this is setup, you can run the program by moving to the steep/python folder in terminal on a mac or the command prompt on windows by doing this:
+                                    <pre class="brush: bash">cd /Users/myUsername/experiments/steep/python/</pre> Then you can run the program like this:
+                                    <pre class="brush: bash">python server.py -c "/Users/myUsername/experiments/simple/files/config.py" -l myComputer -d True</pre> to see all of the options you can run
+                                    <pre class="brush: bash">python server.py -h</pre>
+                                </li>
+                                <li>If you want to run the server on a different computer you can comment out the following 9 lines, and edit the code for those. This would be useful for example to run it on a lab computer or a web server.</li>
+                                <li>If everything is working correctly, when you run this command, the main experiment page should pop open.  You can open new clients by clicking the "Client" button and have it open the link in a new tab.  Then you can see the server monitor page by clicking "Moniter".  Once you have opened at least 1 client, and the monitor page, you can start the experiment by sliding the "Accepting Clients" slider to "Not Accepting Clients" and then clicking "Start Experiment".</li>
+                    </ul>
+                    <A NAME="Description">
+                        <h1 class="title">Description of the simple experiment</h1>
+                        <ul>
+                            <li>The experiment folder (/Users/myUsername/experiments/simple in the example above) should contain two subfolders called files/ and data/.</li>
+                            <li>The files/ subfolder will contain four files:
+                                <pre class="brush: plain">
+/Users/myUsername/experiments/simple/files/config.py
+/Users/myUsername/experiments/simple/files/experiment.py
+/Users/myUsername/experiments/simple/files/experiment.js
+/Users/myUsername/experiments/simple/files/experiment.css
+</pre></li>
+                            <li>The config.py file is explained in the previous section, and doesn't need to be included in the files/ subfolder.</li>
+                            <li>The experiment.py, experiment.js, and experiment.css files need to have those specific names and need to be placed in the files/ subfolder. </li>
+                            <ul>
+                                <li>The python file (experiment.py) will define the python server code,</li>
+                                <li>the javascript file (experiment.js) will define the browser based functions, such as what elements to include, and what to do when a button is clicked.</li>
+                                <li>the css file (experiment.css) will define the style of the interface, such as what colors things should be and where they should be located.</li>
+                            </ul>
+                            <li>The key interaction between the javascript based client and the python based server is sending a message via websockets.</li>
+                            <li class="important">Sending message from javascript to python.</li>
+                            <ul>
+                                <li>To send a message form javascript to python, first we define a function in javascript like this (from simple/files/experiment.js):</li>
+                                <pre class="brush: js">
+function makeChoiceButtonClicked(someVariable) {
+    var message = { "type": "makeChoice", "variable": someVariable };
+    sendMessage(message);
+}
+</pre>
+                                <li>When the python server receives this message, it will run the function "self.makeChoice" from experimentClass:</li>
+                                <pre class="brush: py">
+   def makeChoice(self,message,client):
+      sid=client.subjectID #subject ID of client that sent message
+      messageType=message['type']#given the above message this would be "makeChoice"
+      variable=message['variable']#given the above message this would be whatever value someVariable had
+</pre>
+                            </ul>
+                            <li class="important">Sending message from python to javascript.</li>
+                            <ul>
+                                <li>To send a message form python to javascript, first we define a function in python in the experimentClass like this (from simple/files/experiment.py):</li>
+                                <pre class="brush: py">
+   def sendParameters(self,sid):
+      msg={}
+      msg['payoffVariable']=2
+      msg['type']="sendParameters"
+      self.customMessage(sid,msg)
+</pre>
+                                <li>When the javascript client receives this message, it will run the function "sendParameters" with the input message:</li>
+                                <pre class="brush: js">
+function sendParameters(message) {
+    alert(message['payoffVariable']);
+}
+</pre>
+                            </ul>
+                            <li class="important">Subject status.</li>
+                            <ul>
+                                <li>The way I typically write programs, and how the simple experiment is written, is using the subject status. Each subject has a status on the server, which can be updated by the server. The server sends the status to the client, which defines what the current page should look like.</li>
+                                <li>The status is defined like:
+                                    <pre class="brush: py">
+      self.status={}
+      self.status['page']="generic"
+      self.status['message']=["Please read, sign, and date your consent form. <br> You may read over the instructions as we wait to begin."]
+</pre> or
+                                    <pre class="brush: py">
+         self.data[sid].status={"page":"game","numberClicks":0,"currentMatch":self.currentMatch}
+</pre>
+                                    <li>To update a client with the current status of a subject, there is a built in function called updateStatus where you can send the subjects status to the client with self.updateStatus(subjectID):</li>
+                                    <pre class="brush: py">
+   def updateStatus(self,subjectID):
+      msg={}
+      msg['type']='updateStatus'
+      msg['status']=self.data[subjectID].status
+      self.customMessage(subjectID,msg)
+</pre>
+                                    <li>When the client gets this, it sets the global variable window.state=message['status'] and then runs the function statusManager, tells the javascript what to do for any given status. The example from experiment.js looks like this: </li>
+                                    <pre class="brush: js">
+function statusManager() {
+    thisStatus = window.state;
+    console.log(thisStatus)
+    if (thisStatus[0] == -1) {
+        message = "Loading...";
+        genericScreen(message);
+    } else if (thisStatus["page"] == "generic") {
+        clearAll();
+        genericScreen(thisStatus["message"]);
+    } else if (thisStatus["page"] == "game") {
+        clearAll();
+        drawButton();
+        drawMatch(thisStatus['currentMatch']);
+        drawStatus(thisStatus['numberClicks']);
+    } else if (thisStatus["page"] == "postMatch") {
+        clearAll();
+        genericScreen("That match is over");
+    }
+}
+</pre>
+                                    <li>Note: The self.customMessage function will automatically set msg['status']=self.data[sid].status, and then when the javascript receives it, it will automatically set a global variable window.state=message['status'], so that the updated status will always be available in any function. </li>
+                            </ul>
+                        </ul>
+                    <li class="important">Saving Data.</li>
+                            <ul>
+                                <li>The program will automatically pickle the object experimentClass.data every 10 seconds, so <bf>all data that needs to be saved should be stored in that object.</bf></li>
+                                <li>By default, experimentClass.data['subjectIDs'] is a list of all subjectIDs of subjects that have registered with the experiment.  For example if there are 4 subjects, this list might look like:</li>
+                                                                    <pre class="brush: py">
+['CLTTYBQ4','YN5YYE5E','PQM8Y08X','K33IUO79']
+</pre>
+                                <li>The data for each subject is stored in the subjectClass which is defined in experiment.py  </li>
+                                    <pre class="brush: py">
+class subjectClass():
+   def __init__(self):
+      #the subjectID is automatically defined in server.py, and can be accessed with self.subjectID
+      #every time the client clicks the button will be recorded here.
+      self.choices=[]
+      #the total payoffs are recorded here
+      self.totalPayoffs=0
+      #the subject status is initialized here.  Any time this is changed, you can update the client with self.updateStatus(subjectID)
+      self.status={}
+      self.status['page']="generic"
+      self.status['message']=["Please read, sign, and date your consent form. <br> You may read over the instructions as we wait to begin."]
+</pre>
+<li>The subjectClass for a specific subject is stored in experimentClass.data[subjectID] where subjectID is a string (for example 'CLTTYBQ4' from above).</li>
+<li>As an example, in the simple experiment data is stored by the following:
+                                    <pre class="brush: py">
+      self.data[sid].choices.append([self.currentMatch,self.data['currentClicks'][self.currentMatch]])
+</pre>
+This adds an element to the list self.data[sid].choices which contains [currentMatch,numberofClicks] to record when a subject clicks the button in a given match. </li>
+        </div>
+    </div>
+</body>
+
+</html>
