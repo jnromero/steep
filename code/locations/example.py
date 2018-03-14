@@ -1,5 +1,4 @@
 def getLocation(config):
-	config['webServerRoot']="/Users/myUsername/experiments/"
 	config['serverType']="regularExperiment"	
 	config['serverPort']=2345
 	config['webSocketPort']=3456
