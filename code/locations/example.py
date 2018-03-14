@@ -6,5 +6,4 @@ def getLocation(config):
 	ip="localhost"
 	config["domain"]="http://"+ip+":"+str(config['serverPort'])
 	config["websocketURL"]="ws://"+ip+":"+str(config['webSocketPort'])
-	config["screenServer"]="http://"+ip+":"+str(config['screenServerPort'])
 	return config

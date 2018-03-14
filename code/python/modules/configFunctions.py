@@ -4,8 +4,8 @@ import os
 def setOtherFileLocations(config):
 	config['dataFolder']=config['currentExperiment']+"/data/"+config['serverStartString']+"/"
 
-	#config['configJsURL']=config['domain']+config['dataFolder']+"/config.js"
-	config['configJsURL']=config['dataFolder']+"/config.js"
+	config['configJsURL']=config['domain']+config['dataFolder']+"/config.js"
+	config['configJsRelative']=config['dataFolder']+"/config.js"
 	config['configJsPath']=config['webServerRoot']+config['configJsURL']
 
 	config['dataFileRelativePath']=config['dataFolder']+"/%s.pickle"%(config['serverStartString'])
@@ -29,7 +29,7 @@ def setOtherFileLocations(config):
 def writeJavascriptConfigFile(config):
 	string="window.config=%s;"%(config)
 	string=string.replace(",",",\n\t")
-	file = open(config['webServerRoot']+config['configJsURL'],'w')
+	file = open(config['webServerRoot']+config['configJsRelative'],'w')
 	file.writelines(string)
 	file.close() 
 
