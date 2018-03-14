@@ -39,9 +39,8 @@ for a,b in zip(experimentDirectory.split("/"),steepDirectory.split("/")):
       config['webServerRoot']+=a+"/"
    else:
       break
-config['currentExperiment']="/"+experimentDirectory.replace(config['webServerRoot'],"")+"/"
-config['packageFolder']="/"+steepDirectory.replace(config['webServerRoot'],"")+"/"
-
+config['currentExperiment']=experimentDirectory.replace(config['webServerRoot'],"")+"/"
+config['packageFolder']=steepDirectory.replace(config['webServerRoot'],"")+"/"
 try:
    locationSettings = imp.load_source('locationSettings',steepDirectory+'/locations/%s.py'%(options.location))
    if options.location=="local":
