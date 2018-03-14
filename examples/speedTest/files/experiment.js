@@ -7,7 +7,7 @@ function sendParameters(msg){
 }
 
 function updateNumberClicks(msg){
-    console.log(msg['number']);
+    console.log(msg['number'],new Date().getTime());
     document.getElementById("numberClicks").innerHTML="There have been " + msg['number'] + " clicks so far.";
 }
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
