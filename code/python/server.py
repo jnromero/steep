@@ -5,19 +5,25 @@ import time
 import shutil
 import os
 import webbrowser
+import pathlib
 #This is the name of the directory of the module that imported this module
-experimentDirectory=os.path.abspath(os.path.dirname(os.path.abspath(sys.modules['__main__'].__file__))+"/../")
+experimentDirectory = pathlib.Path(sys.modules['__main__'].__file__).absolute().parents[1]
 #this is the name of the directory that contains the folder containgin this file, in other words: ../
-steepDirectory=os.path.abspath(os.path.dirname(os.path.abspath(os.path.realpath(__file__)))+"/../")
+steepDirectory = pathlib.Path(__file__).absolute().parents[1]
+#this is the first path that both the steepDirectory and experimentDirectory have in common
+for x in steepDirectory.parents:
+   if x in experimentDirectory.parents:
+      webServerRoot=x
+      break
 
-functions = imp.load_source('functions', steepDirectory+"/python/modules/functions.py")
+functions = imp.load_source('functions',str(steepDirectory.joinpath('python', 'modules','functions.py')))
 from twisted.internet import reactor
 from twisted.web.server import Site
 from autobahn.twisted.websocket import listenWS
 
 
 #load options module
-optionsCommands = imp.load_source('optionsCommands', steepDirectory+"/python/modules/optionsCommands.py")
+optionsCommands = imp.load_source('optionsCommands',str(steepDirectory.joinpath('python', 'modules','optionsCommands.py')))
 options=optionsCommands.getOptions()
 
 #get server Start Time String.  This is used for log and data files
@@ -33,16 +39,11 @@ if options.saveData=="False":
 #set Location for config
 config={}
 config['location']=options.location
-config['webServerRoot']=""
-for a,b in zip(experimentDirectory.split("/"),steepDirectory.split("/")):
-   if a==b:
-      config['webServerRoot']+=a+"/"
-   else:
-      break
-config['currentExperiment']=experimentDirectory.replace(config['webServerRoot'],"")+"/"
-config['packageFolder']=steepDirectory.replace(config['webServerRoot'],"")+"/"
+config['webServerRoot']=str(webServerRoot)+"/"
+config['currentExperiment']="/"+str((experimentDirectory.relative_to(webServerRoot)))+"/"
+config['packageFolder']="/"+str((steepDirectory.relative_to(webServerRoot)))+"/"
 try:
-   locationSettings = imp.load_source('locationSettings',steepDirectory+'/locations/%s.py'%(options.location))
+   locationSettings = imp.load_source('locationSettings',str(steepDirectory.joinpath('locations','%s.py'%(options.location))))
    if options.location=="local":
       config=locationSettings.getLocation(config,options.ipAddress)#can add ip address if running local.
    else:
@@ -60,15 +61,14 @@ config['serverStartString']=serverStartString
 restartString=optionsCommands.getRestartString(config)
 config['restartString']=restartString
 
-
-configFunctions = imp.load_source('configFunctions', steepDirectory+"/python/modules/configFunctions.py")
+configFunctions = imp.load_source('configFunctions',str(steepDirectory.joinpath('python', 'modules','configFunctions.py')))
 config=configFunctions.setOtherFileLocations(config)
 configFunctions.writeJavascriptConfigFile(config)
 
 #blank function place holder for furutre monitor message that will be used to update console page on demand
 def testFunction():
    pass
-logger = imp.load_source('logger',steepDirectory+"/python/modules/logger.py")
+logger = imp.load_source('logger',str(steepDirectory.joinpath('python', 'modules','logger.py')))
 thisLogCounter= logger.logCounter()
 sys.stdout = logger.SteepLogger(sys.stdout,"stdout",config,thisLogCounter,testFunction)
 sys.stderr = logger.SteepLogger(sys.stderr,"stderr",config,thisLogCounter,testFunction)
@@ -153,7 +153,7 @@ for k in config:
 
 
 #load the experiment file
-experimentFile=experimentDirectory+"/files/experiment.py"
+experimentFile = str(experimentDirectory.joinpath('files','experiment.py'))
 experiment = imp.load_source('experiment', experimentFile)
 from experiment import experimentClass
 from experiment import subjectClass
@@ -167,18 +167,18 @@ shutil.copyfile(experimentFile.replace(".py",".js"),dataFolderFiles+"/experiment
 shutil.copyfile(experimentFile.replace(".py",".css"),dataFolderFiles+"/experiment.css")
 
 #load webServer module
-steepWebServer = imp.load_source('steepWebSockets', steepDirectory+"/python/modules/webServer.py")
+steepWebServer = imp.load_source('steepWebServer',str(steepDirectory.joinpath('python', 'modules','webServer.py')))
 
 #load websockets module
-steepWebSockets = imp.load_source('steepWebSockets', steepDirectory+"/python/modules/webSockets.py")
+steepWebSockets = imp.load_source('steepWebSockets',str(steepDirectory.joinpath('python', 'modules','webSockets.py')))
 from steepWebSockets import SteepWebSocketFactory
 
 #load mainServer module
-steepMainServer = imp.load_source('steepMainServer', steepDirectory+"/python/modules/mainServer.py")
+steepMainServer = imp.load_source('steepMainServer',str(steepDirectory.joinpath('python', 'modules','mainServer.py')))
 from steepMainServer import SteepMainServer
 
 #load quiz module
-steepQuiz = imp.load_source('steepQuiz', steepDirectory+"/python/modules/quiz.py")
+steepQuiz = imp.load_source('steepQuiz',str(steepDirectory.joinpath('python', 'modules','quiz.py')))
 from steepQuiz import SteepQuiz
 
 #load questionnaire module
@@ -221,17 +221,17 @@ if 'instructions' in config:
    from experimentInstructions import ExperimentInstructions
    
    #load instructions module
-   steepInstructions = imp.load_source('steepInstructions', steepDirectory+"/python/modules/instructions.py")
+   steepInstructions = imp.load_source('steepInstructions',str(steepDirectory.joinpath('python', 'modules','instructions.py')))
    from steepInstructions import SteepInstructions
 
 
 
 #load monitor module
-steepMonitor = imp.load_source('steepMonitor', steepDirectory+"/python/modules/monitor.py")
+steepMonitor = imp.load_source('steepMonitor',str(steepDirectory.joinpath('python', 'modules','monitor.py')))
 from steepMonitor import monitorClass
 
 #load timer module
-steepTimer = imp.load_source('steepTimer', steepDirectory+"/python/modules/timer.py")
+steepTimer = imp.load_source('steepTimer',str(steepDirectory.joinpath('python', 'modules','timer.py')))
 from steepTimer import SteepTimerManager
 
 class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepQuiz,ExperimentQuiz,SteepTimerManager,ExperimentInstructions,ExperimentQuestionnaire):

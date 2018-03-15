@@ -6,7 +6,7 @@ def setOtherFileLocations(config):
 
 	config['configJsURL']=config['domain']+config['dataFolder']+"/config.js"
 	config['configJsRelative']=config['dataFolder']+"/config.js"
-	config['configJsPath']=config['webServerRoot']+config['configJsURL']
+	config['configJsPath']=config['webServerRoot']+config['dataFolder']+"/config.js"
 
 	config['dataFileRelativePath']=config['dataFolder']+"/%s.pickle"%(config['serverStartString'])
 	config['dataFolderURL']=config['domain']+config['currentExperiment']+"/data/"+config['serverStartString']+".zip"

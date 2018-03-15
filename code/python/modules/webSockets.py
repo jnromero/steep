@@ -2,6 +2,7 @@ from __future__ import print_function,division,absolute_import
 import json
 from autobahn.twisted.websocket import WebSocketServerFactory,WebSocketServerProtocol,listenWS
 import time
+import pickle 
 
 class SteepWebSocketProtocol(WebSocketServerProtocol):
    def onOpen(self):
