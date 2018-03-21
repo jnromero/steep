@@ -444,6 +444,43 @@ function multipleMessages(incoming){
     }
 }
 
+function copyObject(obj){
+    var objectOut=JSON.parse(JSON.stringify(obj));
+    return objectOut
+}
+
+function combineObjects(dict1,dict2){//dict1 has priority over dict2
+    let this1=copyObject(dict1);
+    let this2=copyObject(dict2);
+    let output={}
+    for(let k in this1){
+        if(!(k in this2)){
+            //add to final if in this1 but no this2
+            output[k]=copyObject(this1[k]);
+        }
+        else{//key in both
+            if((typeof this1[k]=="number" || typeof this1[k]=="string") && (typeof this2[k]=="number" || typeof this2[k]=="string")){
+                output[k]=copyObject(this1[k]);//this 1 takes priority
+            }
+            else if(typeof this1[k]=="object" && typeof this2[k]=="object"){
+                //both objects
+                output[k]=combineObjects(this1[k],this2[k]);
+            } 
+            else{
+                console.log("the following key is mixed with objects and strings and numbers")
+                console.log(k)
+            }
+        }
+    }
+    for(let k in this2){
+        if(!(k in this1)){
+            //add to final if in this2 but no this1
+            output[k]=copyObject(this2[k])
+        }
+    }
+    return output
+}
+
 
 
 function updateTimers(incoming){
