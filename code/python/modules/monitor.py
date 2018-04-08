@@ -11,7 +11,7 @@ class monitorClass():
       if 'monitorTableSortColumn' not in self.data:
          self.data['monitorTableSortColumn']=0
          self.data['monitorTableSortType']=0
-         self.data['monitorTableInfo']="none"#
+         self.data['monitorTableInfo']=[["delete","delete"]]
       self.updateMonitorTableEntries()
    #Monitor Stuff
 
@@ -61,18 +61,24 @@ class monitorClass():
       self.monitorMessage()
       self.updateTaskTable()
 
+
+
    def updateMonitorTableEntries(self):
       extra=[
          ['#'              ,'k'],
-         ['subjectID'      ,'"<a href=\'javascript:void(0)\' onclick=\'refreshClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)'],
+         ['Refresh'      ,'"<a href=\'javascript:void(0)\' onclick=\'refreshClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)'],
          ['Connection'     ,'self.data[sid].connectionStatus']
       ]
+
       if self.data['monitorTableInfo'][0][0]=="#":
          "already Added"
       elif self.data['monitorTableInfo']=="none":
          self.data['monitorTableInfo']=extra
       else:
          self.data['monitorTableInfo']=extra+self.data['monitorTableInfo']
+
+      #replace ["delete","delete"] with subject delete button
+      self.data['monitorTableInfo'] = [x if x!=["delete","delete"] else ['Delete','"<a href=\'javascript:void(0)\' onclick=\'deleteClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)'] for x in self.data['monitorTableInfo']]
 
    def getMonitorTable(self):
       tableData={}
