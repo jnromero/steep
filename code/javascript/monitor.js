@@ -314,11 +314,22 @@ function sendToServer(args){
 }
 
 function refreshClient(args){
-  sid=args[0];
+  var sid=args[0];
   msg={}
   msg['type']="refreshMyPage";
-  msg['sid']=sid;
+  msg['subjectIDIncoming']=sid;
   var confirmation=confirmAction("Are you sure you want to refresh "+sid+"??");
+  if(confirmation){
+    sock.send(JSON.stringify(msg));
+  }
+}
+
+function deleteClient(args){
+  var sid=args[0];
+  msg={}
+  msg['type']="deleteThisClient";
+  msg['subjectIDIncoming']=sid;
+  var confirmation=confirmAction("Are you sure you want to delete subject "+sid+"??");
   if(confirmation){
     sock.send(JSON.stringify(msg));
   }
