@@ -72,6 +72,14 @@ function clickButton(buttonType, divID, func) {
   });
 }
 
+function removeAllListeners(divID){
+    var thisDiv = document.getElementById(divID);
+    var clone = thisDiv.cloneNode();
+    while (thisDiv.firstChild) {
+        clone.appendChild(thisDiv.lastChild);
+    }
+    thisDiv.parentNode.replaceChild(clone,thisDiv);
+}
 
 
 
@@ -459,7 +467,7 @@ function combineObjects(dict1,dict2){//dict1 has priority over dict2
             output[k]=copyObject(this1[k]);
         }
         else{//key in both
-            if((typeof this1[k]=="number" || typeof this1[k]=="string") && (typeof this2[k]=="number" || typeof this2[k]=="string")){
+            if((typeof this1[k]=="number" || typeof this1[k]=="string" || this1[k] instanceof Array) && (typeof this2[k]=="number" || typeof this2[k]=="string" || this2[k] instanceof Array)){
                 output[k]=copyObject(this1[k]);//this 1 takes priority
             }
             else if(typeof this1[k]=="object" && typeof this2[k]=="object"){
@@ -528,7 +536,6 @@ function statusManager(){
 function updateStatus(msg) {
     statusManager();
 }
-
 
 mainDiv = createDiv("mainDiv");
 $("body").prepend(mainDiv);
