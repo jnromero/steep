@@ -106,6 +106,9 @@ class SteepMainServer():
       elif pathName.split("/")[-1]=="console.html":
          viewType="console"
          subjectID="console"
+      elif pathName.split("/")[-1]=="tester.html":
+         viewType="tester"
+         subjectID="tester"
       elif pathName.split("/")[-1]=="client.html":
          viewType="regular"
          for k in range(1,1000):
@@ -153,6 +156,8 @@ class SteepMainServer():
             print("New monitor client")
             self.monitorClients.append(client)
             self.updateTaskTable()
+         elif viewType=="tester":
+            print("New tester client")
          elif viewType=="console":
             print("New console client")
             self.consoleClients.append(client)
@@ -242,13 +247,14 @@ class SteepMainServer():
       self.updateStatus(subjectID)
 
    def deleteSubject(self,subjectID):
+      print("Deleteing subject "+subjectID)
       self.data['subjectIDs'].remove(subjectID)
       if subjectID in self.data:
          del self.data[subjectID]
       else:
          print("Trying to delete %s from self.data, but not there"%(subjectID))
       if subjectID in self.clientsById:
-         del self.clientsById[subjectID]
+         self.clientsById[subjectID].sendClose()
       else:
          print("Trying to delete %s from self.clientsById, but not there"%(subjectID))
 
@@ -353,8 +359,11 @@ class SteepMainServer():
    def refreshMyPage(self,message,client):
       msg={}
       msg['type']="refreshMyPage"
-      print(message)
-      return self.messageToId(msg,message['sid'],"send")
+      return self.messageToId(msg,message['subjectIDIncoming'],"send")
+
+   def deleteThisClient(self,message,client):
+      self.deleteSubject(message['subjectIDIncoming'])
+      self.monitorMessage()
 
 
    def stopPythonServer(self,message,client):

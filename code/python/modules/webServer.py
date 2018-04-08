@@ -37,7 +37,7 @@ class RequestHandler(Resource):
          filename="/serverInfo.py"
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
-      elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html","/serverInfo.html"]:
+      elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html","/serverInfo.html","/tester.html"]:
          ext=".py"
          filename=thisPath.replace(".html",".py").replace("/","")
          fileFolder=self.config['packageFolder']+"/html/"

@@ -45,6 +45,7 @@ def getFiles(config):
     files["exp"]['config.js']=config["configJsURL"]
     files["exp"]['experiment.css']=experimentURL+"files/experiment.css"
     files["exp"]['experiment.js']=experimentURL+"files/experiment.js"
+    files["exp"]['tester.js']=experimentURL+"files/tester.js"
 
     if "instructionsFolder" in config:
         instructionsFolder=experimentURL+config['instructionsFolder']
