@@ -26,28 +26,6 @@ class SteepTimerManager():
       if len(args2)>1:
          self.timerFunctions[timerName]=reactor.callLater(*args2)
 
-
-      # if subjectID=="all":
-      #    self.data['timer']=[time.time(),time.time(),duration]
-      #    # print(self.data['timer'])
-      #    if self.timerFunctions.cancelled==0 and self.timerFunction.called==0:
-      #       self.timerFunction.cancel()
-      #    if len(args2)>1:
-      #       self.timerFunction=reactor.callLater(*args2)
-      # elif subjectID=="all2":
-      #    self.data['timer2']=[time.time(),time.time(),duration]
-      #    # print(self.data['timer'])
-      #    if self.timerFunction2.cancelled==0 and self.timerFunction2.called==0:
-      #       self.timerFunction2.cancel()
-      #    if len(args2)>1:
-      #       self.timerFunction2=reactor.callLater(*args2)
-      # else:
-      #    self.data[subjectID].timer=[time.time(),time.time(),duration]
-      #    if self.subjectTimerFunctions[subjectID].cancelled==0 and self.subjectTimerFunctions[subjectID].called==0:
-      #       self.subjectTimerFunctions[subjectID].cancel()
-      #    if len(args2)>1:
-      #       self.subjectTimerFunctions[subjectID]=reactor.callLater(*args2)
-
    def updateTimer(self,timer):
       #timer=currentTime,startTime,totalTime
       timer[0]=time.time()
