@@ -84,10 +84,13 @@ function removeAllListeners(divID){
 
 
 function keyNameToKeyCode(keyName){
+  //http://keycode.info/
   if(keyName=="left"){var keyCode=37;}
   else if(keyName=="right"){var keyCode=39;}
   else if(keyName=="up"){var keyCode=38;}
   else if(keyName=="down"){var keyCode=40;}
+  else if(keyName=="w"){var keyCode=87;}
+  else if(keyName=="y"){var keyCode=89;}
   else{var keyCode=-111111;}
   return keyCode
 }
