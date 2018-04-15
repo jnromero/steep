@@ -423,7 +423,6 @@ class SteepMainServer():
          self.nextMonitorCall=0
          self.lastMonitorMessageSent=time.time()
          self.updateMonitorTable()
-         self.updateTaskTable()
       else:
          #this ensures that there will be one last monitor message if a lot are received all at the same time
          if self.nextMonitorCall==0:
