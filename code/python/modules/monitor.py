@@ -8,6 +8,7 @@ class monitorClass():
       #self.monitorTaskList=['loadInstructions','startQuiz','startExperiment']
       # self.data['taskList']=self.monitorTaskList
       self.monitorTasks()
+      self.data['taskDoneTime']=[]
       if 'monitorTableSortColumn' not in self.data:
          self.data['monitorTableSortColumn']=0
          self.data['monitorTableSortType']=0
@@ -126,6 +127,7 @@ class monitorClass():
 
    def taskDone(self,message):
       task=message['type']
+      self.data['taskDoneTime'].append([task,time.time()])
       self.data['taskStatus'][task]['status']="Done"
       self.saveData()
       self.updateTaskTable()
