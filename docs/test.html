@@ -1,6 +1,14 @@
 <html>
 
 <head>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shCore.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushJScript.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushCss.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushPython.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushPlain.js"></script>
+    <script type="text/javascript" src="syntaxhighlighter_3.0.83/scripts/shBrushBash.js"></script>
+    <link href="syntaxhighlighter_3.0.83/styles/shCore.css" rel="stylesheet" type="text/css" />
+    <link href="syntaxhighlighter_3.0.83/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
     <link href="style.css?234" rel="stylesheet" type="text/css" />
 </head>
 
@@ -22,17 +30,69 @@
 <div class="p">Steep is a minimal framework that allows for interaction between a server (python) and web browser clients (javascript/html/css) via websockets.  Steep is simple, and doesn't have a lot of built in features, which allows for flexibility.  Experimenters can then use the plethora of online resources dedicated to programing of webapps using CSS and Javascript.</div>
 
 <div class="header">Installation</div>
-<div class="p">In order to test STEEP, the following four things must be downloaded/installed:
+<div class="p">In order to test STEEP, the following things must be downloaded/installed:
 <ol>
-    <li>python - STEEP can be used with recent versions of either python 2 or python 3.  To install python on a Mac, I recommend using the installation via homebrew (http://brew.sh/), although you can also just use the default installed version.  For Windows, I recommend anaconda (https://www.continuum.io/downloads).  To check to see if python is installed, you can type</li>
-    <li>twisted - Twisted is an open source networking engine, more info at https://twistedmatrix.com/.  This can be installed with pip using "pip install twisted".</li>
-    <li>autobahn - Autobahn is an open source WebSocket implementation, more info at http://autobahn.ws/.  This can be installed with pip using "pip install autobahn".</li>
-    <li>STEEP - The latest version of STEEP can be downloaded from github via the following link: https://github.com/jnromero/steep/releases/latest</li>
+    <li><span class="red">python</span> - STEEP can be used with recent versions of either python 2 or python 3.  To install python on a Mac, I recommend using the installation via homebrew (<a href='http://brew.sh/'>http://brew.sh/</a>), although you can also just use the default installed version.  For Windows, I recommend anaconda (<a href='https://www.continuum.io/downloads'>https://www.continuum.io/downloads</a>).  For the rest of this document, I am going to assume that the steep folder has been installed to the following path: /path/to/steep/ which means that the following file should exist: /path/to/steep/requirements.txt</li>
+    <li><span class="red">STEEP</span> - The latest version of STEEP can be downloaded from github via the following link: <a href='https://github.com/jnromero/steep/releases/latest'>https://github.com/jnromero/steep/releases/latest</a>.  If you have git command line tools, then it can also be installed with the following command: </li>
+        <pre class="brush: bash">
+git clone git://github.com/jnromero/steep.git /steep/
+</pre> 
+    <li><span class="red">python packages</span> - once python has been installed you should be able to use the pip installer to ensure that you have all required packages.  To do this, run the following commands:
+        <pre class="brush: bash">
+pip install setuptools
+pip install wheel
+pip install -r /path/to/steep/requirements.txt</pre> 
 </ol>
 </div>
 
+<div class="header">Running Experiments Online</div>
+<div class="p">STEEP can be run locally on a computer.  Often times it may be useful/preferred to run an experiment online.  Potential benefits of this include flexibility to not need a server computer with required software and the ability to run remotely or in multiple locations.  There are many ways to run online experiments.  You can setup up your own web server, but you need to make sure you have access to required ports.  However, the recommended way to run these it to use a virtual private server (VPS).  Many sites offer VPS with fees by the hour that range in the $0.01 per hour to $0.20 per hour range.  One recommended site is <a href='http://vultr.com/'>http://vultr.com/</a>.  To setup an experiment on vultr.com, take the following steps:
+    <ol>
+        <li>Register for an account at vultr.com</li>
+        <li>Create a new startup script by following the link <a href='https://my.vultr.com/startup/'>https://my.vultr.com/startup/</a>.  Add the following to the startup script:
+        <pre class="brush: bash">
+#!/bin/sh
+
+#start screen to run the program in 
+screen -dmS serverScreen
+
+echo "STEEP Startup running"
+#download steep to the folder /steep/
+git clone git://github.com/jnromero/steep.git /steep/
+#download your program, from github or wherever to the folder /experiment/
+git clone git://github.com/jnromero/normalForm.git /experiment/
+
+#install necessary programs
+apt-get update -y
+sudo apt install build-essential -y
+apt install python-dev -y
+apt install python-pip -y
+#install steep python package requirements
+pip install setuptools
+pip install wheel
+pip install -r /steep/requirements.txt
+
+#get current ip address
+myip="$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')"
+
+#start server on the screen called serverScreen
+screen -S serverScreen -p 0 -X stuff 'cd /experiment/files/\n'
+screen -S serverScreen -p 0 -X stuff "python experiment.py -l local -i "$myip"\n"
+</pre> Then give this startup script a name like myStartupScript and click add script.</li>
+<li>Finally deploy a new server from <a href='https://my.vultr.com/deploy/'>https://my.vultr.com/deploy/</a>.  You can choose server type (vary by speed), server location (closer the better probably), operating system (recommend Ubuntu 17.10 x64), server size (again, vary by speed), select the startup script that you created (i.e. myStartupScript), and then click "Deploy Now".
+    <li>Once the server has been deployed, it will take several minutes to start up.  You can access the server ip address from <a href='https://my.vultr.com/'>https://my.vultr.com/</a>.  Let's suppose that the server ip address is listed as 12.23.34.45.  After the startup script has finished, you should be able to access the steep console page at http://12.23.34.45:23456 and the clients from http://12.23.34.45:23456/client.html.
 
 </div>
+
+
+</div>
+
+
+                <!-- Finally, to actually run the highlighter, you need to include this JS on your page -->
+                <script type="text/javascript">
+                SyntaxHighlighter.all()
+                </script>
+
 
 </body>
 
