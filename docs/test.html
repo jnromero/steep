@@ -78,11 +78,18 @@ myip="$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*)
 #start server on the screen called serverScreen
 screen -S serverScreen -p 0 -X stuff 'cd /experiment/files/\n'
 screen -S serverScreen -p 0 -X stuff "python experiment.py -l local -i "$myip"\n"
-</pre> Then give this startup script a name like myStartupScript and click add script.</li>
+</pre>You need to edit line 10 above to ensure that your experiment is downloaded.  This can either be through github, dropbox, or anything else.  If you want to use dropbox rather than github, then you can replace line 10 with the following:
+<pre class="brush: bash">
+sudo apt-get install unzip
+curl -L https://www.dropbox.com/sh/v23/l3k2f?dl=1 > experiment.zip
+unzip experiment.zip -d /experiment/
+</pre>  Where https://www.dropbox.com/sh/v23/l3k2f?dl=1 is the link you copied for the folder from dropbox (make sure that you change the end do "dl=1" if not already like that). Finally, give this startup script a name like myStartupScript and click add script.</li>
 <li>Finally deploy a new server from <a href='https://my.vultr.com/deploy/'>https://my.vultr.com/deploy/</a>.  You can choose server type (vary by speed), server location (closer the better probably), operating system (recommend Ubuntu 17.10 x64), server size (again, vary by speed), select the startup script that you created (i.e. myStartupScript), and then click "Deploy Now".
     <li>Once the server has been deployed, it will take several minutes to start up.  You can access the server ip address from <a href='https://my.vultr.com/'>https://my.vultr.com/</a>.  Let's suppose that the server ip address is listed as 12.23.34.45.  After the startup script has finished, you should be able to access the steep console page at http://12.23.34.45:23456 and the clients from http://12.23.34.45:23456/client.html.
 
 </div>
+
+
 
 
 </div>
