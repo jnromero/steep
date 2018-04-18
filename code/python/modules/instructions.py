@@ -186,7 +186,8 @@ class SteepInstructions():
       self.data['serverStatus']['instructions']['loaded']=1
       self.loadInstructionsOnClient("allPlusVideo")
       self.monitorMessage()
-      
+      self.updateTaskTable()
+
    def loadInstructionsOnClient(self,sid="all",output="send"):
       print(len(self.data['subjectIDs']))
       print("Loading Instructions on client....",sid)
@@ -424,6 +425,7 @@ class SteepInstructions():
 
       self.sendListOfMessages(msgs)
       self.monitorMessage()
+      self.updateTaskTable()
 
 
 
@@ -443,6 +445,7 @@ class SteepInstructions():
       self.data['serverStatus']['instructions']['time']=float(self.data['instructionsTime'])/self.instructionsLength
       self.data['serverStatus']['instructions']['playing']=0   
       self.monitorMessage()
+      self.updateTaskTable()
 
    def cancelInstructionsCalls(self,sid):
       if sid in self.taskCalls:
@@ -465,6 +468,7 @@ class SteepInstructions():
       self.data['serverStatus']['instructions']['time']=float(self.data['instructionsTime'])/self.instructionsLength
       self.data['serverStatus']['instructions']['playing']=0   
       self.monitorMessage()
+      self.updateTaskTable()
 
 
    def runSingleTask(self,func,args,sid="all",output="send"):
@@ -581,6 +585,7 @@ class SteepInstructions():
          self.data['serverStatus']['instructions']['time']=float(self.data[sid].instructionsTime)/self.instructionsLength
 
       self.monitorMessage()
+      self.updateTaskTable()
 
 
 
@@ -652,6 +657,7 @@ class SteepInstructions():
       self.data['serverStatus']['instructions']['finished']=1
       self.data['serverStatus']['page']="none"
       self.monitorMessage()
+      self.updateTaskTable()
       msg={}
       msg['type']="endInstructions"
       for sid in self.getSubjectIDList("allPlusVideo"):
