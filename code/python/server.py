@@ -158,6 +158,13 @@ experiment = imp.load_source('experiment', experimentFile)
 from experiment import experimentClass
 from experiment import subjectClass
 
+#add to config if needed:
+try:
+   experiment.addToConfig(config)
+except:
+   "addToConfig not included in experiment.py.  Use this function to modify config"
+
+
 #copy experiment file for later viewing
 dataFolderFiles=config['webServerRoot']+config['dataFolder']+"/files/"
 if not os.path.exists(dataFolderFiles):
@@ -225,7 +232,6 @@ if 'instructions' in config:
    from steepInstructions import SteepInstructions
 
 
-
 #load monitor module
 steepMonitor = imp.load_source('steepMonitor',str(steepDirectory.joinpath('python', 'modules','monitor.py')))
 from steepMonitor import monitorClass
@@ -236,6 +242,7 @@ from steepTimer import SteepTimerManager
 
 class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepQuiz,ExperimentQuiz,SteepTimerManager,ExperimentInstructions,ExperimentQuestionnaire):
    def __init__(self,config,options,log,thisLogCounter):
+      self.subjectClass=subjectClass
       self.logCounter=thisLogCounter
       self.log=log
       self.config=config
@@ -246,7 +253,6 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       SteepTimerManager.__init__(self)
       SteepQuiz.__init__(self)
       experimentClass.__init__(self)
-      self.subjectClass=subjectClass
       SteepInstructions.__init__(self)
       monitorClass.__init__(self)
       SteepQuiz.__init__(self)
