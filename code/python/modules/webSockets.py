@@ -28,20 +28,22 @@ class SteepWebSocketFactory(WebSocketServerFactory,):
       self.messageLogFile = open(self.config['messageLogFile'],'wb')
       self.messageLogFile.close()
       self.messageLogFile = open(self.config['messageLogFile'],'ab')
-
+      self.messagesFromPythonToJavascript=True
+      
    def messageJavascriptToPython(self,message,client):
       #automatically run the function self.message['type'](message,client) when that message is received
       self.writeToMessageLog(message,"from")
       eval("self.%s(%s,%s)"%(message['type'],'message','client'))
 
    def messagePythonToJavascript(self,message,client):
-      try:
-         sid=client.subjectID
-      except:
-         sid="sidNotSet"
-      message['sid']=sid
-      self.writeToMessageLog(message,"to")
-      client.sendMessage(json.dumps(message).encode('utf8'))
+      if self.messagesFromPythonToJavascript:
+         try:
+            sid=client.subjectID
+         except:
+            sid="sidNotSet"
+         message['sid']=sid
+         self.writeToMessageLog(message,"to")
+         client.sendMessage(json.dumps(message).encode('utf8'))
    
    def writeToMessageLog(self,message,direction):
       dataToWrite=[direction,time.time(),message]
