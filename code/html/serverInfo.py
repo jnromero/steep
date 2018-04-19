@@ -32,6 +32,7 @@ def getPage(config):
 	this+='<html>\n'
 	this+='\t<head>\n'
 	this+='\t\t<title>STEEP: Monitor</title>\n'
+    this+=pf.addExternalJavascriptLines(config,"javascriptHead")
 	this+=pf.javascriptLine(files['common']['jquery.js'])
 	this+=pf.javascriptLine(files["exp"]['config.js'])
 	this+=pf.javascriptLine(files['common']['common.js'])
@@ -44,6 +45,7 @@ def getPage(config):
 	this+='\t\t<div id="mainDiv"></div>\n'
 	this+='\t\t\t<script type="text/javascript">%s;</script>\n'%(string)
 	this+=pf.javascriptLine(files['common']['serverInfo.js'])
+    this+=pf.addExternalJavascriptLines(config,"javascriptEnd")
 	this+='\t<body>\n'
 	this+='</html>'
 

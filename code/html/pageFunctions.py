@@ -1,6 +1,21 @@
 #!/usr/bin/python
 import random
 
+
+def addExternalJavascriptLines(config,location):
+    #location is either "javascriptHead" or "javascriptEnd"
+    string=""
+    if location in config:
+        for details in config[location]:
+            if details[0]=="full":
+                string+=javascriptLine(details[1])
+            elif details[0]=="relative":
+                domain=config['domain']
+                currentExperiment=config['currentExperiment']
+                experimentURL=domain+currentExperiment
+                relativeURL=experimentURL+"files/"+details[1]
+                string+=javascriptLine(relativeURL)
+    return string
 def javascriptLine(url):
  return '\t\t<script type="text/javascript" src="%s"></script>\n'%(url)
 

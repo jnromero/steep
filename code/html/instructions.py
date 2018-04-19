@@ -8,6 +8,7 @@ def getPage(config):
     this+='<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Traditional//EN">\n'
     this+='<html id="everything">\n'
     this+='\t<head>\n'
+    this+=pf.addExternalJavascriptLines(config,"javascriptHead")
     this+=pf.javascriptLine(files['common']['jquery.js'])
     this+=pf.javascriptLine(files["exp"]['config.js'])
     this+=pf.javascriptLine(files['common']['common.js'])
@@ -22,6 +23,7 @@ def getPage(config):
     this+=pf.javascriptLine(files['exp']['experiment.js'])
     this+=pf.javascriptLine(files['common']['instructions.js'])
     this+=pf.javascriptLine(files['exp']['instructions.js'])
+    this+=pf.addExternalJavascriptLines(config,"javascriptEnd")
     this+='\t</body>\n'
     this+='</html>'
 
