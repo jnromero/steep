@@ -48,11 +48,11 @@ pip install -r /path/to/steep/requirements.txt</pre>
 <div class="p">Sometimes you may want to add external js and css files to your experiment.  In order to do this, you need to add the addToConfig function at the top of the experiment.py file:
         <pre class="brush: python">
 def addToConfig(config):
-   config['javascriptHead']=[["full","https://test.com/test.js"],["relative","/js/testing.js"]]
+   config['javascriptHead']=[["full","http://test.com/test.js"],["relative","/js/testing.js"]]
    config['javascriptEnd']=[["full","http://test.com/test2.js"],["relative","/js/testing2.js"]]
    return config
 </pre>
-This function takes config as an input and returns config as an output.  The entries "javascriptHead" and "javascriptEnd" are lists of lists containing lists with two entries.  The first entry is either "full" or "relative" depending on whether the linked file is a full url or a url relative to the folder containing experiment.py.  The files listed in "javascriptHead" will be added to all steep html files at the top of the head section.  The files listed in "javascriptEnd" will be added to all steep html files at the very end of the body section. 
+This function takes config as an input and returns config as an output.  The entries "javascriptHead" and "javascriptEnd" are lists of lists containing lists with two entries.  The first entry is either "full" or "relative" depending on whether the linked file is a full url or a url relative to the folder containing experiment.py.  The files listed in "javascriptHead" will be added to all steep html files at the top of the head section.  The files listed in "javascriptEnd" will be added to all steep html files at the very end of the body section.   Therefore the above example will add "http://test.com/test.js" and "/path/to/experiment/files/js/testing.js" in the head of the html files and "http://test.com/test2.js" and "/path/to/experiment/files/js/testing2.js" at the end of the body of the html files.
 </div>
 
 <div class="header">Running Experiments Online</div>
