@@ -9,7 +9,7 @@ def getPage(config):
     this+='<html id="everything">\n'
     this+='\t<head>\n'
     this+='\t\t<title>STEEP: Client</title>\n'
-    this+=pf.addExternalJavascriptLines(config,"javascriptHead")
+    this+=pf.addExternalFiles(config,"headStart")
     this+=pf.javascriptLine(files['common']['jquery.js'])
     this+=pf.javascriptLine(files['common']['velocity.js'])
     this+=pf.javascriptLine(files["exp"]['config.js'])
@@ -22,8 +22,10 @@ def getPage(config):
     this+=pf.cssLine(files['common']['questionnaire.css'])
     this+=pf.cssLine(files['common']['simulateMouse.css'])
     this+=pf.cssLine(files['exp']['experiment.css'])
+    this+=pf.addExternalFiles(config,"headEnd")
     this+='\t</head>\n'
     this+='\t<body>\n'
+    this+=pf.addExternalFiles(config,"bodyStart")
     this+=pf.javascriptLine(files['common']['simulateMouse.js'])
     this+=pf.javascriptLine(files['common']['video.js'])
     this+=pf.javascriptLine(files['exp']['experiment.js'])
@@ -34,7 +36,7 @@ def getPage(config):
         instructions=True
     if instructions==True:
         this+=pf.javascriptLine(files['exp']['instructions.js'])
-    this+=pf.addExternalJavascriptLines(config,"javascriptEnd")
+    this+=pf.addExternalFiles(config,"bodyEnd")
     this+='\t</body>\n'
     this+='</html>'
     return this

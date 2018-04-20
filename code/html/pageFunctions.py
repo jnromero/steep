@@ -2,20 +2,35 @@
 import random
 
 
-def addExternalJavascriptLines(config,location):
+def addExternalFiles(config,location):
     #location is either "javascriptHead" or "javascriptEnd"
     string=""
-    if location in config:
-        for details in config[location]:
-            if details[0]=="full":
-                string+=javascriptLine(details[1])
-            elif details[0]=="relative":
-                domain=config['domain']
-                currentExperiment=config['currentExperiment']
-                experimentURL=domain+currentExperiment
-                relativeURL=experimentURL+"files/"+details[1]
-                string+=javascriptLine(relativeURL)
+    if "additionalFiles" in config:
+        for fileDetails in config["additionalFiles"]:
+            fileLocation=fileDetails[2]
+            fileType=fileDetails[1]
+            filePath=fileDetails[0]
+            extension=filePath.split(".")[-1]
+            print(fileDetails,extension,fileLocation==location)
+            if fileLocation==location:
+                if fileType=="full":
+                    if extension=="js":
+                        string+=javascriptLine(fileDetails[0])
+                    elif extension=="css":
+                        string+=cssLine(fileDetails[0])
+                elif fileType=="relative":
+                    domain=config['domain']
+                    currentExperiment=config['currentExperiment']
+                    experimentURL=domain+currentExperiment
+                    relativeURL=experimentURL+"files/"+fileDetails[0]
+                    if extension=="js":
+                        string+=javascriptLine(relativeURL)
+                    if extension=="css":
+                        string+=cssLine(relativeURL)
     return string
+
+
+
 def javascriptLine(url):
  return '\t\t<script type="text/javascript" src="%s"></script>\n'%(url)
 

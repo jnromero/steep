@@ -16,7 +16,7 @@ def getPage(config,totalPages,currentTab):
 	this+='<html>\n'
 	this+='\t<head>\n'
 	this+='\t\t<title>STEEP: Dashboard</title>\n'
-	this+=pf.addExternalJavascriptLines(config,"javascriptHead")
+    this+=pf.addExternalFiles(config,"headStart")
 	this+=pf.javascriptLine(files['common']['jquery.js'])
 	this+=pf.javascriptLine(files["exp"]['config.js'])
 	this+=pf.javascriptLine(files['common']['common.js'])
@@ -25,12 +25,14 @@ def getPage(config,totalPages,currentTab):
 	this+=pf.cssLine(files['common']['common.css'])
 	this+=pf.cssLine(files['common']['switch.css'])
 	this+=pf.cssLine(files['common']['monitor.css'])
+    this+=pf.addExternalFiles(config,"headEnd")
 	this+='\t</head>\n'
 	this+='\t<body>\n'
+    this+=pf.addExternalFiles(config,"bodyStart")
 	this+='\t\t<script type="text/javascript">%s</script>\n'%(string)
 	this+='\t\t<div id="mainDiv"></div>\n'
 	this+=pf.javascriptLine(files['common']['console.js'])
-	this+=pf.addExternalJavascriptLines(config,"javascriptEnd")
+    this+=pf.addExternalFiles(config,"bodyEnd")
 	this+='\t<body>\n'
 	this+='</html>'
 
