@@ -8,25 +8,40 @@
 <body>
 <div id="sideBar">
     <div class="sideBarHeader">STEEP</div>
-    <div class="sideBarEntry">Overview</div>
-    <div class="sideBarEntry">Installation</div>
-    <div class="sideBarEntry">Running a simple experiment</div>
-    <div class="sideBarEntry">Features</div>
-    <div class="sideBarEntrys">Structure of an Experiment</div>
-    <div class="sideBarEntrys">Subject IDs</div>
-    <div class="sideBarEntrys">Sending Messages</div>
-    <div class="sideBarEntryss">Test 4</div>
-    <div class="sideBarEntry">Description of a simple experiment</div>
 </div>
 <div id="mainContent">
+
+
+
+
+
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+
 <div class="header">Overview</div>
 <div class="p">Steep is a minimal framework that allows for interaction between a server (python) and web browser clients (javascript/html/css) via websockets.  Steep is simple, and doesn't have a lot of built in features, which allows for flexibility.  Experimenters can then use the plethora of online resources dedicated to programing of webapps using CSS and Javascript.</div>
 
+
+
+
+
+
+
+
+
+
+
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
 <div class="header">Installation</div>
 <div class="p">In order to test STEEP, the following things must be downloaded/installed:
 <ol>
     <li><span class="red">python</span> - STEEP can be used with recent versions of either python 2 or python 3.  To install python on a Mac, I recommend using the installation via homebrew (<a href='http://brew.sh/' target="_blank">http://brew.sh/</a>), although you can also just use the default installed version.  For Windows, I recommend anaconda (<a href='https://www.continuum.io/downloads' target="_blank">https://www.continuum.io/downloads</a>).  For the rest of this document, I am going to assume that the steep folder has been installed to the following path: /path/to/steep/ which means that the following file should exist: /path/to/steep/requirements.txt</li>
-    <li><span class="red">STEEP</span> - The latest version of STEEP can be downloaded from github via the following link: <a href='https://github.com/jnromero/steep/releases/latest' target="_blank">https://github.com/jnromero/steep/releases/latest</a>.  If you have git command line tools, then it can also be installed with the following command: </li>
+    <li><span class="red">STEEP</span> - The latest version of STEEP can be downloaded from github via the following link: <a href='https://github.com/jnromero/steep/releases/latest' target="_blank">https://github.com/jnromero/steep/releases/latest</a>.  If you have git command line tools, then it can also be installed with the following command: (with /path/to/steep/ changed to the install path on your computer)</li>
 <pre class="command-line" data-user="root" data-host="localhost"><code class="language-bash">git clone git://github.com/jnromero/steep.git /path/to/steep/</code></pre> 
     <li><span class="red">python packages</span> - once python has been installed you should be able to use the pip installer to ensure that you have all required packages.  To do this, run the following commands:
 <pre class="command-line" data-user="root" data-host="localhost"><code class="language-bash">pip install setuptools
@@ -34,9 +49,174 @@ pip install wheel
 pip install -r /path/to/steep/requirements.txt</code></pre> 
 </ol>
 </div>
+
+
+
+
+
+
+
+
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+
+<div class="header">Running a Simple Experiment</div>
+<div class="p">Once you have installed the above requirements, you can run a simple experiment.  Navigate to the directory /path/to/steep/examples/simple/files/ (this can be done in terminal on a Mac or or the command prompt on Windows) and start the experiment by typing:
+
+
+
+<pre class="command-line" data-user="root" data-host="localhost"><code class="language-bash">cd /path/to/steep/examples/simple/files/
+python experiment.py -l local</code></pre> 
+
+Once the server is running, you can open the monitor at <a href="http://localhost:23456/monitor.html" target="_blank">http://localhost:23456/monitor.html</a> and several clients at <a href="http://localhost:23456/client.html" target="_blank">http://localhost:23456/client.html</a>.  In this simple experiment, every client is in the same group, and they have a button to click.  Once the total number of clicks for all subjects is greater than 10, then a new match starts. For a further description of this simple experiment see Description of Simple Experiment.
+</div>
+
+
+
+
+
+
+
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+
+<div class="header">Structure of an Experiment</div>
+<div class="p">A basic STEEP experiment is programmed in three files:.
+
+
+<ol>
+    <li><span class="red">experiment.css</span> This file contains style information for the interface.</li>
+    <li><span class="red">experiment.js</span> This file contains javascript code.  In this file you will have function such as "drawGame" that will draw the interface for the subjects. You will also have function such as "makeChoice" which will select a choice for the subject and contact the server.</li>
+    <li><span class="red">experiment.py</span> This file is the main server file.  This file controls every aspect of the experiment, such as making the matchings between subjects, aggregating subjects choices, calculating payoffs, etc.
+        <ul>
+            <li>This file needs to contain two classes with the names experimentClass and subjectClass.</li>
+            <li>All data from the experiment should be stored in the dictionary self.data of the experimentClass.</li>
+            <li>The dictionary self.data automatically has entries self.data['subjectIDs'] which is a list of all subject ids in the experiment.</li>
+            <li>Data of an individual subject is stored in a the subjectClass object.  The subjectClass object for a given subject (say subject with subject ID "subject1") can be accessed with self.data["subject1"]</li>
+        </ul>
+    </li>
+</ol>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+
+<div class="header">Sending Messages</div>
+<div class="p">The main functionality of STEEP is to provide a simple way for experimenters to set up a connection between a python server and web clients in a way that will be accessible and useful for running economics experiments.  Therefore, the most important and basic feature of STEEP is sending messages.  There are two types of messages: client to server and server to client.
+<div class="subheader">Server to Client (.py to .js)</div>
+<div class="p">
+Since the server is a python server, the server to client messages are sent from python using code as follows:
+
+
+
+<pre class="line-numbers"><code class="language-python">#experiment.py
+
+msg={}
+msg['type']="updatePeriodPayoffs"
+msg['payoffs']=2.25
+msg['period']=26
+self.messageToId(msg,"subject1")
+</code></pre>
+
+This code will send the message to the client with subjectID "subject1".  All messages must be a dictionary and have a "type" key.  This example message has a "type" key of "updatePeriodPayoffs".  When the client receives this message, it will automatically run a javascript function with the name of the "type" key.  So if a client receives the above message, then it would run a function like this:
+
+<pre class="line-numbers"><code class="language-js">//experiment.js
+
+function updatePeriodPayoffs(msg){
+  document.getElementById("periodPayoff").innerHTML=msg['payoffs'];
+  document.getElementById("currentPeriod").innerHTML=msg['period'];
+}
+</code></pre>
+
+The javascript function will have access to the entire msg dictionary, so any relevant information that the server needs to communicate to the client can be put in this dictionary.  
+
+
+
+</div>
+
+<div class="subheader">Client to Server (.js to .py)</div>
+<div class="p">
+Since the client is sending messages with javascript to a python server, the client to server messages are sent from javascript using code as follows:
+
+
+<pre class="line-numbers"><code class="language-js">//experiment.js
+
+msg={}
+msg['type']="makeChoice"
+msg['choice']="c";
+msg['period']=45;
+sendMessage(msg);
+</code></pre>
+This code will send the message to the python server.  All messages must be a dictionary and have a "type" key.  This example message has a "type" key of "makeChoice".  When the server receives this message, it will automatically run a python function with the name of the "type" key.  So if the server receives the above message, then it would run a function like this:
+
+
+<pre class="line-numbers"><code class="language-python">#experiment.py
+
+def makeChoice(self,msg):
+    subjectID=msg['subjectID']
+    thisPeriod=msg['period']
+    thisChoice=msg['choice']
+    self.data[subjectID].choices[thisPeriod]=[thisChoice,time.time()]
+</code></pre>
+
+The python function will have access to the entire msg dictionary, so any relevant information that the client needs to communicate to the server can be put in this dictionary.  In addition, the "subjectID" key will be added to the msg dictionary automatically so that the server can identify which client the message came from.
+
+
+
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
 <div class="header">Adding external javascript and CSS files</div>
 <div class="p">Sometimes you may want to add external js and css files to your experiment.  In order to do this, you need to add the addToConfig function at the top of the experiment.py file:
-<pre class="line-numbers"><code class="language-python">def addToConfig(config):
+<pre class="line-numbers"><code class="language-python">#experiment.py
+
+def addToConfig(config):
    config['additionalFiles']=[
       ["/js/testing2.js","relative","headStart"],
       ["http://test.com/test.css","full","headEnd"],
@@ -47,8 +227,9 @@ pip install -r /path/to/steep/requirements.txt</code></pre>
 </code></pre>
 This function takes config as an input and returns config as an output.  You can set the key "additionalFiles" of config to be a list of lists containing lists with three entries.  The first entry is the path to the external file.  The second entry is either "full" or "relative" depending on whether the linked file is a full url or a url relative to the folder containing experiment.py.  The third entry is either "headStart","headEnd","bodyStart", or "bodyEnd" and will determine the location of the external file in the html document.  This works for .js file and .css files only, and the file type is automatically detected.  The above example will lead to the following html:
 
+<pre class="line-numbers"><code class="language-html">&lt;!-- client.html -->
 
-<pre class="line-numbers"><code class="language-html">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Traditional//EN">
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Traditional//EN">
 &lt;html id="everything">
     &lt;head>
         &lt;title>STEEP: Client&lt;/title>
@@ -65,6 +246,12 @@ This function takes config as an input and returns config as an output.  You can
 </code></pre>
 </div>
 
+
+
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
 <div class="header">Running Experiments Online</div>
 <div class="p">STEEP can be run locally on a computer.  Often times it may be useful/preferred to run an experiment online.  Potential benefits of this include flexibility to not need a server computer with required software and the ability to run remotely or in multiple locations.  There are many ways to run online experiments.  You can setup up your own web server, but you need to make sure you have access to required ports.  However, the recommended way to run these it to use a virtual private server (VPS).  Many sites offer VPS with fees by the hour that range in the $0.01 per hour to $0.20 per hour range.  One recommended site is <a href='http://vultr.com/' target="_blank">http://vultr.com/</a>.  To setup an experiment on vultr.com, take the following steps:
     <ol>
@@ -105,7 +292,7 @@ curl -L https://www.dropbox.com/sh/v23/l3k2f?dl=1 > experiment.zip
 unzip experiment.zip -d /experiment/
 </code></pre>
 
-  Where https://www.dropbox.com/sh/v23/l3k2f?dl=1 is the link you copied for the folder from dropbox (make sure that you change the end do "dl=1" if not already like that). Finally, give this startup script a name like myStartupScript and click add script.</li>
+  Where https://www.dropbox.com/sh/v23/l3k2f?dl=1 is the link you copied for the folder from dropbox (make sure that you change the end to "dl=1" if not already like that). Finally, give this startup script a name like myStartupScript and click add script.</li>
 <li>Finally deploy a new server from <a href='https://my.vultr.com/deploy/' target="_blank">https://my.vultr.com/deploy/</a>.  You can choose server type (vary by speed), server location (closer the better probably), operating system (recommend Ubuntu 17.10 x64), server size (again, vary by speed), select the startup script that you created (i.e. myStartupScript), and then click "Deploy Now".
     <li>Once the server has been deployed, it will take several minutes to start up.  You can access the server ip address from <a href='https://my.vultr.com/' target="_blank">https://my.vultr.com/</a>.  Let's suppose that the server ip address is listed as 12.23.34.45.  After the startup script has finished, you should be able to access the steep console page at http://12.23.34.45:23456 and the clients from http://12.23.34.45:23456/client.html.
 
@@ -117,6 +304,49 @@ unzip experiment.zip -d /experiment/
 </div>
 
 <script src="prism/prism.js"></script>
+
+<script>
+    var sideBar=document.getElementById("sideBar");
+    var headers=document.querySelectorAll('.header,.subheader')
+    for(k=0;k<headers.length;k++){
+        var thisHeader=document.createElement("div");  
+        var thisHeaderLink=document.createElement("a");  
+        if(headers[k].className=="header"){
+            thisHeader.className="sideBarEntry"
+        }
+        else if(headers[k].className=="subheader"){
+            thisHeader.className="sideBarEntrys"
+        }
+        thisHeaderLink.innerHTML=headers[k].innerHTML;
+        var replaced = headers[k].innerHTML.split(' ').join('').split('.').join('').split(')').join('').split('(').join('');
+        thisHeaderLink.href="#"+replaced;
+        thisHeader.innerHTML=thisHeaderLink.outerHTML;
+        sideBar.appendChild(thisHeader);
+        var subheaders=headers[k].getElementsByClassName("p");
+
+        var target=document.createElement("a");  
+        target.name=replaced;
+        headers[k].parentNode.insertBefore(target,headers[k]);
+    }
+
+
+
+
+</script>
+
+
+
+<!--     <div class="sideBarEntry">Overview</div>
+    <div class="sideBarEntry">Installation</div>
+    <div class="sideBarEntry">Running a simple experiment</div>
+    <div class="sideBarEntry">Features</div>
+    <div class="sideBarEntrys">Structure of an Experiment</div>
+    <div class="sideBarEntrys">Subject IDs</div>
+    <div class="sideBarEntrys">Sending Messages</div>
+    <div class="sideBarEntryss">Test 4</div>
+    <div class="sideBarEntry">Description of a simple experiment</div>
+ -->
+
 
 </body>
 
