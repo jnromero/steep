@@ -1,5 +1,11 @@
 
+@import url(https://fonts.googleapis.com/css?family=Questrial);
 
+* {
+    tab-size: 4;
+    line-height: 2;
+    hyphens: auto;
+}
 
 @media (max-width: 750px) {
     #sideBar {
@@ -39,7 +45,7 @@
 
     #mainContent {
         left:300px;    
-        width:900px;
+        width:1200px;
         min-height:100%;
         top:0px;
     }
