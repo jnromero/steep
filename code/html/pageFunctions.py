@@ -11,7 +11,6 @@ def addExternalFiles(config,location):
             fileType=fileDetails[1]
             filePath=fileDetails[0]
             extension=filePath.split(".")[-1]
-            print(fileDetails,extension,fileLocation==location)
             if fileLocation==location:
                 if fileType=="full":
                     if extension=="js":
