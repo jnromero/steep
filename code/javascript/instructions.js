@@ -210,6 +210,7 @@ function endInstructions(incoming){
     deleteDiv('clickMp3Div');
     deleteDiv('captionOverlay');
     deleteDiv('cursorOverlay');
+    statusManager();
     // deleteDiv("mainDiv");
     // mainDiv=createDiv("mainDiv");
     // $("body").prepend(mainDiv);
