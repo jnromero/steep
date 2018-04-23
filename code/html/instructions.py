@@ -15,6 +15,7 @@ def getPage(config):
     this+=pf.cssLine(files['common']['instructions.css'])
     this+=pf.cssLine(files['common']['common.css'])
     this+=pf.cssLine(files['common']['simulateMouse.css'])
+    this+=pf.addPluginFiles(config,"css")
     this+=pf.cssLine(files['exp']['experiment.css'])
     this+=pf.addExternalFiles(config,"headEnd")
     this+='\t</head>\n'
@@ -22,6 +23,7 @@ def getPage(config):
     this+=pf.addExternalFiles(config,"bodyStart")
     this+=pf.javascriptLine(files['common']['simulateMouse.js'])
     this+=pf.javascriptLine(files['common']['video.js'])
+    this+=pf.addPluginFiles(config,"js")
     this+=pf.javascriptLine(files['exp']['experiment.js'])
     this+=pf.javascriptLine(files['common']['instructions.js'])
     this+=pf.javascriptLine(files['exp']['instructions.js'])

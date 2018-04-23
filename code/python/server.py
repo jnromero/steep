@@ -15,7 +15,6 @@ for x in steepDirectory.parents:
    if x in experimentDirectory.parents:
       webServerRoot=x
       break
-
 functions = imp.load_source('functions',str(steepDirectory.joinpath('python', 'modules','functions.py')))
 from twisted.internet import reactor
 from twisted.web.server import Site
@@ -63,7 +62,6 @@ config['restartString']=restartString
 
 configFunctions = imp.load_source('configFunctions',str(steepDirectory.joinpath('python', 'modules','configFunctions.py')))
 config=configFunctions.setOtherFileLocations(config)
-configFunctions.writeJavascriptConfigFile(config)
 
 #blank function place holder for furutre monitor message that will be used to update console page on demand
 def testFunction():
@@ -155,14 +153,60 @@ for k in config:
 #load the experiment file
 experimentFile = str(experimentDirectory.joinpath('files','experiment.py'))
 experiment = imp.load_source('experiment', experimentFile)
-from experiment import experimentClass
-from experiment import subjectClass
+from experiment import experimentClass as experimentClassRaw
+from experiment import subjectClass as subjectClassRaw
 
 #add to config if needed:
 try:
    experiment.addToConfig(config)
 except:
    "addToConfig not included in experiment.py.  Use this function to modify config"
+configFunctions.writeJavascriptConfigFile(config)
+
+
+#add plugins from config
+#in order for plugins to work ALL experiment.py files must have super function in __init__
+if "plugins" in config:
+   experimentClasses=[experimentClassRaw]
+   for plugin in config['plugins']:
+      j=config['plugins'].index(plugin)
+      path=plugin[0]
+      pluginLocation=plugin[1]
+      if pluginLocation=="relative":
+         pluginFile = str(experimentDirectory.joinpath('files',path))
+         imp.load_source('pluginModules%s'%(j),pluginFile)
+         exec("from pluginModules%s import experimentClass as pluginClasses"%(j))
+      elif pluginLocation=="absolute":
+         pluginFile = str(experimentDirectory.joinpath(path))
+         imp.load_source('pluginModules%s'%(j),pluginFile)
+         exec("from pluginModules%s import experimentClass as pluginClasses"%(j))
+      experimentClasses.append(pluginClasses)
+   experimentClass = type('experimentClass',tuple(experimentClasses), {})
+else:
+   experimentClass=experimentClassRaw
+
+
+if "plugins" in config:
+   subjectClasses=[subjectClassRaw]
+   for plugin in config['plugins']:
+      j=100+config['plugins'].index(plugin)
+      path=plugin[0]
+      pluginLocation=plugin[1]
+      if pluginLocation=="relative":
+         pluginFile = str(experimentDirectory.joinpath('files',path))
+         imp.load_source('pluginModules%s'%(j),pluginFile)
+         exec("from pluginModules%s import subjectClass as pluginClasses"%(j))
+      elif pluginLocation=="absolute":
+         pluginFile = str(experimentDirectory.joinpath(path))
+         imp.load_source('pluginModules%s'%(j),pluginFile)
+         exec("from pluginModules%s import subjectClass as pluginClasses"%(j))
+      subjectClasses.append(pluginClasses)
+   subjectClass = type('subjectClass',tuple(subjectClasses), {})
+else:
+   subjectClass=subjectClassRaw
+
+
+
 
 
 #copy experiment file for later viewing

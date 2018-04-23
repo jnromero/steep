@@ -3,7 +3,7 @@ import random
 
 
 def addExternalFiles(config,location):
-    #location is either "javascriptHead" or "javascriptEnd"
+    #location is either "headStart" or "headEnd" "bodyStart" "bodyEnd"
     string=""
     if "additionalFiles" in config:
         for fileDetails in config["additionalFiles"]:
@@ -27,6 +27,33 @@ def addExternalFiles(config,location):
                     if extension=="css":
                         string+=cssLine(relativeURL)
     return string
+
+
+    this+=pf.addPluginFiles(config,"js")
+
+def addPluginFiles(config,extension):
+    string=""
+    if "plugins" in config:
+        for plugin in config["plugins"]:
+            path=plugin[0]
+            pathLocation=plugin[1]
+            if pathLocation=="relative":
+                domain=config['domain']
+                currentExperiment=config['currentExperiment']
+                experimentURL=domain+currentExperiment
+                url=experimentURL+"files/"+path
+            elif pathLocation=="absolute":
+                path="/"+path.replace(config['webServerRoot'],"")
+                domain=config['domain']
+                # currentExperiment=config['currentExperiment']
+                # experimentURL=domain+currentExperiment
+                url=domain+path
+            if extension=="js":
+                string=javascriptLine(url.replace(".py",".js"))+string
+            elif extension=="css":
+                string=cssLine(url.replace(".py",".css"))+string
+    return string
+
 
 
 

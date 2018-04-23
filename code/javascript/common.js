@@ -252,7 +252,6 @@ function wakeUp(incoming){
 }
 
 function placeTextOLD(divid,text,top,fontSize,color,fadeTime){
-    console.log("Sdfsdf");
     thisDiv=createAndAddDiv(divid,"mainDiv");
     thisDiv.innerHTML=text;
     thisDiv.style.opacity="0";
