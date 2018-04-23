@@ -210,7 +210,7 @@ function drawServerInfo(){
 
   placeText({
     "parentDiv":"mainInfoHolder",
-    "text":"<a href='"+config['domain']+"/client.html'>"+config['domain']+"/client.html</a>",
+    "text":"<a href='"+config['domain']+"/client.html' target='_blank'>"+config['domain']+"/client.html</a>",
     "fontSize":"20px",
     "color":"black",
     "height":"50px",
