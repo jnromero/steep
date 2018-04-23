@@ -157,7 +157,7 @@ class SteepMainServer():
             print("New monitor client")
             client.currentMonitorTable=self.currentMonitorTable
             client.monitorTableSortColumn=[[0,"reg"],[0,"reg"],[0,"reg"]]
-            client.page="monitor"
+            client.page="serverInfo"
             client.consoleTab=1
             print("New monitor client SET!!!!!!!!!")
             self.monitorClients.append(client)

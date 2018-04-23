@@ -34,29 +34,10 @@ class RequestHandler(Resource):
       root,ext=os.path.splitext(thisPath)
       if thisPath=="/" or thisPath=="":
          ext=".py"
-         filename="/serverInfo.py"
+         filename="/monitor.py"
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
       elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html","/serverInfo.html","/tester.html"]:
-         ext=".py"
-         filename=thisPath.replace(".html",".py").replace("/","")
-         fileFolder=self.config['packageFolder']+"/html/"
-         fullPath=self.config['webServerRoot']+fileFolder+filename
-      elif thisPath in ["/console.html"]:
-         try:
-            thisPage=int(getValueFromQueryKey(parsedURL.query,"page"))
-         except:
-            "thisPage isn't integer"
-            thisPage=""
-         if thisPage=="" or thisPage=="current":
-            try:
-               thisPage=self.thisCounter.fileCount
-            except:
-               thisPage=1
-
-         self.logURL=self.config['domain']+self.config['dataFolder']+"/logs/%s.log"%(thisPage)
-         self.currentLogTab=thisPage
-         self.thisCounter.currentTab=thisPage
          ext=".py"
          filename=thisPath.replace(".html",".py").replace("/","")
          fileFolder=self.config['packageFolder']+"/html/"
@@ -85,12 +66,7 @@ class RequestHandler(Resource):
          # os.remove(fullPath)
          return File.render_GET(thisFile,request)
       elif os.path.isfile(fullPath):
-         if filename=="console.py":
-            print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))
-            thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
-            output=thisPage.getPage(self.config,self.thisCounter.fileCount,self.currentLogTab)
-            return output.encode('utf-8')
-         elif ext==".py":
+         if ext==".py":
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))            
             thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
             output=thisPage.getPage(self.config)
