@@ -4,124 +4,68 @@ function goToPageNewTab(args){
 }
 
 
-function drawNewPageLinks(){
-    placeText({
-      "text":"New Page Links",
-      "top":"225px",
-      "left":"0px",
-      "width":"100px",
-      "height":"25px",
-      "fontSize":"100%",
-      "color":'black',
-    });
 
-    placeText({
-      "text":"New Client",
-      "divid":"clientButton",
-      "top":"250px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      "fontSize":"125%",
-      "color":'blue',
-      "border":"1px solid rgba(0,0,0,.1)",
-    });
-    placeText({
-      "text":"Video",
-      "divid":"videoButton",
-      "top":"300px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      "fontSize":"125%",
-      "color":'blue',
-      "border":"1px solid rgba(0,0,0,.1)",
-    });
-  clickButton("many","clientButton",goToPageNewTab,window.config['domain']+"/client.html");
-  clickButton("many","videoButton",goToPageNewTab,window.config['domain']+"/video.html");
-  var hoverInfo={"border":"1px solid blue","backgroundColor":"rgba(0,0,255,.2)"};
-  hoverDiv("clientButton",hoverInfo)
-  hoverDiv("videoButton",hoverInfo)
+// window.monitorTables
+
+function camelCaseToRegular(string){
+  string=string
+    // insert a space before all caps
+    .replace(/([A-Z])/g, ' $1')
+    // uppercase the first character
+    .replace(/^./, function(str){ return str.toUpperCase(); })
+    return string
 }
+
+
+
 
 
 function drawPageTabs(currentPage){
-    placeText({
-      "text":"Server Links",
-      "divid":"server2Button",
-      "top":"25px",
-      "left":"0px",
-      "width":"100px",
-      "height":"25px",
-      "fontSize":"100%",
-      "color":"black"
-    });
+  // placeText({"text":"Server Links","divid":"server2Button","top":"0px","left":"0px","width":"100px","height":"25px","fontSize":"100%","color":"black"});
+  var consoleLeft="400px";
+  var monitorLeft="200px";
+  var serverLeft="0px";
 
 
-    placeText({
-      "text":"Server Info",
-      "divid":"serverButton",
-      "top":"50px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      "fontSize":"125%",
-      "border":"1px solid rgba(0,0,0,.1)",
-      "color":"green"
-    });
+  placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Server Info","divid":"serverButton","top":"0px","left":serverLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
+  placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Monitor","divid":"monitorButton","top":"0px","left":monitorLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
+  placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Console","divid":"consoleButton","top":"0px","left":consoleLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
 
-    placeText({
-      "text":"Monitor",
-      "divid":"monitorButton",
-      "top":"100px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      "fontSize":"125%",
-      "border":"1px solid rgba(0,0,0,.1)",
-      "color":"green"
-    });
+  clickButton("many","serverButton",changeMonitorPage,"serverInfo");
+  clickButton("many","monitorButton",changeMonitorPage,"monitor");
+  clickButton("many","consoleButton",changeMonitorPage,"console");
 
-    placeText({
-      "text":"Console",
-      "divid":"consoleButton",
-      "top":"150px",
-      "left":"0px",
-      "width":"100px",
-      "height":"50px",
-      //"backgroundColor":"rgba(0,255,0,.05)",
-      "fontSize":"125%",
-      "border":"1px solid rgba(0,0,0,.1)",
-      "color":"green"
-    });
-  clickButton("many","serverButton",goToPage,window.config['domain']+"/serverInfo.html");
-  clickButton("many","monitorButton",goToPage,window.config['domain']+"/monitor.html");
-  clickButton("many","consoleButton",goToPage,window.config['domain']+"/console.html");
-
-  document.getElementById(currentPage+"Button").style.backgroundColor='rgba(0,255,0,.1)';
-  var hoverInfo={"border":"1px solid green","backgroundColor":"rgba(0,255,0,.2)"};
+  document.getElementById(currentPage+"Button").style.backgroundColor='rgba(255,255,255,.5)';
+  var hoverInfo={"backgroundColor":"white","color":"navy"};
   hoverDiv("serverButton",hoverInfo)
   hoverDiv("monitorButton",hoverInfo)
-  hoverDiv("consoleButton",hoverInfo)
-
+  hoverDivChangeOtherDiv("consoleButton","consoleButton",hoverInfo)
 }
 
 
+
+
+function drawMonitorHeader(){
+    var thisDiv = document.createElement("div");
+    thisDiv.id="monitorHeader";
+    document.body.prepend(thisDiv);
+
+    var thisDiv = document.createElement("div");
+    thisDiv.id="monitorHeaderRight";
+    document.body.prepend(thisDiv);
+
+  placeText({"parentDiv":"monitorHeader","text":"STEEP","divid":"steepTitle","top":"0px","left":"calc(50% - 800px)","width":"800px","height":"75px","fontSize":"30px","border":"0px solid rgba(0,0,0,.1)","color":"white"});  
+}
 function drawMainDivInside(){
-  placeText({
-    "divid":"mainDivInside",
-    "top":"0px",
-    "left":"100px",
-    "width":"1500px",
-    "height":"901px",
-    "border":"1px solid rgba(0,0,0,.1)",
-  });
+  document.getElementById("mainDiv").style.height="100%";
+  document.getElementById("mainDiv").style.backgroundColor="white";
+  placeText({"divid":"mainDivInside","top":"100px","left":"0px","width":"1600px","height":"calc(100% - 100px)"});
   document.getElementById("mainDivInside").style.overflowY = "scroll";
 }
 
 
 
-function goToPage(args){
-  window.location.href=args[0];
+function changeMonitorPage(args){
+  sock.send(JSON.stringify({"type":"changeMonitorPage","page":args[0]}));
 }
 

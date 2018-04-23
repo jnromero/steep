@@ -31,6 +31,7 @@ def getPage(config,totalPages,currentTab):
 	this+=pf.addExternalFiles(config,"bodyStart")
 	this+='\t\t<script type="text/javascript">%s</script>\n'%(string)
 	this+='\t\t<div id="mainDiv"></div>\n'
+	this+=pf.javascriptLine(files['common']['monitor.js'])
 	this+=pf.javascriptLine(files['common']['console.js'])
 	this+=pf.addExternalFiles(config,"bodyEnd")
 	this+='\t<body>\n'

@@ -151,11 +151,17 @@ class SteepMainServer():
       [subjectID,viewType,urlParamsToAdd,queryParameters]=self.getViewTypeAndSubjectID(message)
       #set subject ID for client
       client.subjectID=subjectID
+      print(client.peer)
       if self.config['serverType']=="regularExperiment":
          if viewType=="monitor":
             print("New monitor client")
+            client.currentMonitorTable=self.currentMonitorTable
+            client.monitorTableSortColumn=[[0,"reg"],[0,"reg"],[0,"reg"]]
+            client.page="monitor"
+            client.consoleTab=1
+            print("New monitor client SET!!!!!!!!!")
             self.monitorClients.append(client)
-            self.updateTaskTable()
+            self.updateMonitorPage(client)
          elif viewType=="tester":
             print("New tester client")
          elif viewType=="console":
@@ -388,19 +394,23 @@ class SteepMainServer():
                self.nextConsoleCall.cancel()
          self.nextConsoleCall=0
          self.lastConsoleMessageTime=time.time()
-         msg={"type":"consoleLinesUpdate"}
-         msg['consoleLines']=self.getCurrentConsoleLines()
          try:
-            for client in self.consoleClients:
-               client.sendMessage(json.dumps(msg).encode('utf8'))
+            # for client in self.consoleClients:
+            for client in self.monitorClients:
+               if client.page=="console":
+                  msg={"type":"consoleLinesUpdate"}   
+                  msg['monitorTables']=[x for x in self.data['monitorTableInfo']]
+                  msg['consoleLines']=self.getCurrentConsoleLines(client.consoleTab)
+                  msg=self.getExtraMonitorPageInfo(msg,client)
+                  client.sendMessage(json.dumps(msg).encode('utf8'))
          except Exception as thisExept: 
             # print("can't send message to console"+thisExept)
             pass
       else:
          if self.nextConsoleCall==0:
             self.nextConsoleCall=reactor.callLater(.1,self.consoleMessage)
-   def getCurrentConsoleLines(self):
-      currentTab=self.logCounter.currentTab
+   def getCurrentConsoleLines(self,tab):
+      currentTab=tab
       thisFile=self.config['logFolder']+"/pickle/%s.pickle"%(currentTab)
       with open(thisFile,'rb') as file:
          out=[]

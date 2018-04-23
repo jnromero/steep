@@ -3,10 +3,9 @@
 
 #monitorTable{
   position:absolute;
-  left: 0px;
+  left: 25px;
   top:0px;
-  width:1175px;
-  border:3px solid black;
+  width:1250px;
 }
 
 
@@ -15,7 +14,6 @@
   left: 975;
   top:275px;
   width:275px;
-  border:3px solid black;
 }
 
 
@@ -25,53 +23,43 @@
     vertical-align: middle;
     text-align: center;
     padding: 15px;
-  border:1px solid black;
 }
 
 #taskTable td,th{
     height: 50px;
     vertical-align: middle;
     padding: 15px;
-  border:1px solid black;
 }
 
 #monitorTable th{
     font-weight: bold;
+  background-color:rgba(0,0,255,.2);
+  border-bottom: 1px solid black;
 }
 
+#monitorTable tr:nth-child(2n+1) {background: rgba(0,255,0,.05)}
+#monitorTable tr:nth-child(2n+2) {background: rgba(0,0,255,.05)}
+#monitorTable tr:nth-child(2n+1):hover {background: rgba(0,255,0,.2)}
+#monitorTable tr:nth-child(2n+2):hover {background: rgba(0,0,255,.2)}
+#monitorTable tr:nth-child(1):hover {background: rgba(0,0,255,0)}
+
+
 #acceptingButton{
-  background-color:rgba(0,255,0,.1);
-  position:absolute;
-  right: 25px;
-  top:25px;
-  width:275px;
-  height:50px;
-  line-height: 50px;
-  text-align: center;
-  border:1px solid black;
+  top:0px;
 }
 
 
 
 #loadInstructionsButton{
-  background-color:rgba(0,255,0,.1);
-  position:absolute;
-  right: 25px;
-  top:85px;
-  width:275px;
-  height:50px;
-  line-height: 50px;
-  text-align: center;
-  border:1px solid black;
-    box-sizing: border-box;
+  top:60px;
 }
 
 
 #instructionsContainer{
-  background-color:rgba(255,0,0,.1);
+  background-color:var(--w3-red);
   position:absolute;
   right: 25px;
-  top:85px;
+  top:135px;
   width:275px;
   height:50px;
   line-height: 50px;
@@ -92,7 +80,7 @@ color:green;}
   position:absolute;
   left: 0px;
   top:0px;
-  width:55px;
+  width:75px;
   height:50px;
   line-height: 50px;
   text-align: center;
@@ -102,9 +90,9 @@ color:green;}
 
 #instructionsPlayButton{
   position:absolute;
-  left: 110px;
+  left: 100px;
   top:0px;
-  width:55px;
+  width:75px;
   height:50px;
   line-height: 50px;
   text-align: center;
@@ -112,9 +100,9 @@ color:green;}
 
 #instructionsEndButton{
   position:absolute;
-  left: 220px;
+  left: 200px;
   top:0px;
-  width:55px;
+  width:75px;
   height:50px;
   line-height: 50px;
   text-align: center;
@@ -148,16 +136,51 @@ color:green;}
 }
 
 .taskButton{
-  background-color:rgba(255,0,0,.1);
+  background-color:var(--w3-red);
   position:absolute;
   right: 25px;
   top:0px;
   width:275px;
   height:50px;
   line-height: 50px;
+  font-size: 20px;
   text-align: center;
-  border:1px solid black;
+  color: white;
+/*  border:1px solid black;
+*/}
+
+
+.alwaysThere{
+  background-color:var(--w3-lightblue);
 }
 
 
+
+#monitorHeader{
+  position: absolute;
+  z-index: 10;
+  min-width: 1600px;
+  width: 100%;
+  height: 75px;
+  top:0px;
+  background-color: var(--w3-red);
+}
+
+
+#monitorHeaderRight{
+  position: absolute;
+  z-index: 11;
+  height: 75px;
+  background-color: var(--w3-lightblue);
+  left: 50%;
+  top:0px;
+  width:600px;
+}
+
+
+@media (max-width: 1600px) {
+  #monitorHeaderRight{
+    left: 800px;
+    width:600px;
+}
 

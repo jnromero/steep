@@ -15,6 +15,7 @@ class SteepQuiz():
 
    def startQuiz(self,message,client):
       #quiz specific monitor table
+      self.taskDone(message)
       self.quizSpecificMonitorTable()
       self.data['serverStatus']['page']="quiz"
       for sid in self.data['subjectIDs']:
@@ -80,11 +81,12 @@ class SteepQuiz():
 
    #quiz specific monitor Table
    def quizSpecificMonitorTable(self):
-      self.data['monitorTableInfo']=[
+      self.currentMonitorTable="quiz"
+      self.data['monitorTableInfo']['quiz']=[
       ['Status'                  ,'self.data[sid].status["quizQuestionStatus"]'],
       ['Question Number'         ,'self.data[sid].status["quizQuestionNumber"]'],
       ['Question Tries'          ,'self.data[sid].status["quizQuestionTries"]'],
       ['Total Tries'             ,'len(self.data[sid].quizAnswers)'],
       ['Answer'                  ,'self.data[sid].status["answer"]'],
       ]
-      self.updateMonitorTableEntries()
+      self.newMonitorTable()

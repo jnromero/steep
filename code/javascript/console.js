@@ -27,6 +27,7 @@ function getColor(outputType){
 function drawConsoleLines(){
   var currentY=0;
   var lineHeight=0;
+  placeText({"parentDiv":"mainDivInside","divid":"consoleLinesHolder","width":"100%","height":"100%","top":"0px","left":"0px",});
   for(var k=0;k<window.consoleLines.length;k++){
 
     //getLine height
@@ -42,10 +43,12 @@ function drawConsoleLines(){
     }
 
 
+
+
     if(window.consoleLines[k][3]['sameLine']!="True"){
       //draw background
       var thisFormat={
-        "parentDiv":"mainDivInside",
+        "parentDiv":"consoleLinesHolder",
         "divid":"lineBackground"+k,
         "text":"",
         "top":currentY+"px",
@@ -68,7 +71,7 @@ function drawConsoleLines(){
 
       //draw line numbers
         placeText({
-          "parentDiv":"mainDivInside",
+          "parentDiv":"consoleLinesHolder",
           "divid":"lineNumber"+k,
           "text":window.consoleLines[k][2]+":",
           "top":currentY+"px",
@@ -82,7 +85,7 @@ function drawConsoleLines(){
 
     //draw text
     var thisFormat={
-      "parentDiv":"mainDivInside",
+      "parentDiv":"consoleLinesHolder",
       "divid":"line"+k,
       "text":window.consoleLines[k][1],
       "top":currentY+"px",
@@ -102,109 +105,138 @@ function drawConsoleLines(){
 }
 
 
+
+
 function drawConsoleTabs(){
   placeText({
-    "divid":"tab"+(k+1),
-    "text":"Console Tabs",
-    "fontSize":"100%",
-    "color":"black",
-    "top":225+"px",
-    "left":0+"px",
-    "width":"100px",
-    "height":"25px",
-  });
+    "zIndex":"6",
+    "color":"white",
+    "fontSize":"20px",
+    "lineHeight":"75px",
+    "text":"Console Navigator - Current Page"+(window.consoleTabsInfo[0])+" out of "+window.consoleTabsInfo[1],
+    "divid":"consoleTabsHolder",
+    "top":"-250px",
+    "left":"675px",
+    "width":"850px",
+    "height":"175px",
+    "fontSize":"20px",
+    "backgroundColor":"white",
+      "backgroundColor":"var(--w3-purple)",
+    "transition":"all .25s ease"
+    });
 
 
   placeText({
+      "parentDiv":"consoleTabsHolder",
       "divid":"firstPageTab",
       "text":"First Page",
-      "fontSize":"125%",
-      "color":"blue",
-      "top":250+"px",
-      "left":0+"px",
-      "width":"100px",
-      "height":"50px",
-      "border":"1px solid rgba(0,0,0,.1)"
+      "fontSize":"20px",
+      "color":'white',
+      "top":75+"px",
+      "left":25+"px",
+      "width":"200px",
+      "height":"75px",
+      "backgroundColor":"var(--w3-lightblue)"
     });
 
 
   placeText({
+      "parentDiv":"consoleTabsHolder",
       "divid":"previousPageTab",
       "text":"Previous Page",
-      "fontSize":"125%",
-      "color":"blue",
-      "top":300+"px",
-      "left":0+"px",
-      "width":"100px",
-      "height":"50px",
-      "border":"1px solid rgba(0,0,0,.1)"
+      "fontSize":"20px",
+      "color":'white',
+      "top":75+"px",
+      "left":225+"px",
+      "width":"200px",
+      "height":"75px",
+      "backgroundColor":"var(--w3-lightblue)"
     });
 
 
   placeText({
+      "parentDiv":"consoleTabsHolder",
       "divid":"nextPageTab",
       "text":"Next Page",
-      "fontSize":"125%",
-      "color":"blue",
-      "top":350+"px",
-      "left":0+"px",
-      "width":"100px",
-      "height":"50px",
-      "border":"1px solid rgba(0,0,0,.1)"
+      "fontSize":"20px",
+      "color":'white',
+      "top":75+"px",
+      "left":425+"px",
+      "width":"200px",
+      "height":"75px",
+      "backgroundColor":"var(--w3-lightblue)"
     });
 
 
   placeText({
+      "parentDiv":"consoleTabsHolder",
       "divid":"lastPageTab",
       "text":"Last Page",
-      "fontSize":"125%",
-      "color":"blue",
-      "top":400+"px",
-      "left":0+"px",
-      "width":"100px",
-      "height":"50px",
-      "border":"1px solid rgba(0,0,0,.1)"
+      "fontSize":"20px",
+      "color":'white',
+      "top":75+"px",
+      "left":625+"px",
+      "width":"200px",
+      "height":"75px",
+      "backgroundColor":"var(--w3-lightblue)"
     });
 
+  if(window.consoleTabsInfo!=undefined){
   placeText({
+      "zIndex":"11",
       "divid":"pagenumber",
-      "text":"Page "+(window.currentTab)+" out of "+window.totalPages,
+      "text":"Page "+(window.consoleTabsInfo[0])+" out of "+window.consoleTabsInfo[1],
       "fontSize":"100%",
-      "color":"black",
-      "top":450+"px",
-      "left":0+"px",
-      "width":"100px",
+      "color":"white",
+      "top":"50px",
+      "left":"1200px",
+      "width":"200px",
       "height":"25px",
       // "border":"1px solid rgba(0,0,0,.1)"
     });
+    hoverDivChangeOtherDiv("pagenumber","consoleTabsHolder",{"top":"70px"});
+    clickButton("many","pagenumber",changeMonitorPage,"console");
+    }
 
 
     var nextTab=Math.min(window.currentTab+1,window.totalPages);
     var previousTab=Math.max(window.currentTab-1,1);
-    clickButton("many","firstPageTab",goToPage,window.config['domain']+"/console.html?page=1");
-    clickButton("many","previousPageTab",goToPage,window.config['domain']+"/console.html?page="+previousTab);
-    clickButton("many","nextPageTab",goToPage,window.config['domain']+"/console.html?page="+nextTab);
-    clickButton("many","lastPageTab",goToPage,window.config['domain']+"/console.html?page=current");
-    var hoverInfo={"border":"1px solid blue","backgroundColor":"rgba(0,0,255,.2)"};
+    clickButton("many","firstPageTab",changeConsoleTab,"first");
+    clickButton("many","previousPageTab",changeConsoleTab,"previous");
+    clickButton("many","nextPageTab",changeConsoleTab,"next");
+    clickButton("many","lastPageTab",changeConsoleTab,"last");
+  var hoverInfo={"backgroundColor":"white","color":"navy"};
     hoverDiv("firstPageTab",hoverInfo)
     hoverDiv("previousPageTab",hoverInfo)
     hoverDiv("nextPageTab",hoverInfo)
     hoverDiv("lastPageTab",hoverInfo)
+    hoverDivChangeOtherDiv("consoleButton","consoleTabsHolder",{"top":"70px"});
+    hoverDivChangeOtherDiv("consoleTabsHolder","consoleTabsHolder",{"top":"70px"});
 
 
 }
+
+
+function changeConsoleTab(args){
+  sock.send(JSON.stringify({"type":"changeConsoleTab","tab":args[0]}));
+}
+
 
 function consoleLinesNoUpdate(msg){
   console.log("consoleLinesNoUpdate")
 }
 
 function consoleLinesUpdate(msg){
-  console.log("update")
-  clearAll();
-  drawPageTabs("console");
-  drawMainDivInside();
+  deleteDiv("serverInfoContainer")
+  deleteDiv("configInfoContainer")
+  deleteDiv("monitorTableHolder");
+  deleteDiv("taskTableHolder");
+  deleteDiv("mainInfoHolder");
+  getMonitorTablesInfo(msg)
   window.consoleLines=msg['consoleLines'];
   drawConsoleLines();
+  drawPageTabs("console");
+  drawMonitorPageLinks();
   drawConsoleTabs();
   document.getElementById("mainDivInside").scrollTop= (0,20000);
 }

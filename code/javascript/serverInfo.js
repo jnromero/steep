@@ -8,9 +8,8 @@ function drawServerInfo(){
     "color":"black",
     "height":"400px",
     "width":"750px",
-    "left":"700px",
-    "top":"350px",
-    "top":"50px",
+    "left":"800px",
+    "top":"275px",
     "backgroundColor":"white"
   };
   placeText(incoming);
@@ -44,6 +43,7 @@ function drawServerInfo(){
     "left":"270px",
     "textAlign":"left",
     "top":"50px",
+    "width":"unset",
   });
 
   placeText({
@@ -64,7 +64,7 @@ function drawServerInfo(){
     "fontSize":"70%",
     "color":"black",
     "height":"50px",
-    "width":"1000px",
+    "width":"unset",
     "left":"270px",
     "textAlign":"left",
     "top":"100px",
@@ -92,7 +92,7 @@ function drawServerInfo(){
       "fontSize":"70%",
       "color":"black",
       "height":"50px",
-      "width":"1000px",
+      "width":"unset",
       "left":"270px",
       "textAlign":"left",
       "top":(y)+"px",
@@ -118,7 +118,7 @@ function drawServerInfo(){
     "fontSize":"70%",
     "color":"black",
     "height":"50px",
-    "width":"1000px",
+    "width":"unset",
     "left":"270px",
     "textAlign":"left",
     "top":(y)+"px",
@@ -126,56 +126,125 @@ function drawServerInfo(){
 
   y+=50;
 
+
   placeText({
-    "parentDiv":"serverInfoContainer",
+    "parentDiv":"mainDivInside",
+    "divid":"mainInfoHolder",
+    "height":"250px",
+    "width":"100%",
+    "top":"0px",
+    "left":"0px",
+    "overflow":"hidden",
+    "backgroundColor":"rgba(255,0,0,.1)",
+    });
+
+  placeText({
+    "parentDiv":"mainInfoHolder",
     "text":"Launcher String:",
-    "fontSize":"70%",
+    "fontSize":"20px",
     "color":"green",
     "height":"50px",
     "width":"250px",
     "left":"0px",
     "textAlign":"right",
-    "top":y+"px",
+    "top":25+"px",
   });
 
   placeText({
-    "parentDiv":"serverInfoContainer",
+    "parentDiv":"mainInfoHolder",
     "text":"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe -kiosk --no-default-browser-check --disk-cache-size=1 --media-cache-size=1 "+window.config['domain']+"/client.html",
-    "fontSize":"20%",
+    "fontSize":"20px",
     "color":"black",
     "height":"50px",
-    "width":"1000px",
     "left":"270px",
+    "whiteSpace":"nowrap",
+    "overflow":"none",
+    "width":"calc(100% - 270px)",
     "textAlign":"left",
-    "top":(y)+"px",
+    "top":25+"px",
     "userSelect":"text",
-    "zIndex":"9999",
+    "zIndex":"5",
   });
   y+=50;
 
   placeText({
-    "parentDiv":"serverInfoContainer",
+    "parentDiv":"mainInfoHolder",
     "text":"Restart String:",
-    "fontSize":"70%",
+    "fontSize":"20px",
     "color":"green",
     "height":"50px",
     "width":"250px",
     "left":"0px",
     "textAlign":"right",
-    "top":y+"px",
+    "top":75+"px",
   });
 
 
   placeText({
-    "parentDiv":"serverInfoContainer",
+    "parentDiv":"mainInfoHolder",
     "text":config['restartString'],
-    "fontSize":"20%",
+    "fontSize":"20px",
     "color":"black",
     "height":"50px",
     "width":"1000px",
     "left":"270px",
     "textAlign":"left",
-    "top":(y)+"px",
+    "top":75+"px",
+    "userSelect":"text",
+  });
+
+
+
+  placeText({
+    "parentDiv":"mainInfoHolder",
+    "text":"New Client Link:",
+    "fontSize":"20px",
+    "color":"green",
+    "height":"50px",
+    "width":"250px",
+    "left":"0px",
+    "textAlign":"right",
+    "top":125+"px",
+  });
+
+
+  placeText({
+    "parentDiv":"mainInfoHolder",
+    "text":"<a href='"+config['domain']+"/client.html'>"+config['domain']+"/client.html</a>",
+    "fontSize":"20px",
+    "color":"black",
+    "height":"50px",
+    "width":"1000px",
+    "left":"270px",
+    "textAlign":"left",
+    "top":125+"px",
+    "userSelect":"text",
+  });
+
+
+  placeText({
+    "parentDiv":"mainInfoHolder",
+    "text":"New Video Link:",
+    "fontSize":"20px",
+    "color":"green",
+    "height":"50px",
+    "width":"250px",
+    "left":"0px",
+    "textAlign":"right",
+    "top":175+"px",
+  });
+
+
+  placeText({
+    "parentDiv":"mainInfoHolder",
+    "text":"<a href='"+config['domain']+"/video.html'>"+config['domain']+"/video.html</a>",
+    "fontSize":"20px",
+    "color":"black",
+    "height":"50px",
+    "width":"1000px",
+    "left":"270px",
+    "textAlign":"left",
+    "top":175+"px",
     "userSelect":"text",
   });
 
@@ -200,7 +269,7 @@ function drawConfigInfo(){
     "height":"800px",
     "width":"800px",
     "left":"00px",
-    "top":"0px",
+    "top":"275px",
   });
 
 
@@ -239,7 +308,7 @@ function drawConfigInfo(){
     "fontSize":"25px",
     "color":"green",
     "height":"50px",
-    "width":"250px",
+    "width":"300px",
     "left":"0px",
     "textAlign":"right",
     "top":y+"px",
@@ -251,25 +320,29 @@ function drawConfigInfo(){
     "fontSize":"25px",
     "color":thisColor,
     "height":"50px",
-    "width":"1000px",
-    "left":"270px",
+    "width":"unset",
+    "left":"320px",
     "textAlign":"left",
     "top":(y)+"px",
   });
-  y+=33;
+  y+=50;
 }
 }
 
 
 
 
-
-clearAll();
-drawPageTabs("server");
-drawMainDivInside();
-drawServerInfo();
-drawConfigInfo();
-drawNewPageLinks();
+function showServerInfo(msg){
+  deleteDiv("monitorTableHolder")
+  deleteDiv("taskTableHolder")
+  deleteDiv("consoleLinesHolder")
+  getMonitorTablesInfo(msg)
+  drawPageTabs("server");
+  drawMonitorPageLinks();
+  drawConsoleTabs();
+  drawServerInfo();
+  drawConfigInfo();
+}
 
 
 

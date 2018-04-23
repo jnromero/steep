@@ -9,30 +9,60 @@ class monitorClass():
       # self.data['taskList']=self.monitorTaskList
       self.monitorTasks()
       self.data['taskDoneTime']=[]
-      if 'monitorTableSortColumn' not in self.data:
-         self.data['monitorTableSortColumn']=0
-         self.data['monitorTableSortType']=0
-         self.data['monitorTableInfo']=[["delete","delete"]]
-      self.updateMonitorTableEntries()
-   #Monitor Stuff
+      self.data['monitorTableInfo']={}
+      self.clientInfoSpecificMonitorTableEntries()
 
    def sendMessageToMonitorClients(self,msg):
       try:
          for client in self.monitorClients:
-            client.sendMessage(json.dumps(msg).encode('utf8'))
+            if client.page=="monitor":
+               msg=self.getExtraMonitorPageInfo(msg,client)
+               client.sendMessage(json.dumps(msg).encode('utf8'))
       except Exception as thisExept: 
          print(thisExept)
-         print("can't send message to monitor")
+         print("can't send message to monitor, from sendMessageToMonitorClients")
 
 
    #def monitorMessage(self): in mainServer.py so that it can use reactor.
 
+
+   def updateMonitorPage(self,client):
+      if client.page=="monitor":
+         self.updateMonitorTable()
+         self.updateTaskTable()
+      elif client.page=="console":
+         self.lastConsoleMessageTime=time.time()-10#this ensures a page refresh
+         self.consoleMessage()
+      elif client.page=="serverInfo":
+         self.showServerInfo(client)
+
+   def showServerInfo(self,client):
+      try:
+         msg={'type':"showServerInfo"}
+         msg=self.getExtraMonitorPageInfo(msg,client)
+         print(msg)
+         client.sendMessage(json.dumps(msg).encode('utf8'))
+      except Exception as thisExept: 
+         print(thisExept)
+         print("can't send message to monitor, from sendMessageToMonitorClients")
+
+   def newMonitorTable(self):
+      for client in self.monitorClients:
+         client.currentMonitorTable=self.currentMonitorTable
+      self.updateMonitorTable()
+
    def updateMonitorTable(self):
-      self.updateMonitorTableEntries()
-      msg={"type":"updateMonitorTable"}
-      msg['table']=self.getMonitorTable()
-      msg['serverStatus']=self.data['serverStatus']
-      self.sendMessageToMonitorClients(msg)
+      try:
+         for client in self.monitorClients:
+            if client.page=="monitor":
+               msg={"type":"updateMonitorTable"}
+               msg['table']=self.getMonitorTable(client)
+               msg['serverStatus']=self.data['serverStatus']
+               msg=self.getExtraMonitorPageInfo(msg,client)
+               client.sendMessage(json.dumps(msg).encode('utf8'))
+      except Exception as thisExept: 
+         print(thisExept)
+         print("can't send message to monitor, from updateMonitorTable")
       
    def updateTaskTable(self):
       msg={"type":"updateTaskTable"}
@@ -58,38 +88,44 @@ class monitorClass():
             self.notAcceptingClientsAnymoreDefault()
       else:
          print("Accepting Clients Now!")
-
+      self.finalPayoffsSpecificMonitorTableEntries()
       self.monitorMessage()
       self.updateTaskTable()
 
 
 
-   def updateMonitorTableEntries(self):
-      extra=[
-         ['#'              ,'k'],
+   def clientInfoSpecificMonitorTableEntries(self):
+      self.currentMonitorTable="clientInfo"
+      self.data['monitorTableInfo']['clientInfo']=[
          ['Refresh'      ,'"<a href=\'javascript:void(0)\' onclick=\'refreshClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)'],
-         ['Connection'     ,'self.data[sid].connectionStatus']
+         ['Connection'     ,'self.data[sid].connectionStatus'],
+         ['IP Address'     ,'self.clientsById[sid].peer'],
+         ['Delete','"<a href=\'javascript:void(0)\' onclick=\'deleteClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)']         
       ]
 
-      if self.data['monitorTableInfo'][0][0]=="#":
-         "already Added"
-      elif self.data['monitorTableInfo']=="none":
-         self.data['monitorTableInfo']=extra
-      else:
-         self.data['monitorTableInfo']=extra+self.data['monitorTableInfo']
+   def finalPayoffsSpecificMonitorTableEntries(self):
+      try:
+         self.currentMonitorTable="finalPayoffs"
+         sid=self.data['subjectIDs'][0]
+         thisTable=[]
+         for k in self.data[sid].finalPayoffs:
+            thisTable.append([k,"'$%%.02f'%%(self.data[sid].finalPayoffs['%s'])"%(k)])
+         self.data['monitorTableInfo']['finalPayoffs']=thisTable
+      except Exception,e: 
+         print("can't set final payoffs monitor table",str(e))
 
-      #replace ["delete","delete"] with subject delete button
-      self.data['monitorTableInfo'] = [x if x!=["delete","delete"] else ['Delete','"<a href=\'javascript:void(0)\' onclick=\'deleteClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)'] for x in self.data['monitorTableInfo']]
 
-   def getMonitorTable(self):
+   def getMonitorTable(self,client):
+      thisMonitorTable=[["subjectID","sid"]]+self.data['monitorTableInfo'][client.currentMonitorTable]
       tableData={}
       tableData['subjectIDs']=self.data['subjectIDs']
-      tableData['titles']=[x[0] for x in self.data['monitorTableInfo']]
+      tableData['connected']=[self.data[x].connectionStatus for x in self.data['subjectIDs']]
+      tableData['titles']=[x[0] for x in thisMonitorTable]
       k=0
       for sid in tableData['subjectIDs']:
          k+=1
          tableData[sid]={}
-         for item in self.data['monitorTableInfo']:
+         for item in thisMonitorTable:
             string=item[0]
             value=item[1]
             if len(item)>2:
@@ -101,29 +137,71 @@ class monitorClass():
                exec('tableData[sid][\'%s\']=%s'%(string,value))
             except:
                exec('tableData[sid][\'%s\']="NA"'%(string))
-      tableData=self.sortMonitorTable(tableData,self.data['monitorTableSortColumn'])
+      tableData=self.sortMonitorTable(tableData,client.monitorTableSortColumn)
       return tableData
 
-   def sortMonitorTable(self,tableData,index):
-      thisTitle=tableData['titles'][index]
+   def sortMonitorTable(self,tableData,sortColumns):
       toBeSorted=[]
       for sid in tableData['subjectIDs']:
-         toBeSorted.append([tableData[sid][thisTitle],sid])
-      if self.data['monitorTableSortType']==0:
-         toBeSorted.sort()#reverse=True)
-      else:
-         toBeSorted.sort(reverse=True)
-
-      tableData['subjectIDs']=[x[1] for x in toBeSorted]
+         thisList=[sid]
+         for c in sortColumns:
+            index=c[0]
+            thisTitle=tableData['titles'][index]
+            thisList.append(tableData[sid][thisTitle])
+         toBeSorted.append(thisList)
+      index=0
+      for c in sortColumns:
+         index+=1
+         if c[1]=="reg":
+            toBeSorted.sort(key=lambda x: x[index])#reverse=True)
+         else:
+            toBeSorted.sort(key=lambda x: x[index],reverse=True)
+         tableData['subjectIDs']=[x[0] for x in toBeSorted]
       return tableData
 
    def sortMonitorTableMessage(self,message,client):
-      if self.data['monitorTableSortColumn']==int(message['col']):
-         self.data['monitorTableSortType']=1-self.data['monitorTableSortType']
+      client.monitorTableSortColumn
+      if client.monitorTableSortColumn[-1][0]==int(message['col']):
+         if client.monitorTableSortColumn[-1][1]=="rev":
+            client.monitorTableSortColumn[-1][1]="reg"
+         elif client.monitorTableSortColumn[-1][1]=="reg":
+            client.monitorTableSortColumn[-1][1]="rev"
       else:
-         self.data['monitorTableSortType']=0
-      self.data['monitorTableSortColumn']=int(message['col'])
+         client.monitorTableSortColumn.append([int(message['col']),"reg"])
+         client.monitorTableSortColumn=client.monitorTableSortColumn[1:]
+      print(client.monitorTableSortColumn)
       self.monitorMessage()
+
+   def changeMonitorTable(self,message,client):
+      client.currentMonitorTable=message["table"]
+      client.page="monitor"
+      self.updateMonitorPage(client)
+
+   def changeMonitorPage(self,message,client):
+      print("Changin page",client.page)
+      client.page=message["page"]
+      self.updateMonitorPage(client)
+
+   def changeConsoleTab(self,message,client):
+      if message["tab"]=="first":
+         client.consoleTab=1
+      elif message["tab"]=="next":
+         client.consoleTab+=1
+         client.consoleTab=min(client.consoleTab,self.logCounter.fileCount)
+      elif message["tab"]=="previous":
+         client.consoleTab-=1
+         client.consoleTab=max(client.consoleTab,1)
+      elif message["tab"]=="last":
+         client.consoleTab=self.logCounter.fileCount
+      client.page="console"
+      self.updateMonitorPage(client)
+
+
+   def getExtraMonitorPageInfo(self,msg,client):
+      msg['consoleTabs']=[client.consoleTab,self.logCounter.fileCount]
+      msg['monitorTables']=[x for x in self.data['monitorTableInfo']]
+      msg['currentMonitorTable']=client.currentMonitorTable
+      return msg
 
    def taskDone(self,message):
       task=message['type']

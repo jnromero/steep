@@ -22,6 +22,8 @@ def getPage(config):
   this+='\t<body>\n'
   this+=pf.addExternalFiles(config,"bodyStart")
   this+='\t\t<div id="mainDiv"></div>\n'
+  this+=pf.javascriptLine(files['common']['serverInfo.js'])
+  this+=pf.javascriptLine(files['common']['console.js'])
   this+=pf.javascriptLine(files['common']['monitor.js'])
   this+=pf.addExternalFiles(config,"bodyEnd")
   this+='\t</body>\n'

@@ -1,7 +1,7 @@
 from __future__ import print_function,division,absolute_import   
 import time
 from twisted.internet import reactor
-
+import datetime
 class SteepTimerManager():
    def __init__(self):
       self.data['timers']={}
@@ -31,3 +31,9 @@ class SteepTimerManager():
       timer[0]=time.time()
       remaining=timer[2]-(timer[0]-timer[1])
       return remaining
+
+   def updateTimerPretty(self,timer):
+      #timer=currentTime,startTime,totalTime
+      timer[0]=time.time()
+      remaining=int(timer[2]-(timer[0]-timer[1]))
+      return str(datetime.timedelta(seconds=remaining))
