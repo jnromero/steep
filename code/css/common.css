@@ -226,5 +226,46 @@ div{
 
 
 
+  
+  *{
+    --w3-yellow: rgba(236, 219, 84, 1); 
+    --w3-red: rgba(233, 75, 60, 1); 
+    --w3-lightblue: rgba(111, 159, 216, 1);
+    --w3-brownred: rgba(148, 71, 67, 1);
+    --w3-lavender: rgba(219, 177, 205, 1);
+    --w3-pink: rgba(236, 151, 135, 1);
+    --w3-turquoise: rgba(0, 165, 145, 1);
+    --w3-purple: rgba(107, 91, 149, 1);
+    --w3-brown:rgba(108, 79, 61, 1) ;
+    --w3-offwhite: rgba(234, 222, 219, 1);
+    --w3-pinkpurple: rgba(188, 112, 164, 1);
+    --w3-green: rgba(191, 214, 65, 1);
 
+    --w3-yellow1: rgba(236, 219, 84, .1); 
+    --w3-red1: rgba(233, 75, 60, .1); 
+    --w3-lightblue1: rgba(111, 159, 216, .1);
+    --w3-brownred1: rgba(148, 71, 67, .1);
+    --w3-lavender1: rgba(219, 177, 205, .1);
+    --w3-pink11: rgba(236, 151, 135, .1);
+    --w3-turquoise1: rgba(0, 165, 145, .1);
+    --w3-purple1: rgba(107, 91, 149, .1);
+    --w3-brown:rgba(108, 79, 61, .1) ;
+    --w3-offwhite1: rgba(234, 222, 219, .1);
+    --w3-pinkpurple1: rgba(188, 112, 164, .1);
+    --w3-green1: rgba(191, 214, 65, .1);
+
+    --w3-yellow2: rgba(236, 219, 84, .2); 
+    --w3-red2: rgba(233, 75, 60, .2); 
+    --w3-lightblue2: rgba(111, 159, 216, .2);
+    --w3-brownred2: rgba(148, 71, 67, .2);
+    --w3-lavender2: rgba(219, 177, 205, .2);
+    --w3-pink2: rgba(236, 151, 135, .2);
+    --w3-turquoise2: rgba(0, 165, 145, .2);
+    --w3-purple2: rgba(107, 91, 149, .2);
+    --w3-brown:rgba(108, 79, 61, .2) ;
+    --w3-offwhite2: rgba(234, 222, 219, .2);
+    --w3-pinkpurple2: rgba(188, 112, 164, .2);
+    --w3-green2: rgba(191, 214, 65, .2);
+
+  }
 
