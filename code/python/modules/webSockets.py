@@ -13,11 +13,6 @@ class SteepWebSocketProtocol(WebSocketServerProtocol):
    def onMessage(self, payload, isBinary):
       if not isBinary:
          msg = json.loads(payload.decode('utf8'))
-         try:
-            sid=client.subjectID
-         except:
-            sid="sidNotSet"
-         msg["sid"]=sid
          self.factory.messageJavascriptToPython(msg,self)
 
 class SteepWebSocketFactory(WebSocketServerFactory,):
@@ -31,6 +26,11 @@ class SteepWebSocketFactory(WebSocketServerFactory,):
       self.messagesFromPythonToJavascript=True
    def messageJavascriptToPython(self,message,client):
       #automatically run the function self.message['type'](message,client) when that message is received
+      try:
+         sid=client.subjectID
+      except:
+         sid="sidNotSet"
+      message["sid"]=sid
       self.writeToMessageLog(message,"from")
       eval("self.%s(%s,%s)"%(message['type'],'message','client'))
 
