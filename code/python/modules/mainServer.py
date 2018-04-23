@@ -96,11 +96,11 @@ class SteepMainServer():
       if self.config['serverType']=="demoExperiment":
          if "subjectID" in queryParameters:
             del queryParameters['subjectID']
-
+      print(pathName)
       if pathName.split("/")[-1]=="video.html":
          viewType="video"
          subjectID="video"
-      elif pathName.split("/")[-1]=="monitor.html":
+      elif pathName.split("/")[-1]=="monitor.html" or pathName=="/":
          viewType="monitor"
          subjectID="monitor"
       elif pathName.split("/")[-1]=="console.html":
