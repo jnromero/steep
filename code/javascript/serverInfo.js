@@ -337,9 +337,6 @@ function showServerInfo(msg){
   deleteDiv("taskTableHolder")
   deleteDiv("consoleLinesHolder")
   getMonitorTablesInfo(msg)
-  drawPageTabs("server");
-  drawMonitorPageLinks();
-  drawConsoleTabs();
   drawServerInfo();
   drawConfigInfo();
 }

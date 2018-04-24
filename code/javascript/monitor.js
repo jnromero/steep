@@ -374,14 +374,22 @@ function drawMonitorPageLinks(){
 getAutomatic();
 
 drawMonitorHeader();
-drawPageTabs("monitor");
 drawMainDivInside();
 
 function getMonitorTablesInfo(msg){
+  console.log(msg)
   window.monitorTables=msg['monitorTables'];
   window.currentMonitorTable=msg['currentMonitorTable']
   window.serverStatus=msg['serverStatus'];
   window.consoleTabsInfo=msg['consoleTabs'];
+}
+
+function updateMonitorHeader(msg){
+  getMonitorTablesInfo(msg);
+  console.log("updateMonitorHeader",msg)
+  drawPageTabs(msg['currentPage']);
+  drawConsoleTabs();
+  drawMonitorPageLinks();
 }
 
 function updateMonitorTable(msg){
@@ -390,9 +398,6 @@ function updateMonitorTable(msg){
   deleteDiv("mainInfoHolder");
   deleteDiv("consoleLinesHolder");
   getMonitorTablesInfo(msg);
-  drawPageTabs("monitor");
-  drawMonitorPageLinks();
-  drawConsoleTabs();
   window.lastTimeCheck=(new Date()).getTime();
   makeMonitorTable(msg);
 }

@@ -27,6 +27,7 @@ class monitorClass():
 
 
    def updateMonitorPage(self,client):
+      self.updateMonitorHeader(client)
       if client.page=="monitor":
          self.updateMonitorTable()
          self.updateTaskTable()
@@ -46,9 +47,19 @@ class monitorClass():
          print(thisExept)
          print("can't send message to monitor, from sendMessageToMonitorClients")
 
+
+   def updateMonitorHeader(self,client):
+      msg={"type":"updateMonitorHeader"}
+      msg['currentPage']=client.page
+      msg['serverStatus']=self.data['serverStatus']
+      msg=self.getExtraMonitorPageInfo(msg,client)
+      client.sendMessage(json.dumps(msg).encode('utf8'))
+
    def newMonitorTable(self):
       for client in self.monitorClients:
+         self.updateMonitorHeader(client)
          client.currentMonitorTable=self.currentMonitorTable
+         self.updateMonitorHeader(client)
       self.updateMonitorTable()
 
    def updateMonitorTable(self):

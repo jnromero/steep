@@ -235,9 +235,6 @@ function consoleLinesUpdate(msg){
   getMonitorTablesInfo(msg)
   window.consoleLines=msg['consoleLines'];
   drawConsoleLines();
-  drawPageTabs("console");
-  drawMonitorPageLinks();
-  drawConsoleTabs();
   document.getElementById("mainDivInside").scrollTop= (0,20000);
 }
 

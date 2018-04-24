@@ -21,23 +21,24 @@ function camelCaseToRegular(string){
 
 
 function drawPageTabs(currentPage){
+  console.log("!!!!!",currentPage)
   // placeText({"text":"Server Links","divid":"server2Button","top":"0px","left":"0px","width":"100px","height":"25px","fontSize":"100%","color":"black"});
   var consoleLeft="400px";
   var monitorLeft="200px";
   var serverLeft="0px";
 
 
-  placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Server Info","divid":"serverButton","top":"0px","left":serverLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
+  placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Server Info","divid":"serverInfoButton","top":"0px","left":serverLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
   placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Monitor","divid":"monitorButton","top":"0px","left":monitorLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
   placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Console","divid":"consoleButton","top":"0px","left":consoleLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
 
-  clickButton("many","serverButton",changeMonitorPage,"serverInfo");
+  clickButton("many","serverInfoButton",changeMonitorPage,"serverInfo");
   clickButton("many","monitorButton",changeMonitorPage,"monitor");
   clickButton("many","consoleButton",changeMonitorPage,"console");
 
   document.getElementById(currentPage+"Button").style.backgroundColor='rgba(255,255,255,.5)';
   var hoverInfo={"backgroundColor":"white","color":"navy"};
-  hoverDiv("serverButton",hoverInfo)
+  hoverDiv("serverInfoButton",hoverInfo)
   hoverDiv("monitorButton",hoverInfo)
   hoverDivChangeOtherDiv("consoleButton","consoleButton",hoverInfo)
 }

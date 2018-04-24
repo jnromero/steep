@@ -206,7 +206,7 @@ class SteepMainServer():
                print(self.data['serverStatus']['page'])
                if self.data['serverStatus']['page']=="instructions":
                   self.reconnectInstructions(subjectID)
-               elif self.data['serverStatus']['page']=="quiz":    
+               elif self.data['serverStatus']['page']=="quiz":   
                   self.reconnectQuiz(subjectID)
                else:
                   self.reconnectingClient(client)
