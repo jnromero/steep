@@ -45,7 +45,7 @@ class monitorClass():
          client.sendMessage(json.dumps(msg).encode('utf8'))
       except Exception as thisExept: 
          print(thisExept)
-         print("can't send message to monitor, from sendMessageToMonitorClients")
+         print("can't send message to monitor, from showServerInfo")
 
 
    def updateMonitorHeader(self,client):
@@ -184,6 +184,7 @@ class monitorClass():
       self.monitorMessage()
 
    def changeMonitorTable(self,message,client):
+      client.monitorTableSortColumn=[[0,"reg"],[0,"reg"],[0,"reg"]]
       client.currentMonitorTable=message["table"]
       client.page="monitor"
       self.updateMonitorPage(client)
