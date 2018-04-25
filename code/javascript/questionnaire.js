@@ -40,14 +40,16 @@ function showQuestionnaire(subjectID,payoff){
 
 function checkIfAnswersComplete(args){
 	var ids=args[0];
-    console.log(args);
 	incomplete=0;
 	answers={}
 	for(id in ids){
 		answers[ids[id]]=document.getElementById(ids[id]).value;
-		if(document.getElementById(ids[id]).value==""){
-			incomplete=1;
-		}
+        if(document.getElementById(ids[id]).value==""){
+            incomplete=1;
+        }
+        else if(document.getElementById(ids[id]).value==undefined){
+            incomplete=1;
+        }
 	}
 	if(incomplete==1){
 		alert("Please answer all questions.");
