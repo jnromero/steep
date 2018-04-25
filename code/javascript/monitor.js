@@ -306,6 +306,16 @@ function deleteClient(args){
   }
 }
 
+function chooseVolunteer(args){
+  var sid=args[0];
+  msg={}
+  msg['type']="chooseVolunteer";
+  msg['subjectIDIncoming']=sid;
+  sock.send(JSON.stringify(msg));
+}
+
+
+
 
 function startIt(type){
   msg={"type":type};
