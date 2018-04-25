@@ -41,7 +41,6 @@ class monitorClass():
       try:
          msg={'type':"showServerInfo"}
          msg=self.getExtraMonitorPageInfo(msg,client)
-         print(msg)
          client.sendMessage(json.dumps(msg).encode('utf8'))
       except Exception as thisExept: 
          print(thisExept)
@@ -180,7 +179,6 @@ class monitorClass():
       else:
          client.monitorTableSortColumn.append([int(message['col']),"reg"])
          client.monitorTableSortColumn=client.monitorTableSortColumn[1:]
-      print(client.monitorTableSortColumn)
       self.monitorMessage()
 
    def changeMonitorTable(self,message,client):
@@ -190,7 +188,6 @@ class monitorClass():
       self.updateMonitorPage(client)
 
    def changeMonitorPage(self,message,client):
-      print("Changin page",client.page)
       client.page=message["page"]
       self.updateMonitorPage(client)
 

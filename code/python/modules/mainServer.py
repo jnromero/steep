@@ -151,7 +151,6 @@ class SteepMainServer():
       [subjectID,viewType,urlParamsToAdd,queryParameters]=self.getViewTypeAndSubjectID(message)
       #set subject ID for client
       client.subjectID=subjectID
-      print(client.peer)
       if self.config['serverType']=="regularExperiment":
          if viewType=="monitor":
             print("New monitor client")
