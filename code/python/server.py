@@ -168,42 +168,51 @@ configFunctions.writeJavascriptConfigFile(config)
 #in order for plugins to work ALL experiment.py files must have super function in __init__
 if "plugins" in config:
    experimentClasses=[experimentClassRaw]
+   subjectClasses=[subjectClassRaw]
    for plugin in config['plugins']:
       j=config['plugins'].index(plugin)
       path=plugin[0]
       pluginLocation=plugin[1]
       if pluginLocation=="relative":
          pluginFile = str(experimentDirectory.joinpath('files',path))
-         imp.load_source('pluginModules%s'%(j),pluginFile)
-         exec("from pluginModules%s import experimentClass as pluginClasses"%(j))
       elif pluginLocation=="absolute":
          pluginFile = str(experimentDirectory.joinpath(path))
-         imp.load_source('pluginModules%s'%(j),pluginFile)
-         exec("from pluginModules%s import experimentClass as pluginClasses"%(j))
-      experimentClasses.append(pluginClasses)
+      imp.load_source('pluginExperimentModules%s'%(j),pluginFile)
+      exec("from pluginExperimentModules%s import experimentClass as pluginExperimentClass"%(j))
+      exec("from pluginExperimentModules%s import subjectClass as pluginSubjectClass"%(j))
+      experimentClasses.append(pluginExperimentClass)
+      subjectClasses.append(pluginSubjectClass)
    experimentClass = type('experimentClass',tuple(experimentClasses), {})
-else:
-   experimentClass=experimentClassRaw
-
-
-if "plugins" in config:
-   subjectClasses=[subjectClassRaw]
-   for plugin in config['plugins']:
-      j=100+config['plugins'].index(plugin)
-      path=plugin[0]
-      pluginLocation=plugin[1]
-      if pluginLocation=="relative":
-         pluginFile = str(experimentDirectory.joinpath('files',path))
-         imp.load_source('pluginModules%s'%(j),pluginFile)
-         exec("from pluginModules%s import subjectClass as pluginClasses"%(j))
-      elif pluginLocation=="absolute":
-         pluginFile = str(experimentDirectory.joinpath(path))
-         imp.load_source('pluginModules%s'%(j),pluginFile)
-         exec("from pluginModules%s import subjectClass as pluginClasses"%(j))
-      subjectClasses.append(pluginClasses)
    subjectClass = type('subjectClass',tuple(subjectClasses), {})
 else:
+   experimentClass=experimentClassRaw
    subjectClass=subjectClassRaw
+
+
+# if "plugins" in config:
+#    subjectClasses=[subjectClassRaw]
+#    for plugin in config['plugins']:
+#       j=100+config['plugins'].index(plugin)
+#       path=plugin[0]
+#       pluginLocation=plugin[1]
+#       if pluginLocation=="relative":
+#          pluginFile = str(experimentDirectory.joinpath('files',path))
+#          imp.load_source('pluginSubjectModules%s'%(j),pluginFile)
+#          exec("from pluginSubjectModules%s import subjectClass as thisSubjectClass"%(j))
+#          x=thisSubjectClass()
+#          print(dir(x))
+#       elif pluginLocation=="absolute":
+#          pluginFile = str(experimentDirectory.joinpath(path))
+#          imp.load_source('pluginSubjectModules%s'%(j),pluginFile)
+#          exec("from pluginSubjectModules%s import subjectClass as thisSubjectClass"%(j))
+#       subjectClasses.append(thisSubjectClass)
+#    print("!!!!!!!!!!!!!!",len(subjectClasses))
+#    for k in subjectClasses:
+#       print("24234234234234",k)
+#       print(dir(k))
+#    subjectClass = type('subjectClass',tuple(subjectClasses), {})
+# else:
+#    subjectClass=subjectClassRaw
 
 
 
@@ -228,35 +237,6 @@ from steepWebSockets import SteepWebSocketFactory
 steepMainServer = imp.load_source('steepMainServer',str(steepDirectory.joinpath('python', 'modules','mainServer.py')))
 from steepMainServer import SteepMainServer
 
-#load quiz module
-steepQuiz = imp.load_source('steepQuiz',str(steepDirectory.joinpath('python', 'modules','quiz.py')))
-from steepQuiz import SteepQuiz
-
-#load questionnaire module
-# steepQuestionnaire = imp.load_source('steepQuestionnaire', "modules/questionnaire.py")
-# from steepQuestionnaire import SteepQuestionnaire
-#No reason for this right now.
-
-class ExperimentQuiz():
-   def __init__(self):
-      "defin blank class in case not importing other"
-if 'quiz' in config:
-   #load experiment specific quiz module
-   experimentQuizFile=config['webServerRoot']+config['currentExperiment']+"/files/quiz.py"
-   experimentQuiz = imp.load_source('experimentQuiz',experimentQuizFile)
-   shutil.copyfile(experimentQuizFile,dataFolderFiles+"/quiz.py")
-   from experimentQuiz import ExperimentQuiz
-
-
-class ExperimentQuestionnaire():
-   def __init__(self):
-      "defin blank class in case not importing other"
-if 'questionnaire' in config:
-   #load experiment specific questionnaire module
-   experimentQuestionnaireFile=config['webServerRoot']+config['currentExperiment']+"/files/questionnaire.py"
-   experimentQuestionnaire = imp.load_source('experimentQuestionnaire',experimentQuestionnaireFile)
-   shutil.copyfile(experimentQuestionnaireFile,dataFolderFiles+"/questionnaire.py")
-   from experimentQuestionnaire import ExperimentQuestionnaire
 
 class ExperimentInstructions():
    def __init__(self):
@@ -284,7 +264,7 @@ from steepMonitor import monitorClass
 steepTimer = imp.load_source('steepTimer',str(steepDirectory.joinpath('python', 'modules','timer.py')))
 from steepTimer import SteepTimerManager
 
-class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepQuiz,ExperimentQuiz,SteepTimerManager,ExperimentInstructions,ExperimentQuestionnaire):
+class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepTimerManager,ExperimentInstructions):
    def __init__(self,config,options,log,thisLogCounter):
       self.subjectClass=subjectClass
       self.logCounter=thisLogCounter
@@ -295,14 +275,10 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       SteepWebSocketFactory.__init__(self)
       SteepMainServer.__init__(self)
       SteepTimerManager.__init__(self)
-      SteepQuiz.__init__(self)
       experimentClass.__init__(self)
       SteepInstructions.__init__(self)
       monitorClass.__init__(self)
-      SteepQuiz.__init__(self)
-      ExperimentQuiz.__init__(self)
       ExperimentInstructions.__init__(self)
-      ExperimentQuestionnaire.__init__(self)
       sys.stdout.consoleMessage=self.consoleMessage
       sys.stderr.consoleMessage=self.consoleMessage
 
