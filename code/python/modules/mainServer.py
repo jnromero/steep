@@ -155,8 +155,8 @@ class SteepMainServer():
          if viewType=="monitor":
             print("New monitor client")
             client.currentMonitorTable=self.currentMonitorTable
-            client.monitorTableSortColumn=[[0,"reg"],[0,"reg"],[0,"reg"]]
-            client.page="serverInfo"
+            client.monitorTableSortColumn=[[0,"reg","clientInfo"],[0,"reg","clientInfo"],[0,"reg","clientInfo"],[0,"reg","clientInfo"],[0,"reg","clientInfo"],[0,"reg","clientInfo"]]
+            client.page="monitor"
             client.consoleTab=1
             print("New monitor client SET!!!!!!!!!")
             self.monitorClients.append(client)
@@ -202,13 +202,10 @@ class SteepMainServer():
                   self.messagePythonToJavascript(msg,self.clientsById[subjectID])
                else:
                   self.clientsById[subjectID]=client
-               print(self.data['serverStatus']['page'])
-               if self.data['serverStatus']['page']=="instructions":
-                  self.reconnectInstructions(subjectID)
-               elif self.data['serverStatus']['page']=="quiz":   
-                  self.reconnectQuiz(subjectID)
-               else:
-                  self.reconnectingClient(client)
+                  try:
+                     self.reconnectingClient(client)
+                  except:
+                     self.updateStatus(subjectID)
 
                self.data[subjectID].ipAddress=client.peer
                self.data[subjectID].connectionStatus='connected'
