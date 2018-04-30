@@ -15,11 +15,8 @@ def getPage(config):
     this+=pf.javascriptLine(files["exp"]['config.js'])
     this+=pf.javascriptLine(files['common']['common.js'])
     this+=pf.javascriptLine(files['common']['websocketConnect.js'])
-    this+=pf.javascriptLine(files['common']['quiz.js'])
     this+=pf.cssLine(files['common']['instructions.css'])
     this+=pf.cssLine(files['common']['common.css'])
-    this+=pf.cssLine(files['common']['quiz.css'])
-    this+=pf.cssLine(files['common']['questionnaire.css'])
     this+=pf.cssLine(files['common']['simulateMouse.css'])
     this+=pf.addPluginFiles(config,"css")
     this+=pf.cssLine(files['exp']['experiment.css'])
@@ -30,14 +27,8 @@ def getPage(config):
     this+=pf.javascriptLine(files['common']['simulateMouse.js'])
     this+=pf.javascriptLine(files['common']['video.js'])
     this+=pf.addPluginFiles(config,"js")
-    this+=pf.javascriptLine(files['exp']['experiment.js'])
     this+=pf.javascriptLine(files['common']['instructions.js'])
-    this+=pf.javascriptLine(files['common']['questionnaire.js'])
-    instructions=False
-    if "instructionsFolder" in config:
-        instructions=True
-    if instructions==True:
-        this+=pf.javascriptLine(files['exp']['instructions.js'])
+    this+=pf.javascriptLine(files['exp']['experiment.js'])
     this+=pf.addExternalFiles(config,"bodyEnd")
     this+='\t</body>\n'
     this+='</html>'
