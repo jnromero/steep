@@ -56,10 +56,10 @@ class monitorClass():
 
    def newMonitorTable(self):
       for client in self.monitorClients:
-         self.updateMonitorHeader(client)
          client.currentMonitorTable=self.currentMonitorTable
          self.updateMonitorHeader(client)
       self.updateMonitorTable()
+      self.updateTaskTable()
 
    def updateMonitorTable(self):
       try:
@@ -124,12 +124,20 @@ class monitorClass():
       except Exception,e: 
          print("can't set final payoffs monitor table",str(e))
 
+   def getMonitorTableValue(self,sid,item):
+      try:
+         out=eval(item[1])
+      except:
+         out="NA"
+      return out
 
    def getMonitorTable(self,client):
       thisMonitorTable=[["subjectID","sid"]]+self.data['monitorTableInfo'][client.currentMonitorTable]
       tableData={}
       tableData['subjectIDs']=self.data['subjectIDs']
-      tableData['connected']=[self.data[x].connectionStatus for x in self.data['subjectIDs']]
+      tableData['connected']={}
+      for sid in self.data['subjectIDs']:
+         tableData['connected'][sid]=self.data[sid].connectionStatus
       tableData['titles']=[x[0] for x in thisMonitorTable]
       k=0
       for sid in tableData['subjectIDs']:
@@ -137,16 +145,8 @@ class monitorClass():
          tableData[sid]={}
          for item in thisMonitorTable:
             string=item[0]
-            value=item[1]
-            if len(item)>2:
-               formating=item[2]
-            else:
-               formating="%s"
-            try:
-               formatString="'tableData[sid][\'formating\']=formating'".replace("formating",formating)
-               exec('tableData[sid][\'%s\']=%s'%(string,value))
-            except:
-               exec('tableData[sid][\'%s\']="NA"'%(string))
+            tableData[sid][string]=self.getMonitorTableValue(sid,item)
+
       tableData=self.sortMonitorTable(tableData,client.monitorTableSortColumn)
       return tableData
 
@@ -156,8 +156,13 @@ class monitorClass():
          thisList=[sid]
          for c in sortColumns:
             index=c[0]
-            thisTitle=tableData['titles'][index]
-            thisList.append(tableData[sid][thisTitle])
+            sortTyep=c[1]
+            table=c[2]
+            item=self.data['monitorTableInfo'][table][index-1]
+            if index==0:
+               thisList.append(sid)
+            else:
+               thisList.append(self.getMonitorTableValue(sid,item))
          toBeSorted.append(thisList)
       index=0
       for c in sortColumns:
@@ -170,19 +175,17 @@ class monitorClass():
       return tableData
 
    def sortMonitorTableMessage(self,message,client):
-      client.monitorTableSortColumn
-      if client.monitorTableSortColumn[-1][0]==int(message['col']):
+      if client.monitorTableSortColumn[-1][0]==int(message['col']) and client.monitorTableSortColumn[-1][2]==client.currentMonitorTable:
          if client.monitorTableSortColumn[-1][1]=="rev":
             client.monitorTableSortColumn[-1][1]="reg"
          elif client.monitorTableSortColumn[-1][1]=="reg":
             client.monitorTableSortColumn[-1][1]="rev"
       else:
-         client.monitorTableSortColumn.append([int(message['col']),"reg"])
+         client.monitorTableSortColumn.append([int(message['col']),"reg",client.currentMonitorTable])
          client.monitorTableSortColumn=client.monitorTableSortColumn[1:]
       self.monitorMessage()
 
    def changeMonitorTable(self,message,client):
-      client.monitorTableSortColumn=[[0,"reg"],[0,"reg"],[0,"reg"]]
       client.currentMonitorTable=message["table"]
       client.page="monitor"
       self.updateMonitorPage(client)
@@ -217,8 +220,16 @@ class monitorClass():
       self.data['taskDoneTime'].append([task,time.time()])
       self.data['taskStatus'][task]['status']="Done"
       self.saveData()
-      self.updateTaskTable()
-      self.monitorMessage()
+      self.newMonitorTable()
+
+
+   def taskDoneMany(self,message):
+      task=message['type']
+      self.data['taskDoneTime'].append([task,time.time()])
+      self.data['taskStatus'][task]['status']=""
+      self.saveData()
+      self.newMonitorTable()
+
 
 
    def taskToTitle(self,taskName):
