@@ -75,7 +75,7 @@ class SteepInstructions():
       #dont end instructions for demo
       #      self.initializeTimer(sid,self.instructionsLength,self.endInstructions)
 
-      self.initializeTimer(sid,self.instructionsLength)
+      self.initializeTimer(sid,self.instructionsLength+5,self.endInstructions)
       self.data[sid].timer=[time.time(),time.time()-timeIN,self.instructionsLength]
       print(self.data[sid].timer)
       kwargs={"sid":sid}
@@ -408,7 +408,7 @@ class SteepInstructions():
       msgs+=msgList
 
       # self.initializeTimer("all",self.instructionsLength,self.endInstructions)
-      self.initializeTimer("all",self.instructionsLength)
+      self.initializeTimer("all",self.instructionsLength+5,self.endInstructions)
       self.data['timer']=[time.time(),time.time()-self.data['instructionsTime'],self.instructionsLength]
 
       [taskMsgs,index,timeToNext]=self.catchUpTasks()
@@ -434,7 +434,7 @@ class SteepInstructions():
 
    def restartInstructions(self,message,client):
       if self.data['serverStatus']['instructions']['playing']==1:
-         self.stopInstructions(message,client)
+         self.stopInstructions()
       for sid in ['video']+self.data['subjectIDs']:
          self.data[sid].status['page']="generic"
          self.data[sid].status['message']=["The instruction video will start shortly...."]
@@ -461,7 +461,7 @@ class SteepInstructions():
             else:
                print("trying to cancel already called Caption",sid)
 
-   def stopInstructions(self,message,client):
+   def stopInstructions(self):
       self.cancelInstructionsCalls("allPlusVideo")
       self.runJavascriptFunction("pauseInstructions","allPlusVideo","send")
       self.data['instructionsTime']=time.time()-self.data['instructionsStartTime']
@@ -646,7 +646,7 @@ class SteepInstructions():
 
 
    def endInstructionsMessage(self,message,client):
-      self.stopInstructions(message,client)
+      self.stopInstructions()
       self.endInstructions()
    
    def endInstructions(self):
@@ -660,8 +660,8 @@ class SteepInstructions():
       self.updateTaskTable()
       msg={}
       msg['type']="endInstructions"
-      for sid in self.getSubjectIDList("allPlusVideo"):
-         self.data[sid].status["page"]="generic"
-         self.data[sid].status["message"]=["The Instructions Have Ended. <br> Plese wait for experiment to continue."]
+      # for sid in self.getSubjectIDList("allPlusVideo"):
+      #    self.data[sid].status["page"]="generic"
+      #    self.data[sid].status["message"]=["The Instructions Have Ended. <br> Plese wait for experiment to continue."]
       return self.messageToId(msg,"allPlusVideo","send")
 
