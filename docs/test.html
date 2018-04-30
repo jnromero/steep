@@ -203,6 +203,50 @@ The python function will have access to the entire msg dictionary, so any releva
 
 
 
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<!-- *********************************************************************************************** -->
+<div class="header">Customizing Monitor Table</div>
+<div class="p">You can customize the tables you see on the monitor page.  A function like the following will add another page to the monitor table that you can use to track what subjects are doing during the experiment:
+<pre class="line-numbers"><code class="language-python">#experiment.py
+
+def quizSpecificMonitorTableEntries(self):
+  self.currentMonitorTable="quiz"
+  self.data['monitorTableInfo']['quiz']=[
+      ['page'         ,'self.data[sid].status["page"]'],
+      ['Guess1'       ,'len(self.data[sid].quizGuesses[1])'],
+      ['Guess2'       ,'len(self.data[sid].quizGuesses[2])'],
+      ['lastGuess1'   ,'self.data[sid].quizGuesses[1][-1][1]["answers"]'],
+      ['lastGuess2'   ,'self.data[sid].quizGuesses[2][-1][1]["answers"]'],
+      ['Q1'           ,'self.data[sid].status["quiz1"]'],
+      ['Q2'           ,'self.data[sid].status["quiz2"]'],
+  ]
+  self.newMonitorTable()
+</code></pre>
+
+  Line 4 will set the current monitor table to "quiz".  This means if a new monitor client joins, the default start page will be "quiz".  Line 5 adds the desired entries in the table to the "monitorTableInfo" key of self.data (will already is a dictionary by default).  Line 14 runs the default function "self.newMonitorTable()" all currently connected monitor clients to the "quiz" monitor table.  The monitor clients will be able to switch back to any of the previous pages after this happens.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -286,7 +330,15 @@ screen -S serverScreen -p 0 -X stuff 'cd /experiment/files/\n'
 screen -S serverScreen -p 0 -X stuff "python experiment.py -l local -i "$myip"\n"
 </code></pre>
 
-You need to edit line 10 above to ensure that your experiment is downloaded.  This can either be through github, dropbox, or anything else.  If you want to use dropbox rather than github, then you can replace line 10 with the following:
+You need to edit line 10 above to ensure that your experiment is downloaded.  This can either be through github, dropbox, or anything else.  If you have a private repo in get hub, you will need to generate an access token <a href='https://github.com/settings/tokens' target="_blank">https://github.com/settings/tokens</a>.  This access token will need access to your repo.  If the access token is sdflkn2352jn3tkungo3i4nw , your github username is myusername, and your experiment repo is call myexperiment, then you will edit line 10 to look like:
+
+<pre class="line-numbers"><code class="language-bash">git clone https://myusername:sdflkn2352jn3tkungo3i4nw@github.com/myusername/myexperiment.git /experiment/
+</code></pre>
+
+
+
+
+ If you want to use dropbox rather than github, then you can replace line 10 with the following:
 <pre class="line-numbers"><code class="language-bash">sudo apt-get install unzip
 curl -L https://www.dropbox.com/sh/v23/l3k2f?dl=1 > experiment.zip
 unzip experiment.zip -d /experiment/
