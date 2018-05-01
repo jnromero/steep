@@ -56,7 +56,17 @@ function changeMonitorPage(args){
 }
 
 
+function goToPointInInstructions(args){
+  var e=args[args.length-1];
+  var pos=clickEvent(e);
+  var pct=pos[0]/document.getElementById("monitorTableCaptionsRowEntry").offsetWidth;
+  var msg={"type":"changeInstructionsTimeFromMonitor","percentage":pct}
+  var statement="Are you sure change the instructions time?";
+  sock.send(JSON.stringify(msg));
 
+  // confirmAction(statement,msg);
+  
+}
 
 function makeMonitorTable(msg){
   var subjectIDs=msg['table']['subjectIDs'];
@@ -72,11 +82,13 @@ function makeMonitorTable(msg){
   if(window.serverStatus['page']=="instructions"){
     var captionRow=createAndAddElement("tr","monitorTableCaptionsRow","monitorTable");
     var captionEntry=createAndAddElement("td","monitorTableCaptionsRowEntry","monitorTableCaptionsRow");
-    captionEntry.colSpan=titles.length;
+    captionEntry.colSpan=titles.length+1;
     captionEntry.innerHTML=window.serverStatus['instructions']['lastCaption'];
 
-    var instructionsStatusBar=createAndAddDiv("instructionsStatusBar","monitorTableHolder");
-    instructionsStatusBar.style.width=serverStatus['instructions']['time']*1170;
+    var instructionsStatusBar=createAndAddDiv("instructionsStatusBar","monitorTableCaptionsRowEntry");
+    instructionsStatusBar.style.width=serverStatus['instructions']['time']*document.getElementById("monitorTableCaptionsRowEntry").offsetWidth;
+      clickButton("many","monitorTableCaptionsRowEntry",goToPointInInstructions);
+
   }
   else{
     deleteDiv("instructionsStatusBar");
