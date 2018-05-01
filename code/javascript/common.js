@@ -252,6 +252,15 @@ function clearAll(){
 function wakeUp(incoming){
 }
 
+function clickEvent(e) {
+  // e = Mouse click event.
+  var rect = e.target.getBoundingClientRect();
+  var x = e.clientX - rect.left; //x position within the element.
+  var y = e.clientY - rect.top;  //y position within the element.
+  return [x,y]
+}
+
+
 function placeTextOLD(divid,text,top,fontSize,color,fadeTime){
     thisDiv=createAndAddDiv(divid,"mainDiv");
     thisDiv.innerHTML=text;
