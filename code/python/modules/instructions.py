@@ -19,6 +19,7 @@ class SteepInstructions():
       self.captionCalls={}
 
 
+
    def toggleInsructionsPauseOnClient(self,message,client):
       sid=client.subjectID
       if self.data[sid].instructionsPlaying==1:
@@ -33,14 +34,28 @@ class SteepInstructions():
          timeIN=self.data[sid].queryParameters["startTime"][0]
          self.instructionsDemo(sid,float(timeIN))
 
+
    def changeInstructionsTime(self,message,client):
       sid=client.subjectID
-      timeIN=min(self.instructionsLength-30,max(0,time.time()-self.data[sid].instructionsStartTime+message['amount']))
+      if sid=="monitor":
+         sid="allPlusVideo"
+      if "amount" in message:
+         timeIN=min(self.instructionsLength-30,max(0,time.time()-self.data[sid].instructionsStartTime+message['amount']))
+         self.setURLParameters(params,sid,"send")
+      elif "percentage" in message:
+         timeIN=self.instructionsLength*message['percentage']
       params={}
       params['startTime']="%.02f"%(timeIN)
       self.cancelInstructionsCalls(sid)
-      self.setURLParameters(params,sid,"send")
       self.instructionsDemo(sid,timeIN)
+
+   def changeInstructionsTimeFromMonitor(self,message,client):
+      sid="allPlusVideo"
+      self.stopInstructions({},{})
+      timeIN=self.instructionsLength*message['percentage']
+      self.data['instructionsTime']=timeIN
+      self.playInstructions()
+
 
    def instructionsDemo(self,sid,timeIN=0):
       if timeIN==0 and "startTime" in self.data[sid].queryParameters:
@@ -67,26 +82,29 @@ class SteepInstructions():
       msgList=self.drawInstructionsTimer(sid,"return")
       msgs+=msgList
 
-
-      self.data[sid].instructionsPlaying=1   
+      for s in self.getSubjectIDList(sid):
+         self.data[s].instructionsPlaying=1   
       msgList=self.runJavascriptFunction("clearAllInstructions",sid,"return")
       msgs+=msgList
 
       #dont end instructions for demo
       #      self.initializeTimer(sid,self.instructionsLength,self.endInstructions)
 
-      self.initializeTimer(sid,self.instructionsLength+5,self.endInstructions)
-      self.data[sid].timer=[time.time(),time.time()-timeIN,self.instructionsLength]
-      print(self.data[sid].timer)
+      self.initializeTimer(sid,self.instructionsLength,self.endInstructions)
+      self.data['timers'][sid]=[time.time(),time.time()-timeIN,self.instructionsLength]
+      # self.data[sid].timer=[time.time(),time.time()-timeIN,self.instructionsLength]
+      print(self.data['timers'][sid])
       kwargs={"sid":sid}
 
       [taskMsgs,index,timeToNext]=self.catchUpTasks(sid,timeIN)
-      self.data[sid].taskIndex=index
+      for s in self.getSubjectIDList(sid):
+         self.data[s].taskIndex=index
       self.taskCalls[sid]=reactor.callLater(timeToNext,self.runAnotherTask,**kwargs)
       msgs+=taskMsgs
 
       [msgList,index,timeToNext]=self.catchUpCaptions(sid,timeIN)
-      self.data[sid].captionIndex=index
+      for s in self.getSubjectIDList(sid):
+         self.data[s].captionIndex=index
       self.captionCalls[sid]=reactor.callLater(timeToNext,self.displayCaption,**kwargs)
       msgs+=msgList
 
@@ -137,7 +155,7 @@ class SteepInstructions():
          self.data['instructionsStartTime']=time.time()-self.data['instructionsTime']
 
    def reconnectInstructions(self,sid="all",output="send",timeIN="none"):
-      print("reconnecting"+sid)
+      print("reconnecting 2l43kj23l4kj23 4lkj"+sid)
       msgs=[]
       msgList=self.loadInstructionsOnClient(sid,"return")
       msgs+=msgList
@@ -337,12 +355,13 @@ class SteepInstructions():
 
    def startAudio(self,sid="all",output="send",timeIN="none"):
       #self.instructionsTime should be set before this is run
-      if timeIN=="none":
+      if timeIN=="none" or sid in ["all","allPlusVideo"]:
          timeIN=self.data['instructionsTime']
          self.data['instructionsStartTime']=time.time()-timeIN
       else:
          self.data[sid].instructionsStartTime=time.time()-timeIN
 
+      print("@#$@#$@#$@#$",timeIN)
       msg={}
       msg['currentTime']=timeIN
       msg['type']='startAudio'
@@ -408,8 +427,8 @@ class SteepInstructions():
       msgs+=msgList
 
       # self.initializeTimer("all",self.instructionsLength,self.endInstructions)
-      self.initializeTimer("all",self.instructionsLength+5,self.endInstructions)
-      self.data['timer']=[time.time(),time.time()-self.data['instructionsTime'],self.instructionsLength]
+      self.initializeTimer("all",self.instructionsLength-self.data['instructionsTime'],self.endInstructions)
+      # self.data['timer']=[time.time(),time.time()-self.data['instructionsTime'],self.instructionsLength]
 
       [taskMsgs,index,timeToNext]=self.catchUpTasks()
       self.data['taskIndex']=index
@@ -434,7 +453,7 @@ class SteepInstructions():
 
    def restartInstructions(self,message,client):
       if self.data['serverStatus']['instructions']['playing']==1:
-         self.stopInstructions()
+         self.stopInstructions({},{})
       for sid in ['video']+self.data['subjectIDs']:
          self.data[sid].status['page']="generic"
          self.data[sid].status['message']=["The instruction video will start shortly...."]
@@ -461,7 +480,7 @@ class SteepInstructions():
             else:
                print("trying to cancel already called Caption",sid)
 
-   def stopInstructions(self):
+   def stopInstructions(self,message,client):
       self.cancelInstructionsCalls("allPlusVideo")
       self.runJavascriptFunction("pauseInstructions","allPlusVideo","send")
       self.data['instructionsTime']=time.time()-self.data['instructionsStartTime']
@@ -646,7 +665,7 @@ class SteepInstructions():
 
 
    def endInstructionsMessage(self,message,client):
-      self.stopInstructions()
+      self.stopInstructions({},{})
       self.endInstructions()
    
    def endInstructions(self):
