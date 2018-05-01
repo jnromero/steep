@@ -202,9 +202,10 @@ class SteepMainServer():
                   self.messagePythonToJavascript(msg,self.clientsById[subjectID])
                else:
                   self.clientsById[subjectID]=client
-                  try:
+                  reconnectMethod = getattr(self,"reconnectingClient",None)
+                  if callable(reconnectMethod):
                      self.reconnectingClient(client)
-                  except:
+                  else:
                      self.updateStatus(subjectID)
 
                self.data[subjectID].ipAddress=client.peer
