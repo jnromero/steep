@@ -11,6 +11,7 @@ class SteepInstructions():
       self.instructionsAudioFile=self.config['domain']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.m4a"
       self.instructionsFinishedCaption="Instructions Finished. Please wait patiently for experiment to continue."
       #so video can be like a regular subject with a status
+      self.instructionsPlaybackSpeed=1
       self.createSubject("video")
       self.getInstructionsDuration()
       self.getInstructionsTasks()
@@ -99,13 +100,13 @@ class SteepInstructions():
       [taskMsgs,index,timeToNext]=self.catchUpTasks(sid,timeIN)
       for s in self.getSubjectIDList(sid):
          self.data[s].taskIndex=index
-      self.taskCalls[sid]=reactor.callLater(timeToNext,self.runAnotherTask,**kwargs)
+      self.taskCalls[sid]=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.runAnotherTask,**kwargs)
       msgs+=taskMsgs
 
       [msgList,index,timeToNext]=self.catchUpCaptions(sid,timeIN)
       for s in self.getSubjectIDList(sid):
          self.data[s].captionIndex=index
-      self.captionCalls[sid]=reactor.callLater(timeToNext,self.displayCaption,**kwargs)
+      self.captionCalls[sid]=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.displayCaption,**kwargs)
       msgs+=msgList
 
       msgList=self.startAudio(sid,"return",timeIN)
@@ -140,7 +141,7 @@ class SteepInstructions():
    def getInstructionsDuration(self):
       filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.duration"
       file = open(filename,'r')
-      self.instructionsLength=float(file.read())
+      self.instructionsLength=float(file.read())/self.instructionsPlaybackSpeed
       file.close() 
 
 
@@ -345,7 +346,7 @@ class SteepInstructions():
             clickArgs['args']=s[1]['args']
             clickArgs['sid']=sid
             clickArgs['output']="send"
-            self.taskCalls[sid]=reactor.callLater(sequenceTime+.15,self.runSingleTask,**clickArgs)
+            self.taskCalls[sid]=reactor.callLater(float(sequenceTime+.15)/self.instructionsPlaybackSpeed,self.runSingleTask,**clickArgs)
             sequenceTime+=.65
 
       if output=="send":
@@ -361,9 +362,9 @@ class SteepInstructions():
       else:
          self.data[sid].instructionsStartTime=time.time()-timeIN
 
-      print("@#$@#$@#$@#$",timeIN)
       msg={}
       msg['currentTime']=timeIN
+      msg['playbackRate']=self.instructionsPlaybackSpeed
       msg['type']='startAudio'
       return self.messageToId(msg,sid,output)
 
@@ -433,13 +434,13 @@ class SteepInstructions():
       [taskMsgs,index,timeToNext]=self.catchUpTasks()
       self.data['taskIndex']=index
       kwargs={"sid":"allPlusVideo"}
-      self.taskCalls['allPlusVideo']=reactor.callLater(timeToNext,self.runAnotherTask,**kwargs)
+      self.taskCalls['allPlusVideo']=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.runAnotherTask,**kwargs)
       msgs+=taskMsgs
       [msgList,index,timeToNext]=self.catchUpCaptions()
       self.data['captionIndex']=index
 
       kwargs={"sid":"allPlusVideo"}
-      self.captionCalls['allPlusVideo']=reactor.callLater(timeToNext,self.displayCaption,**kwargs)
+      self.captionCalls['allPlusVideo']=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.displayCaption,**kwargs)
       msgs+=msgList
 
       self.sendListOfMessages(msgs)
@@ -579,7 +580,7 @@ class SteepInstructions():
             timeForNextThisTask=float(self.taskTimes[thisIndex+1][1])
             timeToNext=timeForNextThisTask-timeForThisTask
             kwargs={"sid":sid}
-            self.taskCalls[sid]=reactor.callLater(timeToNext,self.runAnotherTask,**kwargs)
+            self.taskCalls[sid]=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.runAnotherTask,**kwargs)
          self.updateInstructionTimeToMonitor(sid)
 
    def catchUpCaptions(self,sid="all",timeIN="none"):
@@ -659,7 +660,7 @@ class SteepInstructions():
             'do nothing'
          else:      
             kwargs={"sid":sid}
-            self.captionCalls[sid]=reactor.callLater(timeToNext,self.displayCaption,**kwargs)
+            self.captionCalls[sid]=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.displayCaption,**kwargs)
          self.data['serverStatus']['instructions']['lastCaption']=thisCaption
          self.updateInstructionTimeToMonitor(sid)
 

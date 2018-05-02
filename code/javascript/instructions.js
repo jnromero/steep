@@ -13,8 +13,9 @@ function loadInstructions(incoming){
 
 function startAudio(incoming){
     console.log("startAudio",incoming['currentTime'])
-    document.getElementById("audioHolder").playbackRate = 1;
-    document.getElementById("audioHolder").currentTime = incoming['currentTime'];
+    if(incoming['playbackRate']==undefined){incoming['playbackRate']=1;}
+    document.getElementById("audioHolder").playbackRate = incoming['playbackRate'];
+    document.getElementById("audioHolder").currentTime = incoming['currentTime']*document.getElementById("audioHolder").playbackRate;
     document.getElementById("audioHolder").play();
 }
 
@@ -29,8 +30,7 @@ function updateTimeAndAudio(incoming){
     if(incoming['elapsedTime']!=undefined){
         window.elapsed=incoming['elapsedTime'];
         window.lastCheck=(new Date()).getTime();
-        document.getElementById("audioHolder").currentTime = window.elapsed;
-        console.log(document.getElementById("audioHolder").currentTime)
+        document.getElementById("audioHolder").currentTime = window.elapsed*document.getElementById("audioHolder").playbackRate;
         clearTimeout(window.moveInstructionsTimer);
     }
 }
@@ -40,8 +40,7 @@ function evalStringAsFunction(incoming){
     var strings=incoming['strings'];
     window.elapsed=incoming['elapsedTime'];
     window.lastCheck=(new Date()).getTime();
-    document.getElementById("audioHolder").currentTime = window.elapsed;
-        console.log(document.getElementById("audioHolder").currentTime)
+    document.getElementById("audioHolder").currentTime = window.elapsed*document.getElementById("audioHolder").playbackRate;
     for(var k=0;k<strings.length;k++){
         eval(strings[k])();
     }
@@ -74,11 +73,9 @@ function setCaptions(incoming){
     captions.innerHTML=incoming['caption'];
     window.thisTimerName=incoming['whichTimer'];
     moveTimer(window.thisTimerName); 
-    console.log(window.timers);
-    console.log(incoming['length'],window.timers[window.thisTimerName])
     var currentTime=incoming['length']-window.timers[window.thisTimerName];
     if(isNaN(currentTime)){currentTime=0;}
-    document.getElementById("audioHolder").currentTime = currentTime;
+    document.getElementById("audioHolder").currentTime = currentTime*document.getElementById("audioHolder").playbackRate;
 }
 
 
