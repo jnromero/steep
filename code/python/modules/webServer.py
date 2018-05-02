@@ -42,6 +42,8 @@ class RequestHandler(Resource):
          filename=thisPath.replace(".html",".py").replace("/","")
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
+      elif thisPath in ["/experiment.js","/experiment.py","/experiment.css"]:
+         ext="showFiles"
       else:
          root,ext=os.path.splitext(thisPath)
          filename=os.path.basename(thisPath)
@@ -65,6 +67,34 @@ class RequestHandler(Resource):
          thisFile=File(fullPath)
          # os.remove(fullPath)
          return File.render_GET(thisFile,request)
+      elif ext=="showFiles":
+         prismFolder=self.config['packageFolder']+"/css/prism/"
+         filename=self.config['webServerRoot']+self.config['currentExperiment']+"/files/"+thisPath
+         file = open(filename,'rb')
+         fileContent=file.read()
+         if thisPath=="/experiment.py":
+            extension="python"
+         elif thisPath=="/experiment.js":
+            extension="js"
+         elif thisPath=="/experiment.css":
+            extension="css"
+         file.close() 
+         output="""<html>
+
+<head>
+    <link href="%s/prism.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<script src="%s/prism.js"></script>
+
+<h1>%s</h1>
+<pre class="line-numbers"><code class="language-%s">%s
+</code></pre>
+
+</body>
+"""%(prismFolder,prismFolder,thisPath,extension,fileContent)
+         return output.encode('utf-8')
       elif os.path.isfile(fullPath):
          if ext==".py":
             print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))            
