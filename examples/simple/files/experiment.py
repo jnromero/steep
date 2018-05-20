@@ -103,14 +103,15 @@ class experimentClass():
       
 
    def experimentSpecificMonitorTableEntries(self):
-      self.data['monitorTableInfo']=[
+      self.currentMonitorTable="experiment"
+      self.data['monitorTableInfo']['experiment']=[
       ['page'           ,'self.data[sid].status["page"]'],
       ['stage'          ,'self.data[sid].status["stage"]'],
       ['Match#'          ,'self.currentMatch'],
       ['My Clicks'         ,'self.data[sid].matchClicks'],
       ['Total Clicks'            ,'self.currentClicks'],
       ]
-      self.updateMonitorTableEntries()
+      self.newMonitorTable()
 
 
 class subjectClass():

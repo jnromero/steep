@@ -1,0 +1,6 @@
+Make a timer so that can pause and restart experiment from different times
+	- rather than using time.time() will use self.steepTime
+
+- fix sidNotSet
+- make slider
+- ability to add packages
