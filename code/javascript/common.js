@@ -519,7 +519,7 @@ function confirmationActionButtonClick(args){
     if (e.target !== e.currentTarget) {
         var clickedItem = e.target.id;
         if(clickedItem=="confirmationDivButtonYes"){
-            removeAllListeners("confirmationDiv");
+            deleteDiv("confirmationAlertBackgroud");
             sendMessage(message);   
         }
         else if(clickedItem=="confirmationDivButtonNo"){
