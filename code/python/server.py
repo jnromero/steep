@@ -276,11 +276,10 @@ reactor.listenTCP(resource.config['serverPort'], factory)
 
 if options.openBrowser=="True":
    url = 'http://localhost:%s'%(resource.config['serverPort'])
-   webbrowser.open(url)
-   time.sleep(.5)
    for k in range(int(options.numberClients)):
       clientURL=url+"/client.html"
       webbrowser.open(clientURL)
+   webbrowser.open(url)
 
 reactor.run()
 
