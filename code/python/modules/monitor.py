@@ -121,7 +121,7 @@ class monitorClass():
          for k in self.data[sid].finalPayoffs:
             thisTable.append([k,"'$%%.02f'%%(self.data[sid].finalPayoffs['%s'])"%(k)])
          self.data['monitorTableInfo']['finalPayoffs']=thisTable
-      except Exception,e: 
+      except Exception as e: 
          print("can't set final payoffs monitor table",str(e))
 
    def getMonitorTableValue(self,sid,item):
