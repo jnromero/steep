@@ -367,6 +367,7 @@ class SteepMainServer():
    def deleteThisClient(self,message,client):
       self.deleteSubject(message['subjectIDIncoming'])
       self.monitorMessage()
+      reactor.callLater(2,self.monitorMessage)
 
 
    def stopPythonServer(self,message,client):

@@ -73,6 +73,10 @@ function makeMonitorTable(msg){
   var titles=msg['table']['titles'];
   var connected=msg['table']['connected'];
 
+  //Redraw whole table to make sure rows don't stay after subject is deleted.  
+  if(document.getElementById("monitorTable")!=null && document.getElementById("monitorTable").childElementCount!=msg['table']['subjectIDs'].length){
+    deleteDiv("monitorTableHolder");
+  }
   if(isDivNotThere("monitorTableHolder")){
     placeText({"parentDiv":"mainDivInside","divid":"monitorTableHolder","width":"1300px","height":"100%","top":"0px","left":"0px"});
     var table=createAndAddElement("table","monitorTable","monitorTableHolder");
@@ -456,7 +460,6 @@ function getMonitorTablesInfo(msg){
 }
 
 function updateMonitorHeader(msg){
-  console.log("updateMonitorHeader")
   clearAll();
   drawMonitorHeader();
   drawMainDivInside();
