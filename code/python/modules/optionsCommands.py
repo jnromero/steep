@@ -18,6 +18,8 @@ def getOptions():
                      help="set to True to write to console rather than to the console webpage.")
    parser.add_option("-s", "--saveData", dest="saveData", default="True",
                      help="set to False to write data to tmp folder, rather than unique folder.  This should NEVER be used when you run an experiment in the lab.")
+   parser.add_option("-n", "--numberClients", dest="numberClients", default="0",
+                     help="set to an integer n to open clients on startup, mostly for local testing.")
    (options, args) = parser.parse_args()
 
    if options.location=="NONE":
