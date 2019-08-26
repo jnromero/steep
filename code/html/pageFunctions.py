@@ -47,7 +47,7 @@ def addPluginFiles(config,extension):
         for plugin in config["plugins"]:
             path=plugin[0]
             completePath=os.path.abspath(path) 
-            url=completePath.replace(config['webServerRoot'],config['domain'])
+            url=completePath.replace(config['webServerRoot'],config['domain']+"/")
             if extension=="js":
                 string=javascriptLine(url.replace(".py",".js"))+string
             elif extension=="css":

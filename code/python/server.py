@@ -186,7 +186,7 @@ if "plugins" in config:
       pluginFile=os.path.abspath(path) 
       pluginName=os.path.basename(pluginFile).replace(".py","")
       pluginPath=os.path.dirname(pluginFile) 
-      config['pluginRoot'][pluginName]=pluginPath
+      config['pluginRoot'][pluginName]=pluginPath+"/"
       if pluginFile.find(config['webServerRoot'])==-1:
          print("Plugin files must be in the webServerRoot, which for this configuration is",webServerRoot) 
          sys.exit()
