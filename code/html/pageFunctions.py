@@ -36,18 +36,8 @@ def addPluginFiles(config,extension):
     if "plugins" in config:
         for plugin in config["plugins"]:
             path=plugin[0]
-            pathLocation=plugin[1]
-            if pathLocation=="relative":
-                domain=config['domain']
-                currentExperiment=config['currentExperiment']
-                experimentURL=domain+currentExperiment
-                url=experimentURL+"files/"+path
-            elif pathLocation=="absolute":
-                path="/"+path.replace(config['webServerRoot'],"")
-                domain=config['domain']
-                # currentExperiment=config['currentExperiment']
-                # experimentURL=domain+currentExperiment
-                url=domain+path
+            completePath=os.path.abspath(path) 
+            url=completePath.replace(config['webServerRoot'],config['domain'])
             if extension=="js":
                 string=javascriptLine(url.replace(".py",".js"))+string
             elif extension=="css":
