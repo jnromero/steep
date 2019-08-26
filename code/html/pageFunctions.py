@@ -13,19 +13,29 @@ def addExternalFiles(config,location):
             extension=filePath.split(".")[-1]
             if fileLocation==location:
                 if fileType=="full":
-                    if extension=="js":
-                        string+=javascriptLine(fileDetails[0])
-                    elif extension=="css":
-                        string+=cssLine(fileDetails[0])
+                    url=fileDetails[0]
+                    add=1
                 elif fileType=="relative":
                     domain=config['domain']
                     currentExperiment=config['currentExperiment']
                     fullPath=os.path.abspath(config['webServerRoot']+currentExperiment+"files/"+fileDetails[0])
-                    relativeURL=fullPath.replace(config['webServerRoot'],domain+"/",1)
+                    url=fullPath.replace(config['webServerRoot'],domain+"/",1)
+                    add=1
+                elif fileType.find("pluginRelative")==0:
+                    domain=config['domain']
+                    fullPath=os.path.abspath(config['pluginRoot'][fileType.replace("pluginRelative/","")]+"/"+filePath) 
+                    url=fullPath.replace(config['webServerRoot'],domain+"/",1)
+                    add=1
+
+
+                if add==1:
                     if extension=="js":
-                        string+=javascriptLine(relativeURL)
+                        string+=javascriptLine(url)
                     if extension=="css":
-                        string+=cssLine(relativeURL)
+                        string+=cssLine(url)
+
+
+
     return string
 
 

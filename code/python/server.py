@@ -177,14 +177,19 @@ configFunctions.writeJavascriptConfigFile(config)
 #add plugins from config
 #in order for plugins to work ALL experiment.py files must have super function in __init__
 if "plugins" in config:
+   config['pluginRoot']={}
    experimentClasses=[experimentClassRaw]
    subjectClasses=[subjectClassRaw]
    for plugin in config['plugins']:
       j=config['plugins'].index(plugin)
       path=plugin[0]
       pluginFile=os.path.abspath(path) 
+      pluginName=os.path.basename(pluginFile).replace(".py","")
+      pluginPath=os.path.dirname(pluginFile) 
+      config['pluginRoot'][pluginName]=pluginPath
       if pluginFile.find(config['webServerRoot'])==-1:
          print("Plugin files must be in the webServerRoot, which for this configuration is",webServerRoot) 
+         sys.exit()
       moduleString='pluginExperimentModules%s'%(j)
       thisString="%s=loadSource('%s',pluginFile)"%(moduleString,moduleString)
       exec(thisString)
