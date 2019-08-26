@@ -182,11 +182,9 @@ if "plugins" in config:
    for plugin in config['plugins']:
       j=config['plugins'].index(plugin)
       path=plugin[0]
-      pluginLocation=plugin[1]
-      if pluginLocation=="relative":
-         pluginFile = str(experimentDirectory.joinpath('files',path))
-      elif pluginLocation=="absolute":
-         pluginFile = str(experimentDirectory.joinpath(path))
+      pluginFile=os.path.abspath(path) 
+      if pluginFile.find(config['webServerRoot'])==-1:
+         print("Plugin files must be in the webServerRoot, which for this configuration is",webServerRoot) 
       moduleString='pluginExperimentModules%s'%(j)
       thisString="%s=loadSource('%s',pluginFile)"%(moduleString,moduleString)
       exec(thisString)
