@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import random
-
+import os 
 
 def addExternalFiles(config,location):
     #location is either "headStart" or "headEnd" "bodyStart" "bodyEnd"
@@ -20,8 +20,8 @@ def addExternalFiles(config,location):
                 elif fileType=="relative":
                     domain=config['domain']
                     currentExperiment=config['currentExperiment']
-                    experimentURL=domain+currentExperiment
-                    relativeURL=experimentURL+"files/"+fileDetails[0]
+                    fullPath=os.path.abspath(config['webServerRoot']+currentExperiment+"files/"+fileDetails[0])
+                    relativeURL=fullPath.replace(config['webServerRoot'],domain+"/",1)
                     if extension=="js":
                         string+=javascriptLine(relativeURL)
                     if extension=="css":
@@ -63,6 +63,12 @@ def javascriptLine(url):
 def cssLine(url):
   return '\t\t<link rel="stylesheet" type="text/css" href="%s">\n'%(url)
 
+def cleanLink(config,link):
+    out=link.replace(config['domain'],config['webServerRoot'],1)
+    out=os.path.abspath(out) 
+    out=out.replace(config['webServerRoot'],config['domain']+"/",1)
+    return out
+
 def getFiles(config):
     packageFolder=config['packageFolder']
     currentExperiment=config['currentExperiment']
@@ -73,26 +79,26 @@ def getFiles(config):
     files={}
     files['common']={}
 
-    files['common']['jquery.js']=packageURL+"javascript/jquery-1.11.3.min.js"
-    files['common']['velocity.js']=packageURL+"javascript/velocity.min.js"
-    files['common']['common.js']=packageURL+"javascript/common.js"
-    files['common']['websocketConnect.js']=packageURL+"javascript/websocketConnect.js"
-    files['common']['video.js']=packageURL+"javascript/video.js"
-    files['common']['instructions.js']=packageURL+"javascript/instructions.js"
-    files['common']['monitor.js']=packageURL+"javascript/monitor.js"
+    files['common']['jquery.js']=cleanLink(config,packageURL+"javascript/jquery-1.11.3.min.js")
+    files['common']['velocity.js']=cleanLink(config,packageURL+"javascript/velocity.min.js")
+    files['common']['common.js']=cleanLink(config,packageURL+"javascript/common.js")
+    files['common']['websocketConnect.js']=cleanLink(config,packageURL+"javascript/websocketConnect.js")
+    files['common']['video.js']=cleanLink(config,packageURL+"javascript/video.js")
+    files['common']['instructions.js']=cleanLink(config,packageURL+"javascript/instructions.js")
+    files['common']['monitor.js']=cleanLink(config,packageURL+"javascript/monitor.js")
 
-    files['common']['simulateMouse.css']=packageURL+"javascript/simulateMouse/simulateMouse.css"
-    files['common']['simulateMouse.js']=packageURL+"javascript/simulateMouse/simulateMouse.js"
+    files['common']['simulateMouse.css']=cleanLink(config,packageURL+"javascript/simulateMouse/simulateMouse.css")
+    files['common']['simulateMouse.js']=cleanLink(config,packageURL+"javascript/simulateMouse/simulateMouse.js")
 
-    files['common']['instructions.css']=packageURL+"css/instructions.css"
-    files['common']['common.css']=packageURL+"css/common.css"
-    files['common']['monitor.css']=packageURL+"css/monitor.css"
+    files['common']['instructions.css']=cleanLink(config,packageURL+"css/instructions.css")
+    files['common']['common.css']=cleanLink(config,packageURL+"css/common.css")
+    files['common']['monitor.css']=cleanLink(config,packageURL+"css/monitor.css")
 
     files["exp"]={}
     files["exp"]['config.js']=config["configJsURL"]
-    files["exp"]['experiment.css']=experimentURL+"files/experiment.css"
-    files["exp"]['experiment.js']=experimentURL+"files/experiment.js"
-    files["exp"]['tester.js']=experimentURL+"files/tester.js"
+    files["exp"]['experiment.css']=cleanLink(config,experimentURL+"files/experiment.css")
+    files["exp"]['experiment.js']=cleanLink(config,experimentURL+"files/experiment.js")
+    files["exp"]['tester.js']=cleanLink(config,experimentURL+"files/tester.js")
 
     if "instructionsFolder" in config:
         instructionsFolder=experimentURL+config['instructionsFolder']
