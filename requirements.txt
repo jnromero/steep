@@ -5,3 +5,4 @@ twisted
 autobahn
 future
 netifaces
+mutagen

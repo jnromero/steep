@@ -4,6 +4,7 @@ import json
 import time
 from twisted.internet import reactor
 import random
+from mutagen.mp3 import MP3
 
 class SteepInstructions():
    def __init__(self):
@@ -139,10 +140,8 @@ class SteepInstructions():
       self.data['captionIndex']=-1
 
    def getInstructionsDuration(self):
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.duration"
-      file = open(filename,'r')
-      self.instructionsLength=float(file.read())/self.instructionsPlaybackSpeed
-      file.close() 
+      instructionLength=MP3(self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.mp3")
+      self.instructionsLength=float(instructionLength)/self.instructionsPlaybackSpeed
 
 
    def getCurrentInstructionsTime(self):
