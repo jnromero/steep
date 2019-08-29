@@ -8,7 +8,7 @@ def getPage(config):
     this+='<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Traditional//EN">\n'
     this+='<html id="everything">\n'
     this+='\t<head>\n'
-    this+='\t\t<title>STEEP: Client</title>\n'
+    this+='\t\t<title>STEEP: Video</title>\n'
     this+=pf.addExternalFiles(config,"headStart")
     this+=pf.javascriptLine(files['common']['jquery.js'])
     this+=pf.javascriptLine(files['common']['velocity.js'])
