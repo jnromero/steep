@@ -135,7 +135,7 @@ color:green;}
   background-color:rgba(255,0,0,.1);
   position:absolute;
   left: 0px;
-  top:50px;
+  top:0px;
   width:0px;
   height:100px;
   border-right:2px solid red;
