@@ -12,11 +12,14 @@ function loadInstructions(incoming){
 
 
 function startAudio(incoming){
-    console.log("startAudio",incoming['currentTime'])
     if(incoming['playbackRate']==undefined){incoming['playbackRate']=1;}
     document.getElementById("audioHolder").playbackRate = incoming['playbackRate'];
     document.getElementById("audioHolder").currentTime = incoming['currentTime']*document.getElementById("audioHolder").playbackRate;
-    document.getElementById("audioHolder").play();
+    var promise = document.getElementById("audioHolder").play();
+    if (promise) {
+        //Older browsers may not return a promise, according to the MDN website
+        promise.catch(function(error) { console.error(error); console.error(error.message); });
+    }
 }
 
 
