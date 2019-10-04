@@ -9,7 +9,7 @@ from mutagen.mp3 import MP3
 class SteepInstructions():
    def __init__(self):
       "self.doNothering=1"
-      self.instructionsAudioFile=self.config['domain']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.m4a"
+      self.instructionsAudioFile=self.config['domain']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.mp3"
       self.instructionsFinishedCaption="Instructions Finished. Please wait patiently for experiment to continue."
       #so video can be like a regular subject with a status
       self.instructionsPlaybackSpeed=1
@@ -119,30 +119,31 @@ class SteepInstructions():
       self.sendListOfMessages(msgs)
 
    def getInstructionsTasks(self):
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/taskTimes.pickle"
-      file = open(filename,'rb')
-      self.taskTimes=pickle.load(file)
+      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/taskTimes.json"
+      file = open(filename,'r')
+      self.taskTimes=json.load(file)
       file.close() 
       self.data['taskIndex']=-1
 
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/tasks2.pickle"
-      file = open(filename,'rb')
-      self.tasks2=pickle.load(file)
+      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/tasks.json"
+      file = open(filename,'r')
+      self.tasks=json.load(file)
       file.close() 
-
+ 
    def getInstructionsCaptions(self):
       #is a list of lists with [caption,time to next,total time at end of this caption display]
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/captions.pickle"
-      file = open(filename,'rb')
-      self.captions=pickle.load(file)
-      self.captions.append([self.instructionsFinishedCaption,100000,100000])
+      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/captions.json"
+      file = open(filename,'r')
+      self.captions=json.load(file)
       file.close() 
+      self.captions.append([self.instructionsFinishedCaption,100000,100000])
       self.data['captionIndex']=-1
 
    def getInstructionsDuration(self):
-      instructionLength=MP3(self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.mp3")
+      instructionLength=MP3(self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.mp3").info.length
+      # instructionLength=MP3(self.instructionsAudioFile)
       self.instructionsLength=float(instructionLength)/self.instructionsPlaybackSpeed
-
+      self.instructionsLength+=10#add 10 second buffer at end.  
 
    def getCurrentInstructionsTime(self):
       #sets self.instructionsTime
@@ -155,7 +156,7 @@ class SteepInstructions():
          self.data['instructionsStartTime']=time.time()-self.data['instructionsTime']
 
    def reconnectInstructions(self,sid="all",output="send",timeIN="none"):
-      print("reconnecting 2l43kj23l4kj23 4lkj"+sid)
+      print("reconnecting "+sid)
       msgs=[]
       msgList=self.loadInstructionsOnClient(sid,"return")
       msgs+=msgList
@@ -198,7 +199,6 @@ class SteepInstructions():
       self.data['serverStatus']['page']="instructions"
       self.data['instructionsTime']=0
       self.data['instructionsStartTime']=0
-
 
       self.data['serverStatus']['instructions']['lastCaption']=self.captions[0][0]
       self.data['serverStatus']['instructions']['loaded']=1
@@ -491,6 +491,7 @@ class SteepInstructions():
 
 
    def runSingleTask(self,func,args,sid="all",output="send"):
+      print("runSingleTask")
       args['sid']=sid
       args['output']="return"
       thisFunction = getattr(self,func)
@@ -501,14 +502,16 @@ class SteepInstructions():
          return msgList
 
    def catchUpTasks(self,sid="all",timeIN="none"):
+      print("catchUpTasks")
       if timeIN=="none":
          self.getCurrentInstructionsTime()
          timeIN=self.data['instructionsTime']
+      print(timeIN) 
       toBeRun=[{"func":"runJavascriptFunction","args":{"functionName":"clearAllInstructions"}}]
       lastPosition=[-23,-23]
       for index in range(len(self.taskTimes)):
-         taskTime=self.taskTimes[index][-1]
-         thisTask=self.tasks2[index]
+         taskTime=self.taskTimes[index]
+         thisTask=self.tasks[index]
          if taskTime<timeIN:
             if "args" in thisTask:
                if "functionName" in thisTask['args']:
@@ -553,8 +556,20 @@ class SteepInstructions():
          msgList=self.runSingleTask(task['func'],task['args'],sid,"return")
          messages+=msgList
 
-      timeToNextTask=self.taskTimes[index][-1]-timeIN
+      timeToNextTask=self.taskTimes[index]-timeIN
       return [messages,index-1,timeToNextTask]
+
+
+   def testRunAnotherTask(self,message,client):
+      thisIndex=self.data['taskIndex']
+      if "testInstructionTimeIndex" not in self.data:
+         self.data['testInstructionTimeIndex']=0
+
+      timeForThisTask=float(self.taskTimes[self.data['testInstructionTimeIndex']])-.1
+      self.data['instructionsTime']=timeForThisTask
+      self.data['serverStatus']['instructions']['playing']=1
+      self.reconnectInstructions("allPlusVideo","send",timeForThisTask)
+      self.data['testInstructionTimeIndex']+=1
 
    def runAnotherTask(self,sid="all"):
       runTask=0
@@ -570,13 +585,13 @@ class SteepInstructions():
             sendToWho=sid
             runTask=1
       if runTask==1:
-         timeForThisTask=float(self.taskTimes[thisIndex][1])
-         task=self.tasks2[thisIndex]
+         timeForThisTask=float(self.taskTimes[thisIndex])
+         task=self.tasks[thisIndex]
          msgList=self.runSingleTask(task['func'],task['args'],sendToWho,"send")
          # self.getCurrentInstructionsTime()
 
          if thisIndex<len(self.taskTimes)-1:
-            timeForNextThisTask=float(self.taskTimes[thisIndex+1][1])
+            timeForNextThisTask=float(self.taskTimes[thisIndex+1])
             timeToNext=timeForNextThisTask-timeForThisTask
             kwargs={"sid":sid}
             self.taskCalls[sid]=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.runAnotherTask,**kwargs)
