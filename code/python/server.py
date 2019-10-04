@@ -282,6 +282,9 @@ if options.openBrowser=="True":
    for k in range(int(options.numberClients)):
       clientURL=url+"/client.html"
       webbrowser.open(clientURL)
+   if options.videoClient=="True":
+      clientURL=url+"/video.html"
+      webbrowser.open(clientURL)
    webbrowser.open(url)
 
 reactor.run()

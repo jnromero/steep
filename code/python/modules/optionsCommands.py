@@ -20,6 +20,8 @@ def getOptions():
                      help="set to False to write data to tmp folder, rather than unique folder.  This should NEVER be used when you run an experiment in the lab.")
    parser.add_option("-n", "--numberClients", dest="numberClients", default="0",
                      help="set to an integer n to open clients on startup, mostly for local testing.")
+   parser.add_option("-v", "--videoClient", dest="videoClient", default="False",
+                     help="set to True to open a video client.")
    (options, args) = parser.parse_args()
 
    if options.location=="NONE":
