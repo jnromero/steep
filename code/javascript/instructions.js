@@ -1,8 +1,19 @@
+function makeid(length) {
+   var result           = '';
+   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+
 function loadInstructions(incoming){
     deleteDiv("audioHolder");
     var video = document.createElement('video');
     video.id = 'audioHolder';
-    video.src = incoming['source'];
+    //random id avoids cache issues.
+    video.src = incoming['source']+"?"+makeid(5);
     video.playbackRate = 1;
     video.height='0px';
     video.preload='auto'
