@@ -375,13 +375,18 @@ function placeTextNewButStillOld(incoming){
 
 
 function placeText(incoming){
+    if(incoming['elementType']==undefined){
+        incoming['elementType']="div";
+    }
     if(incoming['divid']==undefined){
         incoming['divid']="randomDiv"+parseInt(Math.random()*10000000000);
     }
     if(incoming['parentDiv']==undefined){
         incoming['parentDiv']="mainDiv";
     }
-    var textDiv=createAndAddDiv(incoming["divid"],incoming['parentDiv']);
+
+
+    var textDiv=createAndAddElement(incoming['elementType'],incoming["divid"],incoming['parentDiv']);
 
     if(incoming['height']==undefined){
         incoming['height']="50px";
