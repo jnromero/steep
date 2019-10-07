@@ -76,7 +76,7 @@ class monitorClass():
       
    def updateTaskTable(self):
       msg={"type":"updateTaskTable"}
-      msg['taskList']=self.monitorTaskList
+      msg['taskList']=[x.split("----")[0] for x in self.monitorTaskList]
       msg['taskStatus']=self.data['taskStatus']
       msg['serverStatus']=self.data['serverStatus']
       msg['dataFile']=self.config['dataFilePath']
@@ -244,6 +244,8 @@ class monitorClass():
    def monitorTasks(self):
       self.data['taskStatus']={}
       for task in self.monitorTaskList:
-         self.data['taskStatus'][task]={}
-         self.data['taskStatus'][task]['status']=""
-         self.data['taskStatus'][task]['title']=self.taskToTitle(task)
+         this=task.split("----")+['regular']
+         self.data['taskStatus'][this[0]]={}
+         self.data['taskStatus'][this[0]]['status']=""
+         self.data['taskStatus'][this[0]]['title']=self.taskToTitle(this[0])
+         self.data['taskStatus'][this[0]]['type']=this[1]

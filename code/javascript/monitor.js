@@ -171,11 +171,12 @@ function makeTaskTable(msg){
     var thisTask=msg['taskList'][row];
     var taskTitle=msg['taskStatus'][thisTask]['title'];
     var taskStatus=msg['taskStatus'][thisTask]['status'];
+    var taskType=msg['taskStatus'][thisTask]['type'];
     if(taskTitle=="Load Instructions"){
       drawInstructionsController();
     }
     else{
-      drawGenericTask(row,thisTask,taskTitle,taskStatus);
+      drawGenericTask(row,thisTask,taskTitle,taskStatus,taskType);
     }
   }
 
@@ -187,7 +188,8 @@ function makeTaskTable(msg){
 }
 
 
-function drawGenericTask(row,thisTask,taskTitle,taskStatus){
+function drawGenericTask(row,thisTask,taskTitle,taskStatus,taskType){
+
   var divName="taskDiv_"+thisTask;
   var thisDiv=createAndAddDiv(divName,"taskTableHolder");
   thisDiv.className="taskButton";
@@ -195,6 +197,10 @@ function drawGenericTask(row,thisTask,taskTitle,taskStatus){
   thisDiv.innerHTML=taskTitle;
   if(taskStatus=="Done"){
       thisDiv.style.backgroundColor="var(--w3-green)";
+  }
+  else if(taskType=="textInput"){
+      thisDiv.style.backgroundColor="var(--w3-red)";
+      clickButton("many",divName,sendTextToServer,thisTask,taskTitle);    
   }
   else{
       thisDiv.style.backgroundColor="var(--w3-red)";
@@ -345,6 +351,15 @@ function drawInstructionsController(){
 
   }
 }
+
+function sendTextToServer(args){
+  var thisTask=args[0];
+  var taskTitle=args[1];
+  var statement="Are you sure you want to "+taskTitle+"??";
+  var message={"type":thisTask};
+  confirmActionText(statement,message);
+}
+
 
 function sendToServer(args){
   var thisTask=args[0];
