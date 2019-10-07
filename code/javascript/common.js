@@ -518,9 +518,26 @@ function confirmAction(statement,message){
     clickButton("many","confirmationDiv",confirmationActionButtonClick,message);
 }
 
+
+function confirmActionText(statement,message){
+    placeText({"divid":"confirmationAlertBackgroud","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.3)","zIndex":2147483648});
+    placeText({"parentDiv":"confirmationAlertBackgroud","divid":"confirmationDiv","text":statement,"fontSize":"30px","lineHeight":"50px","height":"400px","padding":"50px","paddingBottom":"150px","top":"calc(25% - 150px)","left":"calc(50% - 300px)","width":"600px","backgroundColor":"rgba(255,255,255,1)","border":"5px solid black"});
+    placeText({"elementType":"textarea","parentDiv":"confirmationDiv","divid":"confirmationDivTextArea","text":"Enter Text Here","fontSize":"26px","bottom":"150px","left":"10%","width":"80%","height":"75px","backgroundColor":"rgba(0,255,0,.1)","border":"5px solid rgba(0,255,0,.3)"});
+    placeText({"parentDiv":"confirmationDiv","divid":"confirmationDivButtonYes","text":"Yes","fontSize":"26px","bottom":"25px","left":"100px","width":"150px","height":"75px","backgroundColor":"rgba(0,255,0,.1)","border":"5px solid rgba(0,255,0,.3)"});
+    placeText({"parentDiv":"confirmationDiv","divid":"confirmationDivButtonNo","text":"No","fontSize":"26px","bottom":"25px","left":"350px","width":"150px","height":"75px","backgroundColor":"rgba(255,0,0,.1)","border":"5px solid rgba(255,0,0,.3)"});
+    // placeText({"parentDiv":"confirmationDiv","divid":"confirmationDivButtonNo","text":"No","fontSize":"20px","lineHeight":"50px","padding":"50px","top":"calc(25% - 150px)","left":"calc(50% - 300px)","width":"600px","height":"300px","backgroundColor":"rgba(255,255,255,1)"});
+    hoverDivChangeOtherDiv("confirmationDivButtonYes","confirmationDivButtonYes",{"border":"5px solid green","backgroundColor":"rgba(0,255,0,.3)"})
+    hoverDivChangeOtherDiv("confirmationDivButtonNo","confirmationDivButtonNo",{"border":"5px solid red","backgroundColor":"rgba(255,0,0,.3)"})
+    clickButton("many","confirmationDiv",confirmationActionButtonClick,message);
+}
+
 function confirmationActionButtonClick(args){
     var e=args[args.length-1];
     var message=args[0];
+    if(document.getElementById("confirmationDivTextArea").value!=undefined){
+        message['confirmActionText']=document.getElementById("confirmationDivTextArea").value;
+    }
+    console.log(message)
     if (e.target !== e.currentTarget) {
         var clickedItem = e.target.id;
         if(clickedItem=="confirmationDivButtonYes"){
