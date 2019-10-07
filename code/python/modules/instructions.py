@@ -125,7 +125,7 @@ class SteepInstructions():
       file.close() 
       self.data['taskIndex']=-1
 
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/tasks.json"
+      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/tasksOut.json"
       file = open(filename,'r')
       self.tasks=json.load(file)
       file.close() 
@@ -641,15 +641,16 @@ class SteepInstructions():
       msg={}
       msg['type']='setCaptions'
       msg['caption']=caption
+      return self.messageToId(msg,sid,output)
+
+   def resyncAudio(self,sid="all",output="send"):
+      msg={}
+      msg['type']='resyncAudio'
       msg['length']=self.instructionsLength
       if sid=="allPlusVideo":
          msg['whichTimer']="all"      
       else:
          msg['whichTimer']=sid      
-      # if self.config['serverType']=="regularExperiment":
-      #    msg['whichTimer']="all"         
-      # elif self.config['serverType']=="demoExperiment":
-      #    msg['whichTimer']="selfTimer"
       return self.messageToId(msg,sid,output)
 
    def displayCaption(self,sid="all"):

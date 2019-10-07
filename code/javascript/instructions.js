@@ -74,14 +74,15 @@ function drawCaptionOverlay(incoming){
 function setCaptions(incoming){
     var captions=document.getElementById('captions');
     captions.innerHTML=incoming['caption'];
+}
+
+function resyncAudio(incoming){
     window.thisTimerName=incoming['whichTimer'];
     moveTimer(window.thisTimerName); 
     var currentTime=incoming['length']-window.timers[window.thisTimerName];
     if(isNaN(currentTime)){currentTime=0;}
     document.getElementById("audioHolder").currentTime = currentTime*document.getElementById("audioHolder").playbackRate;
 }
-
-
 
 function startInstructions(incoming){
     clearAllInstructions();
