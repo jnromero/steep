@@ -534,7 +534,7 @@ function confirmActionText(statement,message){
 function confirmationActionButtonClick(args){
     var e=args[args.length-1];
     var message=args[0];
-    if(document.getElementById("confirmationDivTextArea").value!=undefined){
+    if(document.getElementById("confirmationDivTextArea")!=null && document.getElementById("confirmationDivTextArea").value!=undefined){
         message['confirmActionText']=document.getElementById("confirmationDivTextArea").value;
     }
     console.log(message)
