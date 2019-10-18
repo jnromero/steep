@@ -643,6 +643,7 @@ class SteepInstructions():
       return self.messageToId(msg,sid,output)
 
    def resyncAudio(self,sid="all",output="send"):
+      # self.data['timers']['all'][1]+=1
       msg={}
       msg['type']='resyncAudio'
       msg['length']=self.instructionsLength

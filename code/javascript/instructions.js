@@ -90,8 +90,9 @@ function setCaptions(incoming){
 function resyncAudio(incoming){
     window.thisTimerName=incoming['whichTimer'];
     moveTimer(window.thisTimerName); 
-    var currentTime=incoming['length']-window.timers[window.thisTimerName];
+    var currentTime=incoming['length']-window.timers[window.thisTimerName]-.5;
     if(isNaN(currentTime)){currentTime=0;}
+    else if(currentTime<0){currentTime=0;}
     document.getElementById("audioHolder").currentTime = currentTime*document.getElementById("audioHolder").playbackRate;
 }
 
