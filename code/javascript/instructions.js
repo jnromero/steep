@@ -21,8 +21,18 @@ function loadInstructions(incoming){
     loadClickSound();
 }
 
+function manualPlayInstructions(args){
+    console.log("manualPlayInstructions")
+    var promise = document.getElementById("audioHolder").play();
+    if (promise) {
+        //Older browsers may not return a promise, according to the MDN website
+        promise.catch(function(error) { console.error(error); console.error(error.message); });
+    }
+}
+
 
 function startAudio(incoming){
+    clickButton("once","mainDiv",manualPlayInstructions);
     if(incoming['playbackRate']==undefined){incoming['playbackRate']=1;}
     document.getElementById("audioHolder").playbackRate = incoming['playbackRate'];
     document.getElementById("audioHolder").currentTime = incoming['currentTime']*document.getElementById("audioHolder").playbackRate;
@@ -90,7 +100,7 @@ function setCaptions(incoming){
 function resyncAudio(incoming){
     window.thisTimerName=incoming['whichTimer'];
     moveTimer(window.thisTimerName); 
-    var currentTime=incoming['length']-window.timers[window.thisTimerName]-.5;
+    var currentTime=incoming['length']-window.timers[window.thisTimerName];
     if(isNaN(currentTime)){currentTime=0;}
     else if(currentTime<0){currentTime=0;}
     document.getElementById("audioHolder").currentTime = currentTime*document.getElementById("audioHolder").playbackRate;
