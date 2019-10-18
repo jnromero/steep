@@ -27,7 +27,7 @@ for x in steepDirectory.parents:
       webServerRoot=x
       break
 functions = loadSource('functions',str(steepDirectory.joinpath('python', 'modules','functions.py')))
-from twisted.internet import reactor
+from twisted.internet import reactor#,ssl
 from twisted.web.server import Site
 from autobahn.twisted.websocket import listenWS
 
@@ -276,9 +276,10 @@ listenWS(factory)
 resource = steepWebServer.RequestHandler(config,options.debug,restartString,thisLogCounter)
 factory = Site(resource)
 reactor.listenTCP(resource.config['serverPort'], factory)
+# reactor.listenSSL(resource.config['serverPort'], factory,ssl.DefaultOpenSSLContextFactory('keys/server.key', 'keys/server.crt'))
 
 if options.openBrowser=="True":
-   url = 'http://localhost:%s'%(resource.config['serverPort'])
+   url = 'https://localhost:%s'%(resource.config['serverPort'])
    for k in range(int(options.numberClients)):
       clientURL=url+"/client.html"
       webbrowser.open(clientURL)
