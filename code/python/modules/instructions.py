@@ -491,7 +491,6 @@ class SteepInstructions():
 
 
    def runSingleTask(self,func,args,sid="all",output="send"):
-      print("runSingleTask")
       args['sid']=sid
       args['output']="return"
       thisFunction = getattr(self,func)
