@@ -100,10 +100,18 @@ function setCaptions(incoming){
 function resyncAudio(incoming){
     window.thisTimerName=incoming['whichTimer'];
     moveTimer(window.thisTimerName); 
-    var currentTime=incoming['length']-window.timers[window.thisTimerName];
-    if(isNaN(currentTime)){currentTime=0;}
-    else if(currentTime<0){currentTime=0;}
-    document.getElementById("audioHolder").currentTime = currentTime*document.getElementById("audioHolder").playbackRate;
+    var serverTime=incoming['length']-window.timers[window.thisTimerName];
+    if(isNaN(serverTime)){serverTime=0;}
+    else if(serverTime<0){serverTime=0;}
+    // document.getElementById("audioHolder").currentTime = currentTime*document.getElementById("audioHolder").playbackRate;
+    var clientTime=document.getElementById("audioHolder").currentTime;
+    var audioSyncMultiplier=1.1;
+    if(Math.abs(serverTime-clientTime)<.5){
+        //slow down
+        if(serverTime<clientTime){document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate/audioSyncMultiplier;}
+        //speed up
+        else{document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate*audioSyncMultiplier;}
+    }
 }
 
 function startInstructions(incoming){
