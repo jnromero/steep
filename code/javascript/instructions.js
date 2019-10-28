@@ -105,14 +105,13 @@ function resyncAudio(incoming){
     var serverTime=incoming['length']-window.timers[window.thisTimerName];
     if(isNaN(serverTime)){serverTime=0;}
     else if(serverTime<0){serverTime=0;}
-    var audioSyncMultiplier=1+Math.abs(serverTime-clientTime)*.01;//catch up a 1/10th of a second over 10 seconds
+    var audioSyncMultiplier=1+Math.abs(serverTime-clientTime)*.1;//catch up a 1/10th of a second over 10 seconds
     console.log(audioSyncMultiplier)
     console.log(serverTime,clientTime)
-    console.log(document.getElementById("audioHolder").playbackRate)
     //slow down
-    if(serverTime<clientTime){document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate/audioSyncMultiplier;}
+    if(serverTime<clientTime){document.getElementById("audioHolder").playbackRate=1/audioSyncMultiplier;}
     //speed up
-    else{document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate*audioSyncMultiplier;}
+    else{document.getElementById("audioHolder").playbackRate=audioSyncMultiplier;}
 }
 
 function startInstructions(incoming){
