@@ -105,8 +105,9 @@ function resyncAudio(incoming){
     else if(serverTime<0){serverTime=0;}
     // document.getElementById("audioHolder").currentTime = currentTime*document.getElementById("audioHolder").playbackRate;
     var clientTime=document.getElementById("audioHolder").currentTime;
-    var audioSyncMultiplier=1.1;
-    if(Math.abs(serverTime-clientTime)<.5){
+    var audioSyncMultiplier=1.025;//catch up a quarter of a second over 10 seconds
+    console.log(serverTime,clientTime)
+    if(Math.abs(serverTime-clientTime)<.25){
         //slow down
         if(serverTime<clientTime){document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate/audioSyncMultiplier;}
         //speed up
