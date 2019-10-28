@@ -279,7 +279,7 @@ reactor.listenTCP(resource.config['serverPort'], factory)
 # reactor.listenSSL(resource.config['serverPort'], factory,ssl.DefaultOpenSSLContextFactory('keys/server.key', 'keys/server.crt'))
 
 if options.openBrowser=="True":
-   url = 'https://localhost:%s'%(resource.config['serverPort'])
+   url = 'http://localhost:%s'%(resource.config['serverPort'])
    for k in range(int(options.numberClients)):
       clientURL=url+"/client.html"
       webbrowser.open(clientURL)

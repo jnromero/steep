@@ -93,26 +93,26 @@ function drawCaptionOverlay(incoming){
 
 
 function setCaptions(incoming){
+    resyncAudio(incoming)
     var captions=document.getElementById('captions');
     captions.innerHTML=incoming['caption'];
 }
 
 function resyncAudio(incoming){
+    var clientTime=document.getElementById("audioHolder").currentTime;
     window.thisTimerName=incoming['whichTimer'];
     moveTimer(window.thisTimerName); 
     var serverTime=incoming['length']-window.timers[window.thisTimerName];
     if(isNaN(serverTime)){serverTime=0;}
     else if(serverTime<0){serverTime=0;}
-    // document.getElementById("audioHolder").currentTime = currentTime*document.getElementById("audioHolder").playbackRate;
-    var clientTime=document.getElementById("audioHolder").currentTime;
-    var audioSyncMultiplier=1.025;//catch up a quarter of a second over 10 seconds
+    var audioSyncMultiplier=1+Math.abs(serverTime-clientTime)*.01;//catch up a 1/10th of a second over 10 seconds
+    console.log(audioSyncMultiplier)
     console.log(serverTime,clientTime)
-    if(Math.abs(serverTime-clientTime)<.25){
-        //slow down
-        if(serverTime<clientTime){document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate/audioSyncMultiplier;}
-        //speed up
-        else{document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate*audioSyncMultiplier;}
-    }
+    console.log(document.getElementById("audioHolder").playbackRate)
+    //slow down
+    if(serverTime<clientTime){document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate/audioSyncMultiplier;}
+    //speed up
+    else{document.getElementById("audioHolder").playbackRate=document.getElementById("audioHolder").playbackRate*audioSyncMultiplier;}
 }
 
 function startInstructions(incoming){

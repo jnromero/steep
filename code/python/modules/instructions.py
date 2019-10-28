@@ -640,6 +640,11 @@ class SteepInstructions():
       msg={}
       msg['type']='setCaptions'
       msg['caption']=caption
+      msg['length']=self.instructionsLength
+      if sid=="allPlusVideo":
+         msg['whichTimer']="all"      
+      else:
+         msg['whichTimer']=sid      
       return self.messageToId(msg,sid,output)
 
    def resyncAudio(self,sid="all",output="send"):
