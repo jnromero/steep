@@ -100,7 +100,6 @@ window.keyDownListeners=[]
 function pressKey(buttonType,key,func) {
   removePressKeyListener(key);
   var keyCode=keyNameToKeyCode(key);
-
   var args = Array.prototype.slice.call(arguments,3);
   var functionToRun = partial(func,args);
   var removeListener = partial(removePressKeyListener,key);
@@ -115,6 +114,7 @@ function pressKey(buttonType,key,func) {
 
 function removePressKeyListener(key) {
   document.removeEventListener("keyup",window.keyDownListeners[key]);
+  delete window.keyDownListeners[key];
 }
 
 
