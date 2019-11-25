@@ -99,19 +99,19 @@ function setCaptions(incoming){
 }
 
 function resyncAudio(incoming){
-    var clientTime=document.getElementById("audioHolder").currentTime;
-    window.thisTimerName=incoming['whichTimer'];
-    moveTimer(window.thisTimerName); 
-    var serverTime=incoming['length']-window.timers[window.thisTimerName];
-    if(isNaN(serverTime)){serverTime=0;}
-    else if(serverTime<0){serverTime=0;}
-    var audioSyncMultiplier=1+Math.abs(serverTime-clientTime)*.1;//catch up a 1/10th of a second over 10 seconds
-    console.log(audioSyncMultiplier)
-    console.log(serverTime,clientTime)
-    //slow down
-    if(serverTime<clientTime){document.getElementById("audioHolder").playbackRate=1/audioSyncMultiplier;}
-    //speed up
-    else{document.getElementById("audioHolder").playbackRate=audioSyncMultiplier;}
+    // document.getElementById("audioHolder").playbackRate=1+.1*(Math.random()-.5);
+    // 1+.1*(Math.random()-.5);
+    // var clientTime=document.getElementById("audioHolder").currentTime;
+    // window.thisTimerName=incoming['whichTimer'];
+    // moveTimer(window.thisTimerName); 
+    // var serverTime=incoming['length']-window.timers[window.thisTimerName];
+    // if(isNaN(serverTime)){serverTime=0;}
+    // else if(serverTime<0){serverTime=0;}
+    // var audioSyncMultiplier=1+Math.abs(serverTime-clientTime)*.1;//catch up a 1/10th of a second over 10 seconds
+    // //slow down
+    // if(serverTime<clientTime){document.getElementById("audioHolder").playbackRate=1/audioSyncMultiplier;}
+    // //speed up
+    // else{document.getElementById("audioHolder").playbackRate=audioSyncMultiplier;}
 }
 
 function startInstructions(incoming){
