@@ -117,7 +117,12 @@ function removePressKeyListener(key) {
   delete window.keyDownListeners[key];
 }
 
-
+function simulateKeyPress(keyName){
+    var event = document.createEvent('Event'); 
+    event.initEvent('keyup', true, true); 
+    event.keyCode = keyNameToKeyCode(keyName);     
+    document.dispatchEvent(event);
+}
 
 function removeListeners(divID) {
     var element=document.getElementById(divID);
