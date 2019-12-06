@@ -415,6 +415,7 @@ function placeText(incoming){
             textDiv.style[k]=incoming[k];
         }
     }
+    return textDiv;
 }
 
 
@@ -510,6 +511,20 @@ function combineObjects(dict1,dict2){//dict1 has priority over dict2
     }
     return output
 }
+
+
+function alertBox(statement){
+    placeText({"divid":"confirmationAlertBackgroud","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.3)","zIndex":2147483648});
+    placeText({"parentDiv":"confirmationAlertBackgroud","divid":"confirmationDiv","text":statement,"fontSize":"30px","lineHeight":"50px","height":"unset","padding":"50px","paddingBottom":"150px","top":"calc(25% - 150px)","left":"calc(50% - 300px)","width":"600px","backgroundColor":"rgba(255,255,255,1)","border":"5px solid black"});
+    var alertBoxOK=placeText({"parentDiv":"confirmationDiv","divid":"confirmationDivButtonOK","text":"OK","fontSize":"26px","bottom":"25px","left":"225px","width":"150px","height":"75px","backgroundColor":"rgba(0,255,0,.1)","border":"5px solid rgba(0,255,0,.3)"});
+    clickButton("many",alertBoxOK.id,alertBoxClose);
+    hoverDivChangeOtherDiv("confirmationDivButtonOK","confirmationDivButtonOK",{"border":"5px solid green","backgroundColor":"rgba(0,255,0,.3)"})
+}
+
+function alertBoxClose(){
+    deleteDiv("confirmationAlertBackgroud");
+}
+
 
 
 function confirmAction(statement,message){
