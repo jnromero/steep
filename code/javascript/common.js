@@ -62,12 +62,13 @@ function hoverDivChangeOtherDiv(divIdHover,divIdChange,incoming){
 //clickButton("many","makeChoiceButton",makeChoiceButtonClicked,27);
 function clickButton(buttonType, divID, func) {
   var args = Array.prototype.slice.call(arguments,3);
+  args.push("ClickEventHere")
   var thisDiv = document.getElementById(divID);
   thisDiv.addEventListener("click", function listener(e) {
     if (buttonType == "once") {
       thisDiv.removeEventListener("click", listener);
     }
-    args.push(e)
+    args[args.length-1]=e;
     var functionToRun = partial(func, args);
     functionToRun(e);
   });
