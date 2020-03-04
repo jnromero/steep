@@ -894,7 +894,7 @@ function drawServerInfo(){
 
   placeText({
     "parentDiv":"mainInfoHolder",
-    "text":"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe -kiosk --no-default-browser-check --autoplay-policy=no-user-gesture-required --disk-cache-size=1 --media-cache-size=1 "+window.config['domain']+"/client.html",
+    "text":"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe --incognito --kiosk --no-default-browser-check --autoplay-policy=no-user-gesture-required --disk-cache-size=1 --media-cache-size=1 "+window.config['domain']+"/client.html",
     "fontSize":"20px",
     "color":"black",
     "height":"50px",
