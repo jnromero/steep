@@ -233,7 +233,12 @@ function createAndAddElement(elementType,newElementID,parentElementID){
     if(newElementID!=""){
         thisElement.id=newElementID;
     }
-    document.getElementById(parentElementID).appendChild(thisElement);
+    if(parentElementID=="body"){
+        document.body.appendChild(thisElement);
+    }
+    else{
+        document.getElementById(parentElementID).appendChild(thisElement);
+    }
     return thisElement;
 
 }
