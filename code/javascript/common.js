@@ -135,8 +135,11 @@ function removeListeners(divID) {
 }
 
 function refreshMyPage(){
-    console.log("ref");
     window.location.reload();
+}
+
+function refreshMyPageIn10(){
+    setTimeout(refreshMyPage,10000);
 }
 
 function addParamToURL(incoming){

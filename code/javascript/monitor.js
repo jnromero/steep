@@ -184,7 +184,7 @@ function makeTaskTable(msg){
   drawStopServerButton(msg);
   drawRestartServerButton(msg);
   drawRefreshAllButton(msg);
-
+  drawRefreshAllIn10Button(msg);
 }
 
 
@@ -228,7 +228,7 @@ function drawStopServerButton(msg){
   var stopPythonServerButton=createAndAddDiv("stopPythonServerButton","taskTableHolder");
   stopPythonServerButton.className="taskButton alwaysThere";
   stopPythonServerButton.innerHTML="Stop Python Server";
-  stopPythonServerButton.style.top=(220+60*msg['taskList'].length)+"px";
+  stopPythonServerButton.style.top=(280+60*msg['taskList'].length)+"px";
   clickButton("once","stopPythonServerButton",stopPythonServer);
 
 }
@@ -238,7 +238,7 @@ function drawRestartServerButton(msg){
   var stopPythonServerButton=createAndAddDiv("restartPythonServerButton","taskTableHolder");
   stopPythonServerButton.className="taskButton alwaysThere";
   stopPythonServerButton.innerHTML="Restart Python Server";
-  stopPythonServerButton.style.top=(280+60*msg['taskList'].length)+"px";
+  stopPythonServerButton.style.top=(340+60*msg['taskList'].length)+"px";
   clickButton("once","restartPythonServerButton",restartPythonServer);
 
 }
@@ -249,14 +249,14 @@ function drawRefreshAllButton(msg){
   refreshAllButton.innerHTML="Refresh All Clients";
   refreshAllButton.style.top=(160+60*msg['taskList'].length)+"px";
   clickButton("once","refreshAllButton",refreshClient,"all");
-    // var thisRow = document.createElement("tr");
-  // var cell = document.createElement("td");
-  // cell.colSpan="3";
-  // cell.align="center";
-  // cell.innerHTML="<a href='javascript:void(0)' onclick='refreshClient(\"all\");'>Refresh All</a>";
-  // thisRow.appendChild(cell);
-  // table.appendChild(thisRow);
+}
 
+function drawRefreshAllIn10Button(msg){
+  var refreshAllButton=createAndAddDiv("refreshAllIn10Button","taskTableHolder");
+  refreshAllButton.className="taskButton alwaysThere";
+  refreshAllButton.innerHTML="Refresh All in 10 seconds";
+  refreshAllButton.style.top=(220+60*msg['taskList'].length)+"px";
+  clickButton("once","refreshAllIn10Button",refreshClientIn10,"all");
 }
 
 function toggleAcceptingSwitch(){
@@ -375,6 +375,15 @@ function refreshClient(args){
   msg['type']="refreshMyPage";
   msg['subjectIDIncoming']=sid;
   var statement="Are you sure you want to refresh "+sid+"??";
+  confirmAction(statement,msg);
+}
+
+function refreshClientIn10(args){
+  var sid=args[0];
+  msg={}
+  msg['type']="refreshMyPageIn10";
+  msg['subjectIDIncoming']=sid;
+  var statement="Are you sure you want to refresh "+sid+" in 10 Seconds??";
   confirmAction(statement,msg);
 }
 

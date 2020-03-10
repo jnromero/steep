@@ -364,6 +364,11 @@ class SteepMainServer():
       msg['type']="refreshMyPage"
       return self.messageToId(msg,message['subjectIDIncoming'],"send")
 
+   def refreshMyPageIn10(self,message,client):
+      msg={}
+      msg['type']="refreshMyPageIn10"
+      return self.messageToId(msg,message['subjectIDIncoming'],"send")
+
    def deleteThisClient(self,message,client):
       self.deleteSubject(message['subjectIDIncoming'])
       self.monitorMessage()
