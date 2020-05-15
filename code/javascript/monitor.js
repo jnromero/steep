@@ -180,6 +180,7 @@ function makeTaskTable(msg){
     }
   }
 
+  drawChatAllButton(msg);
   drawDataFileButton(msg);
   drawStopServerButton(msg);
   drawRestartServerButton(msg);
@@ -209,11 +210,25 @@ function drawGenericTask(row,thisTask,taskTitle,taskStatus,taskType){
 }
 
 
+function drawChatAllButton(msg){
+  var dataFileButton=createAndAddDiv("chatAllButton","taskTableHolder");
+  dataFileButton.className="taskButton alwaysThere";
+  dataFileButton.innerHTML="Send Chat To All Clients";
+  dataFileButton.style.top=(100+60*msg['taskList'].length)+"px";
+  // dataFileButton.href=msg['dataFolderURL'];
+  // clickButton("many","dataFileButton",downloadDataFile,msg['dataFolderURL']);
+}
+
+function downloadDataFile(args){
+  window.location.href=args[0];
+}
+
+
 function drawDataFileButton(msg){
   var dataFileButton=createAndAddDiv("dataFileButton","taskTableHolder");
   dataFileButton.className="taskButton alwaysThere";
   dataFileButton.innerHTML="Download Data Folder (.zip)";
-  dataFileButton.style.top=(100+60*msg['taskList'].length)+"px";
+  dataFileButton.style.top=(160+60*msg['taskList'].length)+"px";
   dataFileButton.href=msg['dataFolderURL'];
   clickButton("many","dataFileButton",downloadDataFile,msg['dataFolderURL']);
 }
@@ -228,7 +243,7 @@ function drawStopServerButton(msg){
   var stopPythonServerButton=createAndAddDiv("stopPythonServerButton","taskTableHolder");
   stopPythonServerButton.className="taskButton alwaysThere";
   stopPythonServerButton.innerHTML="Stop Python Server";
-  stopPythonServerButton.style.top=(280+60*msg['taskList'].length)+"px";
+  stopPythonServerButton.style.top=(340+60*msg['taskList'].length)+"px";
   clickButton("once","stopPythonServerButton",stopPythonServer);
 
 }
@@ -238,7 +253,7 @@ function drawRestartServerButton(msg){
   var stopPythonServerButton=createAndAddDiv("restartPythonServerButton","taskTableHolder");
   stopPythonServerButton.className="taskButton alwaysThere";
   stopPythonServerButton.innerHTML="Restart Python Server";
-  stopPythonServerButton.style.top=(340+60*msg['taskList'].length)+"px";
+  stopPythonServerButton.style.top=(400+60*msg['taskList'].length)+"px";
   clickButton("once","restartPythonServerButton",restartPythonServer);
 
 }
@@ -247,7 +262,7 @@ function drawRefreshAllButton(msg){
   var refreshAllButton=createAndAddDiv("refreshAllButton","taskTableHolder");
   refreshAllButton.className="taskButton alwaysThere";
   refreshAllButton.innerHTML="Refresh All Clients";
-  refreshAllButton.style.top=(160+60*msg['taskList'].length)+"px";
+  refreshAllButton.style.top=(220+60*msg['taskList'].length)+"px";
   clickButton("once","refreshAllButton",refreshClient,"all");
 }
 
@@ -255,7 +270,7 @@ function drawRefreshAllIn10Button(msg){
   var refreshAllButton=createAndAddDiv("refreshAllIn10Button","taskTableHolder");
   refreshAllButton.className="taskButton alwaysThere";
   refreshAllButton.innerHTML="Refresh All in 10 seconds";
-  refreshAllButton.style.top=(220+60*msg['taskList'].length)+"px";
+  refreshAllButton.style.top=(280+60*msg['taskList'].length)+"px";
   clickButton("once","refreshAllIn10Button",refreshClientIn10,"all");
 }
 
