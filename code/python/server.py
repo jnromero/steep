@@ -251,7 +251,7 @@ SteepTimerManager=steepTimer.SteepTimerManager
 
 #load chat module
 steepChat = loadSource('steepChat',str(steepDirectory.joinpath('python', 'modules','chat.py')))
-SteepChatManager=steepTimer.SteepChatManager
+SteepChatManager=steepChat.SteepChatManager
 
 class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepTimerManager,SteepChatManager,ExperimentInstructions):
    def __init__(self,config,options,log,thisLogCounter):

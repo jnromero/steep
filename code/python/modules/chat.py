@@ -31,7 +31,7 @@ class SteepChatManager():
       msg={}
       msg['type']="updateChatHistory"
       msg['time']=time.time()
-      msg.['chatInfo']=self.data['chat'].setdefault(sid,{})
+      msg['chatInfo']=self.data['chat'].setdefault(sid,{})
       return message
 
    def sendChatToClient(self,sid):
