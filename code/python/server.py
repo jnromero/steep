@@ -249,7 +249,11 @@ monitorClass=steepMonitor.monitorClass
 steepTimer = loadSource('steepTimer',str(steepDirectory.joinpath('python', 'modules','timer.py')))
 SteepTimerManager=steepTimer.SteepTimerManager
 
-class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepTimerManager,ExperimentInstructions):
+#load chat module
+steepChat = loadSource('steepChat',str(steepDirectory.joinpath('python', 'modules','chat.py')))
+SteepChatManager=steepTimer.SteepChatManager
+
+class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepTimerManager,SteepChatManager,ExperimentInstructions):
    def __init__(self,config,options,log,thisLogCounter):
       self.subjectClass=subjectClass
       self.logCounter=thisLogCounter
@@ -260,6 +264,7 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       SteepWebSocketFactory.__init__(self)
       SteepMainServer.__init__(self)
       SteepTimerManager.__init__(self)
+      SteepChatManager.__init__(self)
       experimentClass.__init__(self)
       SteepInstructions.__init__(self)
       monitorClass.__init__(self)
