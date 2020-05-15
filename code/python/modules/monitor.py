@@ -138,6 +138,10 @@ class monitorClass():
       tableData['connected']={}
       for sid in self.data['subjectIDs']:
          tableData['connected'][sid]=self.data[sid].connectionStatus
+      tableData['communication']={}
+      for sid in self.data['subjectIDs']:
+         tableData['communication'][sid]=self.data[sid].communicationStatus
+
       tableData['titles']=[x[0] for x in thisMonitorTable]
       k=0
       for sid in tableData['subjectIDs']:

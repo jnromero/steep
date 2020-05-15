@@ -246,6 +246,7 @@ class SteepMainServer():
       thisSubject.ipAddress=""
       thisSubject.timer=[0,0,0]
       thisSubject.connectionStatus=""
+      thisSubject.communicationStatus="none"
       self.data[subjectID]=thisSubject
       self.updateStatus(subjectID)
 

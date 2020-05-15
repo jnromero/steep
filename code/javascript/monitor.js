@@ -72,6 +72,7 @@ function makeMonitorTable(msg){
   var subjectIDs=msg['table']['subjectIDs'];
   var titles=msg['table']['titles'];
   var connected=msg['table']['connected'];
+  var communication=msg['table']['communication'];
 
   //Redraw whole table to make sure rows don't stay after subject is deleted.  
   if(document.getElementById("monitorTable")!=null && document.getElementById("monitorTable").childElementCount!=msg['table']['subjectIDs'].length){
@@ -121,8 +122,10 @@ function makeMonitorTable(msg){
   for(var s=0;s<subjectIDs.length;s++){
     var thisRow=createAndAddElement("tr","monitorTableRow_"+s,"monitorTable");
     if(connected[subjectIDs[s]]=="disconnected"){
-      console.log("@#$@#$",s);
       thisRow.style.backgroundColor="rgba(255,0,0,.2)";
+    }
+    if(communication[subjectIDs[s]]=="unseen"){
+      thisRow.style.backgroundColor="rgba(0,255,0,.2)";
     }
     var thisEntry=createAndAddElement("td","monitorTableEntry_"+s+"-0","monitorTableRow_"+s);
     thisEntry.innerHTML=s+1;
