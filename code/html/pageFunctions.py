@@ -86,6 +86,7 @@ def getFiles(config):
     files['common']['video.js']=cleanLink(config,packageURL+"javascript/video.js")
     files['common']['instructions.js']=cleanLink(config,packageURL+"javascript/instructions.js")
     files['common']['monitor.js']=cleanLink(config,packageURL+"javascript/monitor.js")
+    files['common']['chat.js']=cleanLink(config,packageURL+"javascript/chat.js")
 
     files['common']['simulateMouse.css']=cleanLink(config,packageURL+"javascript/simulateMouse/simulateMouse.css")
     files['common']['simulateMouse.js']=cleanLink(config,packageURL+"javascript/simulateMouse/simulateMouse.js")
