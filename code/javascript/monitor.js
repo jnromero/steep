@@ -219,9 +219,8 @@ function drawOpenChatButton(msg){
   dataFileButton.innerHTML="Open Chat Window";
   dataFileButton.style.top=(100+60*msg['taskList'].length)+"px";
   // dataFileButton.href=msg['dataFolderURL'];
-  clickButton("many","chatAllButton",drawChatWindow);
+  clickButton("many","chatAllButton",getChatHistory);
 }
-
 
 function downloadDataFile(args){
   window.location.href=args[0];
