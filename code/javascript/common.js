@@ -473,6 +473,9 @@ function genericScreen(message){
     createAndAddDiv("genericScreenText","genericScreenInside")
     document.getElementById("genericScreenText").innerHTML=message;
     placeText({"text":window.state['subjectID'],"fontSize":"20px","top":"20px","left":"20px","width":"300px","textAlign":"left"});
+    placeText({"divid":"genericScreenChatButton","text":"Click Here to Ask Question","fontSize":"20px","top":"20px","right":"20px","width":"300px","textAlign":"right"});
+    clickButton("many","genericScreenChatButton",getChatHistory);
+
 }
 
 
