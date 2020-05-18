@@ -676,4 +676,9 @@ function camelCaseToRegular(string){
     return string
 }
 
+function clearSessionStorage(message){
+    alert("clearSessionStorage");
+    sessionStorage.clear()
+}
+
 

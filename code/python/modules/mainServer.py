@@ -183,7 +183,7 @@ class SteepMainServer():
                   self.data[subjectID].connectionStatus='connected'
                   self.data[subjectID].queryParameters=queryParameters
                   self.setURLParameters(urlParamsToAdd,subjectID,output="send")
-
+                  self.clearSessionStorageOnClient(subjectID,"send")
                elif self.data['serverStatus']['acceptingClients']==0:
                   #IF not accepting send a list of clients
                   msg={}
@@ -376,13 +376,22 @@ class SteepMainServer():
       reactor.callLater(2,self.monitorMessage)
 
 
+
+   def clearSessionStorageOnClient(self,sid="all",output="send"):
+      msg={}
+      msg['type']="clearSessionStorage"
+      self.messageToId(msg,sid,output)
+
    def stopPythonServer(self,message,client):
       self.saveData()
+      self.clearSessionStorageOnClient("all","send")
       print("To Restart Use:\n")
       print(self.restartString)
       reactor.stop()
 
    def restartPythonServer(self,message,client):
+      self.saveData()
+      self.clearSessionStorageOnClient("all","send")
       reactor.stop()
       print("Starting a new python server")
       string=sys.executable+" "+" ".join(sys.argv)
