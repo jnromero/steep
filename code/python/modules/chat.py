@@ -9,6 +9,8 @@ class SteepChatManager():
       #this can be updated other places
       #this tells who can send message to who
       self.data['canChatWith']={}
+      self.data['unreadChats']={}
+
       d=self.data['canChatWith']
       d['experimenter']={}
       d['experimenter']['see']=['everyone','allSubjectIDs']
@@ -71,7 +73,6 @@ class SteepChatManager():
       out={}
       out['send']=canSend
       out['see']=canSee
-      print("access",sid,out) 
       return out
 
 
@@ -100,6 +101,9 @@ class SteepChatManager():
             self.updateRecentChats("experimenter",receiver)
             for s in self.data['subjectIDs']:
                self.updateRecentChats(s,receiver)
+               unread=self.data['unreadChats'].setdefault(s,[])
+               if receiver not in unread:
+                  unread.append(receiver)
             currentChat=self.data['chat'].setdefault("everyone",{}).setdefault("messages",[])
             currentChat.append([time.time(),sender,message['message']])
             self.sendChatToClient("everyone")
@@ -107,6 +111,14 @@ class SteepChatManager():
             #redundant to save time retreiving
             self.updateRecentChats(sender,receiver)
             self.updateRecentChats(receiver,sender)
+            unread=self.data['unreadChats'].setdefault(receiver,[])
+            if sender not in unread:
+               unread.append(sender)
+            unread=self.data['unreadChats'].setdefault(sender,[])
+            if receiver in unread:
+               unread.remove(receiver)
+
+
             currentChat=self.data['chat'][sender].setdefault("messages",{}).setdefault(receiver,[])
             currentChat.append([time.time(),sender,message['message']])
             currentChat=self.data['chat'][receiver].setdefault("messages",{}).setdefault(sender,[])
@@ -125,6 +137,7 @@ class SteepChatManager():
          msg['messages'][x]=self.data['chat'][sid]['messages'][x]
       msg['messages']["everyone"]=self.data['chat'].get("everyone",{}).get('messages',[])
       msg['access']=self.chatsAccess(sid)
+      msg['unread']=self.data['unreadChats'].get(sid,[])
       return msg
 
    def sendChatToClient(self,sid):
@@ -150,3 +163,11 @@ class SteepChatManager():
       if sid=="monitor": sid="experimenter"
       self.updateRecentChats(sid,"NA")
       self.sendChatToClient(sid)
+
+   def markChatAsRead(self,msg,client):
+      sid=client.subjectID
+      currentUnread=self.data['unreadChats'].get(sid,[])
+      if msg['chatName'] in currentUnread:
+         currentUnread.remove(msg['chatName'])
+
+

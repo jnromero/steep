@@ -1,5 +1,6 @@
 
 function drawChatWindow(){
+    sessionStorage.setItem("chatWindowOpen","true");
     placeText({"divid":"chatBackgroundCover","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.5)","zIndex":2147483648});
     placeText({"parentDiv":"chatBackgroundCover","divid":"chatBackground","fontSize":"30px","lineHeight":"50px","height":"800px","top":"calc(50% - 400px)","left":"calc(50% - 500px)","width":"1000px","backgroundColor":"rgba(255,255,255,1)","border":"0px solid black","overflow":"scroll","boxShadow": "0px 25px 150px 50px rgba(0, 0, 0, .6)",});
     var chatSubjectHistory=createAndAddDiv("chatSubjectHistory","chatBackground");
@@ -8,6 +9,7 @@ function drawChatWindow(){
     var chatCloseButton=createAndAddDiv("chatCloseButton","chatBackground");
     chatCloseButton.innerHTML=String.fromCharCode(parseInt('2718',16));
     chatCloseButton.onclick=function (){
+      sessionStorage.setItem("chatWindowOpen","false");
       deleteDiv("chatBackgroundCover");
     }
 
@@ -18,8 +20,8 @@ function drawChatWindow(){
     submitChatNewText.style.display="none";
     pressKey("once","return",sendChatToServer)
     chatNewText.placeholder="Enter new text here";
-    if(sessionStorage.getItem("currentChat"+window.currentChatConversation)!=undefined){
-       chatNewText.value=sessionStorage.getItem("currentChat"+window.currentChatConversation);
+    if(sessionStorage.getItem("currentChat"+sessionStorage.getItem("currentChatConversation"))!=undefined){
+       chatNewText.value=sessionStorage.getItem("currentChat"+sessionStorage.getItem("currentChatConversation"));
       submitChatNewText.style.display="block";
     } 
     chatNewText.focus()
@@ -29,20 +31,26 @@ function drawChatWindow(){
     for(k=0;k<window.recentChatInfo['recent'].length;k++){
       var thisDiv=createAndAddDiv("","chatSubjectHistory");
       thisDiv.innerHTML=window.recentChatInfo['recent'][k];
-      if(thisDiv.innerHTML==window.currentChatConversation){
+      if(thisDiv.innerHTML==sessionStorage.getItem("currentChatConversation")){
         thisDiv.style.backgroundColor="rgba(0,0,255,.1)";
       }
+      thisDiv.dataset['convoID']=window.recentChatInfo['recent'][k];
       thisDiv.onclick=changeChatConversation;
+      if(window.recentChatInfo["unread"].indexOf(window.recentChatInfo['recent'][k])>-1){
+        unreadMarker=document.createElement("span");
+        unreadMarker.innerHTML="&bull;";
+        thisDiv.appendChild(unreadMarker);
+      }
     } 
 
-    if(window.recentChatInfo['access']['send'].indexOf(window.currentChatConversation)==-1){
+    if(window.recentChatInfo['access']['send'].indexOf(sessionStorage.getItem("currentChatConversation"))==-1){
       chatNewText.readOnly = true;
-      chatNewText.placeholder="You do not have permission to send messages to "+window.currentChatConversation;
+      chatNewText.placeholder="You do not have permission to send messages to "+sessionStorage.getItem("currentChatConversation");
     }
     
 
     chatNewText.onkeyup=function(){
-        sessionStorage.setItem("currentChat"+window.currentChatConversation,chatNewText.value);
+        sessionStorage.setItem("currentChat"+sessionStorage.getItem("currentChatConversation"),chatNewText.value);
         if(chatNewText.value!=""){
           submitChatNewText.style.display="block";
 
@@ -53,9 +61,9 @@ function drawChatWindow(){
     };
 
 
-    chatConversationTitle.innerHTML=window.currentChatConversation;
-    if(window.recentChatInfo['access']['see'].indexOf(window.currentChatConversation)!=-1){//can see
-      var chats=window.recentChatInfo['messages'][window.currentChatConversation];
+    chatConversationTitle.innerHTML=sessionStorage.getItem("currentChatConversation");
+    if(window.recentChatInfo['access']['see'].indexOf(sessionStorage.getItem("currentChatConversation"))!=-1){//can see
+      var chats=window.recentChatInfo['messages'][sessionStorage.getItem("currentChatConversation")];
       if(chats!=undefined){
         if(chats.length>5){
           var thisDiv=createAndAddDiv("","chatConversation");
@@ -108,14 +116,14 @@ function drawChatWindow(){
 function sendChatToServer(event){
   msg={};
   msg['type']="chatMessageFromClient";
-  msg['to']=window.currentChatConversation;
+  msg['to']=sessionStorage.getItem("currentChatConversation");
   msg["message"]=document.getElementById("chatNewText").value;
   var thisValue=document.getElementById("chatNewText").value;
   var thisValue=thisValue.split(" ").join("").split("\n").join("")
   if(thisValue!=""){
     sendMessage(msg);
   }
-  sessionStorage.removeItem("currentChat"+window.currentChatConversation);
+  sessionStorage.removeItem("currentChat"+sessionStorage.getItem("currentChatConversation"));
   removePressKeyListener("return");
   drawChatWindow();    
 }
@@ -155,19 +163,56 @@ function getChatHistory(){
   sendMessage(msg);
 }
 
+
+function markChatAsRead(){
+  msg={};
+  msg['type']='markChatAsRead';
+  msg['chatName']=sessionStorage.getItem("currentChatConversation");
+  sendMessage(msg);
+  var thisIndex=window.recentChatInfo['unread'].indexOf(sessionStorage.getItem("currentChatConversation"));
+  if(thisIndex>-1){
+    window.recentChatInfo['unread'].splice(thisIndex,1);
+  }
+}
+
+
+
+
 function changeChatConversation(event){
-  if(currentChatConversation==undefined){
+  if(sessionStorage.getItem("currentChatConversation")==undefined){
     getChatHistory();
   }
   else{
-    window.currentChatConversation=event.target.innerHTML;
+    sessionStorage.setItem("currentChatConversation",event.target.dataset.convoID);
+    markChatAsRead();
     drawChatWindow();
   }
 }
 
+
+function checkForSock(){
+  if(sock!=null){
+    setTimeout(getChatHistory,10);
+  }
+  else{
+    setTimeout(checkForSock,10);
+  }
+}
+
+if(sessionStorage.getItem("chatWindowOpen")=="true"){
+  checkForSock();
+}
+else{
+  sessionStorage.setItem("chatWindowOpen","false");
+}
+
+
 function updateChatHistory(msg){
+  console.log("!!",msg)
   window.lastChatTimeClient=Date.now();
-  window.currentChatConversation=msg['recent'][0];
+  if(sessionStorage.getItem("chatWindowOpen")=='false' || sessionStorage.getItem("currentChatConversation")==undefined){
+    sessionStorage.setItem("currentChatConversation",msg['recent'][0]);
+  }
   window.recentChatInfo=msg;
   drawChatWindow();
 }
