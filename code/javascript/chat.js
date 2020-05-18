@@ -5,23 +5,44 @@ function drawChatWindow(){
     var chatSubjectHistory=createAndAddDiv("chatSubjectHistory","chatBackground");
     var chatConversationTitle=createAndAddDiv("chatConversationTitle","chatBackground");
     var chatConversation=createAndAddDiv("chatConversation","chatBackground");
+    var chatCloseButton=createAndAddDiv("chatCloseButton","chatBackground");
+    chatCloseButton.innerHTML=String.fromCharCode(parseInt('2718',16));
+    chatCloseButton.onclick=function (){
+      deleteDiv("chatBackgroundCover");
+    }
+
     var chatNewText=createAndAddElement("textarea","chatNewText","chatBackground");
     var submitChatNewText=createAndAddElement("div","submitChatNewText","chatBackground");
     submitChatNewText.innerHTML="Send";
+    submitChatNewText.onclick=sendChatToServer;
     submitChatNewText.style.display="none";
+    pressKey("once","return",sendChatToServer)
     chatNewText.placeholder="Enter new text here";
-
+    if(sessionStorage.getItem("currentChat"+window.currentChatConversation)!=undefined){
+       chatNewText.value=sessionStorage.getItem("currentChat"+window.currentChatConversation);
+      submitChatNewText.style.display="block";
+    } 
+    chatNewText.focus()
 
     var thisDiv=createAndAddDiv("","chatSubjectHistory");
     thisDiv.innerHTML="Conversations";
-    var thisDiv=createAndAddDiv("","chatSubjectHistory");
-    thisDiv.innerHTML="everyone";
-    for(k=0;k<17;k++){
+    for(k=0;k<window.recentChatInfo['recent'].length;k++){
       var thisDiv=createAndAddDiv("","chatSubjectHistory");
-      thisDiv.innerHTML="subject"+k;
+      thisDiv.innerHTML=window.recentChatInfo['recent'][k];
+      if(thisDiv.innerHTML==window.currentChatConversation){
+        thisDiv.style.backgroundColor="rgba(0,0,255,.1)";
+      }
+      thisDiv.onclick=changeChatConversation;
     } 
 
+    if(window.recentChatInfo['access']['send'].indexOf(window.currentChatConversation)==-1){
+      chatNewText.readOnly = true;
+      chatNewText.placeholder="You do not have permission to send messages to "+window.currentChatConversation;
+    }
+    
+
     chatNewText.onkeyup=function(){
+        sessionStorage.setItem("currentChat"+window.currentChatConversation,chatNewText.value);
         if(chatNewText.value!=""){
           submitChatNewText.style.display="block";
 
@@ -30,79 +51,123 @@ function drawChatWindow(){
           submitChatNewText.style.display="none";
         }
     };
-    // var alertBoxOK=placeText({"parentDiv":"confirmationDiv","divid":"confirmationDivButtonOK","text":"OK","fontSize":"26px","bottom":"25px","left":"225px","width":"150px","height":"75px","backgroundColor":"rgba(0,255,0,.1)","border":"5px solid rgba(0,255,0,.3)"});
-    // clickButton("many",alertBoxOK.id,alertBoxClose);
-    // hoverDivChangeOtherDiv("confirmationDivButtonOK","confirmationDivButtonOK",{"border":"5px solid green","backgroundColor":"rgba(0,255,0,.3)"})
-    chats=[
-      ["2020/05/15","subject1","Hey, how's it going?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Could you please clikc on the button on the top right of the screen and let me know what happens when you do that??"],
-      ["2020/05/15","experimenter","Could you please clikc on the button on the top right of the screen and let me know what happens when you do that??"],
-      ["2020/05/15","experimenter","Good, how about you?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-      ["2020/05/15","subject1","Good, are you still there?"],
-    ];
 
 
-    chatConversationTitle.innerHTML='subject1';
-    if(chats.length>5){
-      var thisDiv=createAndAddDiv("","chatConversation");
-      thisDiv.classList.add("chatConversationStart");
-      thisDiv.innerHTML="Start of Conversation";
+    chatConversationTitle.innerHTML=window.currentChatConversation;
+    if(window.recentChatInfo['access']['see'].indexOf(window.currentChatConversation)!=-1){//can see
+      var chats=window.recentChatInfo['messages'][window.currentChatConversation];
+      if(chats!=undefined){
+        if(chats.length>5){
+          var thisDiv=createAndAddDiv("","chatConversation");
+          thisDiv.classList.add("chatConversationStart");
+          thisDiv.innerHTML="Start of Conversation";
+        }
+        var secondsSinceUpdate=(Date.now()-window.lastChatTimeClient)/1000
+        for(k=0;k<chats.length;k++){
+            var thisChat=chats[k];
+            var thisDiv=createAndAddDiv("","chatConversation");
+            thisDiv.classList.add("chatConversationEntry");
+            if(thisChat[1]==window.recentChatInfo['subjectID']){
+              thisDiv.classList.add("myChat");
+            }
+            else{
+              thisDiv.classList.add("theirChat");
+            }
+
+            var thisElement = document.createElement("div");
+            var rawSeconds=window.recentChatInfo['time']-thisChat[0]+(Date.now()-window.lastChatTimeClient)/1000;
+            thisElement.innerHTML=transformRawSeconds(rawSeconds,thisChat[1]);
+            thisDiv.appendChild(thisElement);
+            thisElement.classList.add("chatConversationEntryDate");
+
+            var thisElement = document.createElement("div");
+            var thisElement2 = document.createElement("div");
+              thisElement2.innerHTML=thisChat[2];
+            thisElement.appendChild(thisElement2);
+            thisElement.classList.add("chatConversationEntryText");
+            thisElement2.classList.add("chatConversationEntryTextHolder");
+            thisDiv.appendChild(thisElement);
+
+        }  
+        chatConversation.scrollTop = chatConversation.scrollHeight;
+
+        if(chats.length>5){
+          var thisDiv=createAndAddDiv("","chatConversation");
+          thisDiv.classList.add("chatConversationStart");
+          thisDiv.innerHTML="End of Conversation";
+        }
+      }
     }
-
-    for(k=0;k<chats.length;k++){
-        var thisChat=chats[k];
+    else{
         var thisDiv=createAndAddDiv("","chatConversation");
-        thisDiv.classList.add("chatConversationEntry");
-        if(thisChat[1]=="experimenter"){
-          thisDiv.classList.add("myChat");
-        }
-        else{
-          thisDiv.classList.add("theirChat");
-        }
-
-        var thisElement = document.createElement("div");
-        thisElement.innerHTML="At "+thisChat[0]+" "+thisChat[1]+" wrote";
-        thisDiv.appendChild(thisElement);
-        thisElement.classList.add("chatConversationEntryDate");
-
-        var thisElement = document.createElement("div");
-        var thisElement2 = document.createElement("div");
-          thisElement2.innerHTML=thisChat[2];
-        thisElement.appendChild(thisElement2);
-        thisElement.classList.add("chatConversationEntryText");
-        thisElement2.classList.add("chatConversationEntryTextHolder");
-        thisDiv.appendChild(thisElement);
-
-    }  
-    chatConversation.scrollTop = chatConversation.scrollHeight;
-
-    if(chats.length>5){
-      var thisDiv=createAndAddDiv("","chatConversation");
-      thisDiv.classList.add("chatConversationStart");
-      thisDiv.innerHTML="End of Conversation";
+        thisDiv.classList.add("chatConversationStart");
+        thisDiv.innerHTML="You do not have permission to view this conversation.";
     }
-
 }
-setTimeout(drawChatWindow,100);
 
+function sendChatToServer(event){
+  msg={};
+  msg['type']="chatMessageFromClient";
+  msg['to']=window.currentChatConversation;
+  msg["message"]=document.getElementById("chatNewText").value;
+  var thisValue=document.getElementById("chatNewText").value;
+  var thisValue=thisValue.split(" ").join("").split("\n").join("")
+  if(thisValue!=""){
+    sendMessage(msg);
+  }
+  sessionStorage.removeItem("currentChat"+window.currentChatConversation);
+  removePressKeyListener("return");
+  drawChatWindow();    
+}
+
+function transformRawSeconds(seconds,user){
+  if(seconds<4){
+    var out=user+" just wrote";
+  }
+  else if(seconds<60){
+    var out=Math.floor(seconds)+" seconds ago "+user+" wrote";
+  }
+  else if(seconds<3600){
+    var minutes=Math.floor(seconds/60);
+    if(minutes==1){
+      var out="1 minute ago "+user+" wrote";
+    }
+    else{
+      var out=minutes+" minutes ago "+user+" wrote";      
+    }
+  }
+  else if(seconds<3600*24){
+    var hours=Math.floor(seconds/(60*24));
+    if(hours==1){
+      var out="1 hour ago "+user+" wrote";
+    }
+    else{
+      var out=hours+" hours ago "+user+" wrote";      
+    }
+  }
+  return out;
+}
+
+
+function getChatHistory(){
+  msg={};
+  msg['type']='getChatHistoryFromClient';
+  sendMessage(msg);
+}
+
+function changeChatConversation(event){
+  if(currentChatConversation==undefined){
+    getChatHistory();
+  }
+  else{
+    window.currentChatConversation=event.target.innerHTML;
+    drawChatWindow();
+  }
+}
+
+function updateChatHistory(msg){
+  window.lastChatTimeClient=Date.now();
+  window.currentChatConversation=msg['recent'][0];
+  window.recentChatInfo=msg;
+  drawChatWindow();
+}
