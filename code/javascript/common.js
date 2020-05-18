@@ -93,6 +93,7 @@ function keyNameToKeyCode(keyName){
   else if(keyName=="down"){var keyCode=40;}
   else if(keyName=="w"){var keyCode=87;}
   else if(keyName=="y"){var keyCode=89;}
+  else if(keyName=="return"){var keyCode=13;}
   else{var keyCode=-111111;}
   return keyCode
 }
