@@ -19,6 +19,7 @@ def getPage(config):
     this+=pf.cssLine(files['common']['instructions.css'])
     this+=pf.cssLine(files['common']['common.css'])
     this+=pf.cssLine(files['common']['simulateMouse.css'])
+    this+=pf.cssLine(files['common']['chat.css'])
     this+=pf.addPluginFiles(config,"css")
     this+=pf.cssLine(files['exp']['experiment.css'])
     this+=pf.addExternalFiles(config,"headEnd")

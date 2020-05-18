@@ -36,6 +36,7 @@ def getPage(config):
   this+=pf.javascriptLine(files['common']['chat.js'])
   this+=pf.cssLine(files['common']['monitor.css'])
   this+=pf.cssLine(files['common']['common.css'])
+  this+=pf.cssLine(files['common']['chat.css'])
   this+=pf.addExternalFiles(config,"headEnd")
   this+='\t</head>\n'
   this+='\t<body>\n'

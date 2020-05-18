@@ -94,6 +94,7 @@ def getFiles(config):
     files['common']['instructions.css']=cleanLink(config,packageURL+"css/instructions.css")
     files['common']['common.css']=cleanLink(config,packageURL+"css/common.css")
     files['common']['monitor.css']=cleanLink(config,packageURL+"css/monitor.css")
+    files['common']['chat.css']=cleanLink(config,packageURL+"css/chat.css")
 
     files["exp"]={}
     files["exp"]['config.js']=config["configJsURL"]
