@@ -1,18 +1,64 @@
 
+
+function drawPermanentChatLink(){
+  placeText({"divid":"permanentChatLink","position":"absolute","top":"10px","right":"10px","width":"50px","height":"50px","textAlign":"center","lineHeight":"50px","text":"&quest;","color":"rgba(0, 155, 0, 1)","fontSize":"2rem","zIndex":2147483648});
+  placeText({"divid":"permanentChatLinkUnread","position":"absolute","top":"10px","right":"10px","width":"200px","height":"50px","textAlign":"center","lineHeight":"50px","text":"Unread Message!","color":"rgba(0, 155, 0, 1)","fontSize":"1.5rem","display":"none","zIndex":2147483648,"className":"highlightUnreadChatTitle"});
+  placeText({"divid":"permanentChatLinkDescription","position":"absolute","top":"calc(-5rem - 50px)","right":"10px","width":"300px","height":"calc(5rem + 50px)","textAlign":"center","text":"Click the question mark to ask a question at any point during experiment.","color":"rgba(0, 155, 0, 1)","fontSize":"1rem","zIndex":2147483648,"backgroundColor":"transparent","lineHeight":"1.5rem","padding":"1rem","paddingTop":"calc(1rem + 50px)","transition":".2s ease"});
+  hoverDivChangeOtherDiv("permanentChatLink","permanentChatLinkDescription",{"top":"0px",})
+  hoverDivChangeOtherDiv("permanentChatLinkDescription","permanentChatLinkDescription",{"top":"0px",})
+  clickButton("many","permanentChatLink",getChatHistory);
+  clickButton("many","permanentChatLinkUnread",getChatHistory);
+  clickButton("many","permanentChatLinkDescription",getChatHistory);
+  drawUnreadNotification();
+}
+
+function drawUnreadNotification(){
+  if(window.recentChatInfo!=undefined){
+    if(window.recentChatInfo["unread"].length>0){
+        changeStyleIfDivExists("permanentChatLinkUnread",{"display":"block"});
+        changeStyleIfDivExists("permanentChatLink",{"display":"none"});
+        changeStyleIfDivExists("permanentChatLinkDescription",{"display":"none"});
+    }
+    else{
+        changeStyleIfDivExists("permanentChatLinkDescription",{"display":"block"});
+        changeStyleIfDivExists("permanentChatLink",{"display":"block"});
+        changeStyleIfDivExists("permanentChatLinkUnread",{"display":"none"});
+    }
+  }
+}
+
+function closeChatWindow(event){
+  if(event.target.id=="chatBackgroundCover" || event.target.id=="chatCloseButton"){
+    sessionStorage.setItem("chatWindowOpen","false");
+    document.getElementById("chatBackgroundCover").style.transform="scale(.05)";
+    setTimeout(function(){
+      deleteDiv("chatBackgroundCover");
+      if(document.getElementById("permanentChatLink")!=null){
+        drawUnreadNotification();
+      }
+    },200);
+  }
+}
+
 function drawChatWindow(){
+    drawUnreadNotification();
+    if(document.getElementById("permanentChatLink")!=null){
+      document.getElementById("permanentChatLink").style.display="none";
+      document.getElementById("permanentChatLinkUnread").style.display="none";
+      document.getElementById("permanentChatLinkDescription").style.display="none";
+    }
+    placeText({"divid":"chatBackgroundCover","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.5)","zIndex":2147483648,"transform":"scale(.05)","transformOrigin":"top right","transition":'.2s ease-in-out'});
+    if(sessionStorage.getItem("chatWindowOpen")=="true"){
+      document.getElementById("chatBackgroundCover").style.transform="scale(1)";
+    }
     sessionStorage.setItem("chatWindowOpen","true");
-    placeText({"divid":"chatBackgroundCover","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.5)","zIndex":2147483648});
     placeText({"parentDiv":"chatBackgroundCover","divid":"chatBackground","fontSize":"30px","lineHeight":"50px","height":"800px","top":"calc(50% - 400px)","left":"calc(50% - 500px)","width":"1000px","backgroundColor":"rgba(255,255,255,1)","border":"0px solid black","overflow":"scroll","boxShadow": "0px 25px 150px 50px rgba(0, 0, 0, .6)",});
     var chatSubjectHistory=createAndAddDiv("chatSubjectHistory","chatBackground");
     var chatConversationTitle=createAndAddDiv("chatConversationTitle","chatBackground");
     var chatConversation=createAndAddDiv("chatConversation","chatBackground");
     var chatCloseButton=createAndAddDiv("chatCloseButton","chatBackground");
     chatCloseButton.innerHTML=String.fromCharCode(parseInt('2718',16));
-    chatCloseButton.onclick=function (){
-      sessionStorage.setItem("chatWindowOpen","false");
-      deleteDiv("chatBackgroundCover");
-    }
-
+    document.getElementById("chatBackgroundCover").onclick=closeChatWindow;
     var chatNewText=createAndAddElement("textarea","chatNewText","chatBackground");
     var submitChatNewText=createAndAddElement("div","submitChatNewText","chatBackground");
     submitChatNewText.innerHTML="Send";
@@ -111,6 +157,9 @@ function drawChatWindow(){
         thisDiv.classList.add("chatConversationStart");
         thisDiv.innerHTML="You do not have permission to view this conversation.";
     }
+  setTimeout(function(){
+    document.getElementById("chatBackgroundCover").style.transform="scale(1)";
+  },0);
 }
 
 function sendChatToServer(event){
@@ -189,26 +238,7 @@ function changeChatConversation(event){
   }
 }
 
-
-function checkForSock(){
-  if(sock!=null){
-    setTimeout(getChatHistory,10);
-  }
-  else{
-    setTimeout(checkForSock,10);
-  }
-}
-
-if(sessionStorage.getItem("chatWindowOpen")=="true"){
-  checkForSock();
-}
-else{
-  sessionStorage.setItem("chatWindowOpen","false");
-}
-
-
 function updateChatHistory(msg){
-  console.log("!!",msg)
   window.lastChatTimeClient=Date.now();
   if(sessionStorage.getItem("chatWindowOpen")=='false' || sessionStorage.getItem("currentChatConversation")==undefined){
     sessionStorage.setItem("currentChatConversation",msg['recent'][0]);
@@ -216,3 +246,13 @@ function updateChatHistory(msg){
   window.recentChatInfo=msg;
   drawChatWindow();
 }
+
+
+
+if(sessionStorage.getItem("chatWindowOpen")=="true"){
+  runOnSuccessfulConnection(getChatHistory)
+}
+else{
+  sessionStorage.setItem("chatWindowOpen","false");
+}
+
