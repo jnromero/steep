@@ -182,8 +182,9 @@ class SteepMainServer():
                   self.data[subjectID].ipAddress=client.peer
                   self.data[subjectID].connectionStatus='connected'
                   self.data[subjectID].queryParameters=queryParameters
-                  self.setURLParameters(urlParamsToAdd,subjectID,output="send")
                   self.clearSessionStorageOnClient(subjectID,"send")
+                  self.setURLParameters(urlParamsToAdd,subjectID,output="send")
+                  self.confirmSuccessfulSTEEPconnection(subjectID);
                elif self.data['serverStatus']['acceptingClients']==0:
                   #IF not accepting send a list of clients
                   msg={}
@@ -202,6 +203,7 @@ class SteepMainServer():
                   self.messagePythonToJavascript(msg,self.clientsById[subjectID])
                else:
                   self.clientsById[subjectID]=client
+                  self.confirmSuccessfulSTEEPconnection(subjectID);
                   reconnectMethod = getattr(self,"reconnectingClient",None)
                   if callable(reconnectMethod):
                      self.reconnectingClient(client)
@@ -226,6 +228,11 @@ class SteepMainServer():
          self.data[subjectID].viewType=viewType
          self.setURLParameters(urlParamsToAdd,subjectID,output="send")
       self.monitorMessage()
+
+   def confirmSuccessfulSTEEPconnection(self,sid):
+      msg={}
+      msg['type']='confirmSuccessfulSTEEPconnection'
+      return self.messageToId(msg,sid,"send")
 
 
    def displayDemo(self,viewType,sid):
