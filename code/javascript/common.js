@@ -36,6 +36,16 @@ function hoverDiv(divId,incoming){
 }
 
 
+
+function changeStyleIfDivExists(divid,incoming){
+    var thisDiv=document.getElementById(divid);
+    if(thisDiv!=null){
+        for(k in incoming){
+            thisDiv.style[k]=incoming[k];
+        }        
+    }
+}
+
 function hoverDivChangeOtherDiv(divIdHover,divIdChange,incoming){
     var oldStyle=[]
     for(k in incoming){
@@ -196,10 +206,25 @@ function insertParam(params) {
     }
 
 
-
 function setQueryString(incoming){
     window.history.pushState(null,null,window.location.pathname+incoming['queryString']);
 }
+
+window.steepFunctionsToRunOnSuccessfulConnection=[];
+function runOnSuccessfulConnection(func) {
+    var args = Array.prototype.slice.call(arguments,1);
+    var functionToRun = partial(func, args);
+    window.steepFunctionsToRunOnSuccessfulConnection.push(functionToRun);
+}
+
+window.steepSocketConnected=false;
+function confirmSuccessfulSTEEPconnection(){
+    window.steepSocketConnected=true;
+    for(k=0;k<window.steepFunctionsToRunOnSuccessfulConnection.length;k++){
+        window.steepFunctionsToRunOnSuccessfulConnection[k]();
+    } 
+}
+
 
 function isDivNotThere(divIN){
     var out=true;
@@ -474,9 +499,7 @@ function genericScreen(message){
     createAndAddDiv("genericScreenText","genericScreenInside")
     document.getElementById("genericScreenText").innerHTML=message;
     placeText({"text":window.state['subjectID'],"fontSize":"20px","top":"20px","left":"20px","width":"300px","textAlign":"left"});
-    placeText({"divid":"genericScreenChatButton","text":"Click Here to Ask Question","fontSize":"20px","top":"20px","right":"20px","width":"300px","textAlign":"right"});
-    clickButton("many","genericScreenChatButton",getChatHistory);
-
+    drawPermanentChatLink();
 }
 
 
@@ -625,7 +648,6 @@ function updateTimers(incoming){
 
 function messageManager(msg){
   var incoming = JSON.parse(msg);
-  console.log(incoming['type'])
   window.state=incoming['status'];
   updateTimers(incoming);
   //http://stackoverflow.com/questions/359788/how-to-execute-a-javascript-function-when-i-have-its-name-as-a-string
@@ -677,8 +699,9 @@ function camelCaseToRegular(string){
 }
 
 function clearSessionStorage(message){
-    alert("clearSessionStorage");
+    console.log("1.",sessionStorage);
     sessionStorage.clear()
+    console.log("2.",sessionStorage);
 }
 
 
