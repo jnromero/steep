@@ -50,6 +50,19 @@
     75% {color:rgba(111, 159, 246, 1);}
 }
 
+.highlightUnreadChatTitle{
+    animation-name: highlightUnreadChatTitleKeyFrames;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-duration: 2s;
+}
+
+@keyframes highlightUnreadChatTitleKeyFrames {
+    25% {color:rgba(111, 159, 246, 1);}
+    50% {color:rgba(111, 159, 246, .1);}
+    75% {color:rgba(111, 159, 246, 1);}
+}
+
 
 
 #chatSubjectHistory div:nth-child(n+2):hover{

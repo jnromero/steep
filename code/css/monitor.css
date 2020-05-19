@@ -44,6 +44,20 @@
 #monitorTable tr:nth-child(1):hover {background: rgba(0,0,255,0)}
 
 
+.unreadChatMonitorTableRow{
+  animation-name: unreadChatMonitorTableRowKeyFrames;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1.5s;
+}
+
+@keyframes unreadChatMonitorTableRowKeyFrames {
+    0% {background-color:unset;}
+    50% {background-color:rgba(111, 159, 246, 1);color:white;}
+    100% {background-color:unset;}
+}
+
+
 #acceptingButton{
   top:0px;
 }
