@@ -246,7 +246,7 @@ class SteepMainServer():
       thisSubject.ipAddress=""
       thisSubject.timer=[0,0,0]
       thisSubject.connectionStatus=""
-      thisSubject.communicationStatus="none"
+      thisSubject.communicationStatus=["empty","empty"]#experimenter has unread from this subject, subject has unread from someone
       self.data[subjectID]=thisSubject
       self.updateStatus(subjectID)
 

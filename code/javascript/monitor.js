@@ -124,8 +124,9 @@ function makeMonitorTable(msg){
     if(connected[subjectIDs[s]]=="disconnected"){
       thisRow.style.backgroundColor="rgba(255,0,0,.2)";
     }
-    if(communication[subjectIDs[s]]=="unseen"){
-      thisRow.style.backgroundColor="rgba(0,255,0,.2)";
+    if(communication[subjectIDs[s]]=="unread"){
+      thisRow.classList.add("unreadChatMonitorTableRow");
+      clickButton("many",thisRow.id,getChatHistory);
     }
     var thisEntry=createAndAddElement("td","monitorTableEntry_"+s+"-0","monitorTableRow_"+s);
     thisEntry.innerHTML=s+1;

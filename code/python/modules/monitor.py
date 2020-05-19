@@ -140,7 +140,7 @@ class monitorClass():
          tableData['connected'][sid]=self.data[sid].connectionStatus
       tableData['communication']={}
       for sid in self.data['subjectIDs']:
-         tableData['communication'][sid]=self.data[sid].communicationStatus
+         tableData['communication'][sid]=self.data[sid].communicationStatus[0]
 
       tableData['titles']=[x[0] for x in thisMonitorTable]
       k=0
@@ -149,8 +149,7 @@ class monitorClass():
          tableData[sid]={}
          for item in thisMonitorTable:
             string=item[0]
-            tableData[sid][string]=self.getMonitorTableValue(sid,item)
-
+            tableData[sid][string]=self.getMonitorTableValue(sid,item)                  
       tableData=self.sortMonitorTable(tableData,client.monitorTableSortColumn)
       return tableData
 

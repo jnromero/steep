@@ -118,6 +118,10 @@ class SteepChatManager():
             if receiver in unread:
                unread.remove(receiver)
 
+            if sender=="experimenter":
+               self.data[receiver].communicationStatus=["empty","unread"]
+            if receiver=="experimenter":
+               self.data[sender].communicationStatus=["unread","empty"]
 
             currentChat=self.data['chat'][sender].setdefault("messages",{}).setdefault(receiver,[])
             currentChat.append([time.time(),sender,message['message']])
@@ -166,8 +170,14 @@ class SteepChatManager():
 
    def markChatAsRead(self,msg,client):
       sid=client.subjectID
+      if sid=="monitor":sid="experimenter"
       currentUnread=self.data['unreadChats'].get(sid,[])
       if msg['chatName'] in currentUnread:
          currentUnread.remove(msg['chatName'])
+      if sid=="experimenter":
+         self.data[msg['chatName']].communicationStatus[0]="empty"
+      elif len(currentUnread)==0:
+         self.data[sid].communicationStatus[1]="empty"
 
+      self.monitorMessage()
 
