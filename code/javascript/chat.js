@@ -40,6 +40,7 @@ function closeChatWindow(event){
   }
 }
 
+
 function drawChatWindow(){
     drawUnreadNotification();
     if(document.getElementById("permanentChatLink")!=null){
@@ -94,7 +95,9 @@ function drawChatWindow(){
       chatNewText.placeholder="You do not have permission to send messages to "+sessionStorage.getItem("currentChatConversation");
     }
     
-
+    if(sessionStorage.getItem("currentChatStatus")){
+        sessionStorage.setItem(["subjectID","status","lastTextValue"]);
+    }
     chatNewText.onkeyup=function(){
         sessionStorage.setItem("currentChat"+sessionStorage.getItem("currentChatConversation"),chatNewText.value);
         if(chatNewText.value!=""){
@@ -143,6 +146,34 @@ function drawChatWindow(){
             thisDiv.appendChild(thisElement);
 
         }  
+
+        var chatPartner=sessionStorage.getItem("currentChatConversation");
+        var thisDiv=createAndAddDiv("otherChatStatusDiv"+sessionStorage.getItem("currentChatConversation"),"chatConversation");
+        thisDiv.classList.add("chatConversationEntry");
+        thisDiv.classList.add("theirChat");
+        var thisElement = document.createElement("div");
+        thisElement.innerHTML=chatPartner+" is typing";
+        thisDiv.appendChild(thisElement);
+        thisElement.classList.add("chatConversationEntryDate");
+
+        var thisElement = document.createElement("div");
+        var thisElement2 = document.createElement("div");
+          thisElement2.innerHTML="...";
+        thisElement.appendChild(thisElement2);
+        thisElement.classList.add("chatConversationEntryText");
+        thisElement2.classList.add("chatConversationEntryTextHolder");
+        thisDiv.appendChild(thisElement);
+        var thisString="otherChatStatusDiv"+chatPartner;
+        if(sessionStorage.getItem(thisString)=="typing"){
+          thisDiv.style.display="block";
+        }
+        else{
+          thisDiv.style.display="none";
+        }
+
+
+
+
         chatConversation.scrollTop = chatConversation.scrollHeight;
 
         if(chats.length>5){
@@ -162,7 +193,88 @@ function drawChatWindow(){
   },0);
 }
 
+setInterval(checkCurrentChatStatus,1000);
+function checkCurrentChatStatus(){
+    if(window.recentChatInfo!=undefined){
+      for(k=0;k<window.recentChatInfo['recent'].length;k++){
+        var thisUsername=window.recentChatInfo['recent'][k];
+        var currentText=sessionStorage.getItem("currentChat"+thisUsername);
+        if(currentText==undefined){currentText="";}
+        var currentChatStatus=sessionStorage.getItem("currentChatStatus"+thisUsername);
+        var update=0;
+        try{
+            currentChatStatus=JSON.parse(currentChatStatus);
+            currentChatStatus[0];
+            currentChatStatus[1];
+            currentChatStatus[2];
+        }
+        catch(err){
+          currentChatStatus=[currentText,0,"empty"];        
+        }
+        if(currentChatStatus[0]==currentText){
+          currentChatStatus[1]=parseInt(currentChatStatus[1])+1;
+          if(currentChatStatus[1]>=7){
+            if(currentChatStatus[2]=="typing"){
+              // \\no longer typing
+              if(currentChatStatus[2]!="empty"){
+                update=1;
+              }
+              currentChatStatus[2]="empty";
+            }
+          }
+        }
+        else{
+          currentChatStatus[1]=0;
+          if(currentText==""){
+            // \\no longer typing
+            if(currentChatStatus[2]!="empty"){
+              update=1;
+            }
+            currentChatStatus[2]="empty";          
+          }
+          else{
+            if(currentChatStatus[2]!="typing"){
+              update=1;
+            }
+            currentChatStatus[2]="typing";          
+          }
+        }
+        currentChatStatus[0]=currentText;
+        sessionStorage.setItem("currentChatStatus"+thisUsername,JSON.stringify(currentChatStatus));
+        if(update==1){
+          var msg={};
+          msg['type']="updateChatStatus";
+          msg['convoPartner']=thisUsername;
+          msg['status']=currentChatStatus;
+          sendMessage(msg);
+        }
+      }
+    }
+  }
+
+
+function updateChatStatusFromServer(msg){
+  var thisString="otherChatStatusDiv"+msg['sender'];
+  sessionStorage.setItem(thisString,msg['chatStatus']);
+  var thisElement=document.getElementById(thisString);
+  if(msg['chatStatus']=="typing"){
+    thisElement.style.display="block";
+    thisElement.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+  }
+  else{
+    thisElement.style.display="none";
+  }
+}
+
+
 function sendChatToServer(event){
+  sessionStorage.setItem("currentChatStatus"+sessionStorage.getItem("currentChatConversation"),JSON.stringify(["",0,"empty"]));
+  var msg={};
+  msg['type']="updateChatStatus";
+  msg['convoPartner']=sessionStorage.getItem("currentChatConversation");
+  msg['status']=["",0,"empty"];
+  sendMessage(msg);
+
   msg={};
   msg['type']="chatMessageFromClient";
   msg['to']=sessionStorage.getItem("currentChatConversation");
@@ -245,14 +357,35 @@ function updateChatHistory(msg){
   }
   window.recentChatInfo=msg;
   drawChatWindow();
+  if(window.recentChatInfo['playSound']=="true"){playChatSound();};
+}
+
+
+function loadChatSound(){
+    window.steepChatSound = new Audio(window.config['packageFolder']+'/media/chatSound.m4a'); 
+}
+
+runOnSuccessfulConnection(loadChatSound);
+
+function playChatSound(){
+    var thisElement=window.steepChatSound.cloneNode();
+    thisElement.id=Date.now()+"Audio";
+    thisElement.play();
+    deleteDiv(thisElement.id)
 }
 
 
 
-if(sessionStorage.getItem("chatWindowOpen")=="true"){
-  runOnSuccessfulConnection(getChatHistory)
+
+
+function openChatWindowOnReloadIfNeeded(){
+  if(sessionStorage.getItem("chatWindowOpen")=="true"){
+    getChatHistory();
+  }
+  else{
+    sessionStorage.setItem("chatWindowOpen","false");
+  }
 }
-else{
-  sessionStorage.setItem("chatWindowOpen","false");
-}
+runOnSuccessfulConnection(openChatWindowOnReloadIfNeeded);
+
 

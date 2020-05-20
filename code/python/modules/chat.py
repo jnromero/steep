@@ -127,8 +127,8 @@ class SteepChatManager():
             currentChat.append([time.time(),sender,message['message']])
             currentChat=self.data['chat'][receiver].setdefault("messages",{}).setdefault(sender,[])
             currentChat.append([time.time(),sender,message['message']])
-            self.sendChatToClient(sender)
-            self.sendChatToClient(receiver)
+            self.sendChatToClient(sender,False)
+            self.sendChatToClient(receiver,True)
 
    def getChatHistory(self,sid):
       msg={}
@@ -142,11 +142,13 @@ class SteepChatManager():
       msg['messages']["everyone"]=self.data['chat'].get("everyone",{}).get('messages',[])
       msg['access']=self.chatsAccess(sid)
       msg['unread']=self.data['unreadChats'].get(sid,[])
+      msg['playSound']="false"
       return msg
 
-   def sendChatToClient(self,sid):
+   def sendChatToClient(self,sid,playSound=False):
       if sid=="experimenter":
          msg=self.getChatHistory("experimenter")
+         if playSound:msg['playSound']="true"
          for client in self.monitorClients:
             client.sendMessage(json.dumps(msg).encode('utf8'))
          self.monitorMessage()
@@ -157,9 +159,11 @@ class SteepChatManager():
          self.monitorMessage()
          for s in self.data['subjectIDs']:
             msg=self.getChatHistory(s)
+            if playSound:msg['playSound']="true"
             self.messageToId(msg,s,"send")
       else:
          msg=self.getChatHistory(sid)
+         if playSound:msg['playSound']="true"
          self.messageToId(msg,sid,"send")
 
    def getChatHistoryFromClient(self,msg,client):
@@ -175,9 +179,32 @@ class SteepChatManager():
       if msg['chatName'] in currentUnread:
          currentUnread.remove(msg['chatName'])
       if sid=="experimenter":
-         self.data[msg['chatName']].communicationStatus[0]="empty"
+         if msg['chatName']!='everyone':
+            self.data[msg['chatName']].communicationStatus[0]="empty"
       elif len(currentUnread)==0:
          self.data[sid].communicationStatus[1]="empty"
 
       self.monitorMessage()
+
+   def updateChatStatus(self,msg,client):
+      msgOut={}
+      msgOut['type']="updateChatStatusFromServer"
+      sender=client.subjectID
+      if sender=="monitor":sender="experimenter"
+      msgOut['sender']=sender
+      msgOut['chatStatus']=msg['status'][2]
+      sid=msg['convoPartner']
+      if sid=="experimenter":
+         for client in self.monitorClients:
+            client.sendMessage(json.dumps(msgOut).encode('utf8'))
+         self.monitorMessage()
+      elif sid=="everyone":
+         msgOut['sender']="everyone"
+         for client in self.monitorClients:
+            client.sendMessage(json.dumps(msgOut).encode('utf8'))
+         self.monitorMessage()
+         for s in self.data['subjectIDs']:
+            self.messageToId(msgOut,s,"send")
+      else:
+         self.messageToId(msgOut,sid,"send")
 

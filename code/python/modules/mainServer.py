@@ -160,6 +160,7 @@ class SteepMainServer():
             client.consoleTab=1
             print("New monitor client SET!!!!!!!!!")
             self.monitorClients.append(client)
+            self.confirmSuccessfulSTEEPconnection(client)
             self.updateMonitorPage(client)
          elif viewType=="tester":
             print("New tester client")
@@ -182,9 +183,8 @@ class SteepMainServer():
                   self.data[subjectID].ipAddress=client.peer
                   self.data[subjectID].connectionStatus='connected'
                   self.data[subjectID].queryParameters=queryParameters
-                  self.clearSessionStorageOnClient(subjectID,"send")
                   self.setURLParameters(urlParamsToAdd,subjectID,output="send")
-                  self.confirmSuccessfulSTEEPconnection(subjectID);
+                  self.confirmSuccessfulSTEEPconnection(client)
                elif self.data['serverStatus']['acceptingClients']==0:
                   #IF not accepting send a list of clients
                   msg={}
@@ -203,7 +203,7 @@ class SteepMainServer():
                   self.messagePythonToJavascript(msg,self.clientsById[subjectID])
                else:
                   self.clientsById[subjectID]=client
-                  self.confirmSuccessfulSTEEPconnection(subjectID);
+                  self.confirmSuccessfulSTEEPconnection(client);
                   reconnectMethod = getattr(self,"reconnectingClient",None)
                   if callable(reconnectMethod):
                      self.reconnectingClient(client)
@@ -229,10 +229,10 @@ class SteepMainServer():
          self.setURLParameters(urlParamsToAdd,subjectID,output="send")
       self.monitorMessage()
 
-   def confirmSuccessfulSTEEPconnection(self,sid):
+   def confirmSuccessfulSTEEPconnection(self,client):
       msg={}
       msg['type']='confirmSuccessfulSTEEPconnection'
-      return self.messageToId(msg,sid,"send")
+      self.sendMessageToClient(msg,client)
 
 
    def displayDemo(self,viewType,sid):
@@ -255,6 +255,7 @@ class SteepMainServer():
       thisSubject.connectionStatus=""
       thisSubject.communicationStatus=["empty","empty"]#experimenter has unread from this subject, subject has unread from someone
       self.data[subjectID]=thisSubject
+      self.clearSessionStorageOnClient(subjectID,"send")
       self.updateStatus(subjectID)
 
    def deleteSubject(self,subjectID):
@@ -321,22 +322,20 @@ class SteepMainServer():
          msgs=copy.deepcopy(msgs)
          return msgs
 
+   def sendMessageToClient(self,msg,client):
+      try:
+         self.messagePythonToJavascript(msg,client)
+      except Exception as thisExept: 
+         print(thisExept)
+         sid=client.get("subjectID","NO-ID")
+         print("can't send %s message to %s"%(msg['type'],sid))
+
    def sendMessageToClientByID(self,msg,sid):
       if sid=="video":
-         try:
-            for client in self.videoClients:
-               self.messagePythonToJavascript(msg,client)
-
-         except Exception as thisExept: 
-            print(thisExept)
-            print("can't send %s message to %s"%(msg['type'],sid))
+         for client in self.videoClients:
+            self.sendMessageToClient(msg,client)
       else:
-         try:
-            self.messagePythonToJavascript(msg,self.clientsById[sid])
-         except Exception as thisExept: 
-            print(thisExept)
-            print("can't send %s message to %s"%(msg['type'],sid))
-
+         self.sendMessageToClient(msg,self.clientsById.get(sid,"NOCLIENTAVAILABLE"))
 
    def customMessage(self,subjectID,msg,output="send"):
       #print "send message %s - %s"%(subjectID,msg['type'])
