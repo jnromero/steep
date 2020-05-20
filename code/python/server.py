@@ -212,6 +212,20 @@ shutil.copyfile(experimentFile,dataFolderFiles+"/experiment.py")
 shutil.copyfile(experimentFile.replace(".py",".js"),dataFolderFiles+"/experiment.js")
 shutil.copyfile(experimentFile.replace(".py",".css"),dataFolderFiles+"/experiment.css")
 
+filename=str(steepDirectory.joinpath('python', 'modules','viewer.py'))
+file = open(filename,'r')
+fileData=file.read()
+file.close() 
+
+fileData=fileData.replace("PICKLEFILENAMEGOESHERE",serverStartString+".pickle")
+
+filename=dataFolderFiles+"/../viewer.py"
+file = open(filename,'w')
+file.writelines(fileData)
+file.close() 
+
+
+
 #load webServer module
 steepWebServer = loadSource('steepWebServer',str(steepDirectory.joinpath('python', 'modules','webServer.py')))
 
