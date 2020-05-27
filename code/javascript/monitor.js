@@ -124,6 +124,12 @@ function makeMonitorTable(msg){
     if(connected[subjectIDs[s]]=="disconnected"){
       thisRow.style.backgroundColor="rgba(255,0,0,.2)";
     }
+    else if(connected[subjectIDs[s]]=="rejected"){
+      thisRow.style.backgroundColor="rgba(255,125,0,.5)";
+    }
+    else if(connected[subjectIDs[s]]=="duplicate"){
+      thisRow.style.backgroundColor="rgba(255,125,0,.5)";
+    }
     if(communication[subjectIDs[s]]=="unread"){
       thisRow.classList.add("unreadChatMonitorTableRow");
       clickButton("many",thisRow.id,getChatHistory);
@@ -133,6 +139,9 @@ function makeMonitorTable(msg){
     for(var k=0;k<titles.length;k++){
       var thisEntry=createAndAddElement("td","monitorTableEntry_"+s+"-"+(k+1),"monitorTableRow_"+s);
       thisEntry.innerHTML=msg['table'][subjectIDs[s]][titles[k]];
+      if(connected[subjectIDs[s]]=="rejected" && k==0){
+        thisEntry.innerHTML=msg['table'][subjectIDs[s]][titles[k]]+" (reject)";
+      }
     }
   }
 }
@@ -414,6 +423,35 @@ function deleteClient(args){
   var statement="Are you sure you want to delete subject "+sid+"??";
   confirmAction(statement,msg);
 }
+
+
+function disconnectClient(args){
+  var sid=args[0];
+  msg={}
+  msg['type']="disconnectThisClient";
+  msg['subjectIDIncoming']=sid;
+  var statement="Are you sure you want to disconnect subject "+sid+"??";
+  confirmAction(statement,msg);
+}
+
+function acceptClient(args){
+  var sid=args[0];
+  msg={}
+  msg['type']="acceptThisClient";
+  msg['subjectIDIncoming']=sid;
+  var statement="Are you sure you want to accept subject "+sid+"??";
+  confirmAction(statement,msg);
+}
+
+function rejectClient(args){
+  var sid=args[0];
+  msg={}
+  msg['type']="rejectThisClient";
+  msg['subjectIDIncoming']=sid;
+  var statement="Are you sure you want to reject subject "+sid+"??";
+  confirmAction(statement,msg);
+}
+
 
 function chooseVolunteer(args){
   var sid=args[0];
