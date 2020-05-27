@@ -6,20 +6,20 @@ class SteepQuestionnaire():
 
    def startQuestionnaire(self):
       for sid in self.data['subjectIDs']:
-         self.data[sid].status['page']="questionnaire"
-         self.data[sid].status['subjectID']=sid
+         self.data['subjects'][sid].status['page']="questionnaire"
+         self.data['subjects'][sid].status['subjectID']=sid
          self.updateStatus(sid)
 
    def startQuestionnaireSubject(self,sid):
-      self.data[sid].status['page']="questionnaire"
-      self.data[sid].status['payment']=""
-      self.data[sid].status['subjectID']=sid
+      self.data['subjects'][sid].status['page']="questionnaire"
+      self.data['subjects'][sid].status['payment']=""
+      self.data['subjects'][sid].status['subjectID']=sid
       self.updateStatus(sid)
 
    def questionnaireAnswers(self,message,client):
       sid=client.subjectID
-      self.data[sid].questionnaireAnswers=message['answers']
-      self.data[sid].status['doneWithEverything']="True"
+      self.data['subjects'][sid].questionnaireAnswers=message['answers']
+      self.data['subjects'][sid].status['doneWithEverything']="True"
       for s in self.data['subjectIDs']:
          self.calculateFinalPayoffs(s)
       self.displayFinalSummary(sid)

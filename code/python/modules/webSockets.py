@@ -55,7 +55,7 @@ class SteepWebSocketFactory(WebSocketServerFactory,):
       if client not in self.clients:
          self.clients.append(client)
       # try:
-      #    self.data[client.subjectID].connectionStatus='connected'
+      #    self.data['subjects'][client.subjectID].connectionStatus='connected'
       #    self.monitorMessage()
       # except:
       #    "do nothing"
@@ -75,10 +75,10 @@ class SteepWebSocketFactory(WebSocketServerFactory,):
             for k in toDelete:
                del self.clientsById[k]
             try:
-               self.data[client.subjectID].connectionStatus='disconnected'
-               self.monitorMessage()
+               self.data['subjects'][client.subjectID].connectionStatus='disconnected'
             except:
                "do nothing"
+            self.monitorMessage()
             
       if client in self.videoClients:
          self.videoClients.remove(client)

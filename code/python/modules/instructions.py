@@ -24,16 +24,16 @@ class SteepInstructions():
 
    def toggleInsructionsPauseOnClient(self,message,client):
       sid=client.subjectID
-      if self.data[sid].instructionsPlaying==1:
-         timeIN=time.time()-self.data[sid].instructionsStartTime
+      if self.data['subjects'][sid].instructionsPlaying==1:
+         timeIN=time.time()-self.data['subjects'][sid].instructionsStartTime
          params={}
          params['startTime']="%.02f"%(timeIN)
          self.cancelInstructionsCalls(sid)
          self.setURLParameters(params,sid,"send")
          self.runJavascriptFunction("pauseInstructions",sid,"send")
-         self.data[sid].instructionsPlaying=0
+         self.data['subjects'][sid].instructionsPlaying=0
       else:
-         timeIN=self.data[sid].queryParameters["startTime"][0]
+         timeIN=self.data['subjects'][sid].queryParameters["startTime"][0]
          self.instructionsDemo(sid,float(timeIN))
 
 
@@ -42,7 +42,7 @@ class SteepInstructions():
       if sid=="monitor":
          sid="allPlusVideo"
       if "amount" in message:
-         timeIN=min(self.instructionsLength-30,max(0,time.time()-self.data[sid].instructionsStartTime+message['amount']))
+         timeIN=min(self.instructionsLength-30,max(0,time.time()-self.data['subjects'][sid].instructionsStartTime+message['amount']))
          self.setURLParameters(params,sid,"send")
       elif "percentage" in message:
          timeIN=self.instructionsLength*message['percentage']
@@ -60,8 +60,8 @@ class SteepInstructions():
 
 
    def instructionsDemo(self,sid,timeIN=0):
-      if timeIN==0 and "startTime" in self.data[sid].queryParameters:
-         timeIN=float(self.data[sid].queryParameters["startTime"][0])
+      if timeIN==0 and "startTime" in self.data['subjects'][sid].queryParameters:
+         timeIN=float(self.data['subjects'][sid].queryParameters["startTime"][0])
 
       if timeIN>self.instructionsLength:
          timeIN=0
@@ -85,7 +85,7 @@ class SteepInstructions():
       msgs+=msgList
 
       for s in self.getSubjectIDList(sid):
-         self.data[s].instructionsPlaying=1   
+         self.data['subjects'][s].instructionsPlaying=1   
       msgList=self.runJavascriptFunction("clearAllInstructions",sid,"return")
       msgs+=msgList
 
@@ -94,19 +94,19 @@ class SteepInstructions():
 
       self.initializeTimer(sid,self.instructionsLength,self.endInstructions)
       self.data['timers'][sid]=[time.time(),time.time()-timeIN,self.instructionsLength]
-      # self.data[sid].timer=[time.time(),time.time()-timeIN,self.instructionsLength]
+      # self.data['subjects'][sid].timer=[time.time(),time.time()-timeIN,self.instructionsLength]
       print(self.data['timers'][sid])
       kwargs={"sid":sid}
 
       [taskMsgs,index,timeToNext]=self.catchUpTasks(sid,timeIN)
       for s in self.getSubjectIDList(sid):
-         self.data[s].taskIndex=index
+         self.data['subjects'][s].taskIndex=index
       self.taskCalls[sid]=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.runAnotherTask,**kwargs)
       msgs+=taskMsgs
 
       [msgList,index,timeToNext]=self.catchUpCaptions(sid,timeIN)
       for s in self.getSubjectIDList(sid):
-         self.data[s].captionIndex=index
+         self.data['subjects'][s].captionIndex=index
       self.captionCalls[sid]=reactor.callLater(float(timeToNext)/self.instructionsPlaybackSpeed,self.displayCaption,**kwargs)
       msgs+=msgList
 
@@ -218,8 +218,8 @@ class SteepInstructions():
 
       #update status message
       for s in self.getSubjectIDList(sid):
-         self.data[s].status['page']="generic"
-         self.data[s].status['message']=["The instruction video will start shortly...."]
+         self.data['subjects'][s].status['page']="generic"
+         self.data['subjects'][s].status['message']=["The instruction video will start shortly...."]
       msgList=self.updateStatus(sid,"return")
       messages+=msgList
 
@@ -359,7 +359,7 @@ class SteepInstructions():
          timeIN=self.data['instructionsTime']
          self.data['instructionsStartTime']=time.time()-timeIN
       else:
-         self.data[sid].instructionsStartTime=time.time()-timeIN
+         self.data['subjects'][sid].instructionsStartTime=time.time()-timeIN
 
       msg={}
       msg['currentTime']=timeIN
@@ -455,8 +455,8 @@ class SteepInstructions():
       if self.data['serverStatus']['instructions']['playing']==1:
          self.stopInstructions({},{})
       for sid in ['video']+self.data['subjectIDs']:
-         self.data[sid].status['page']="generic"
-         self.data[sid].status['message']=["The instruction video will start shortly...."]
+         self.data['subjects'][sid].status['page']="generic"
+         self.data['subjects'][sid].status['message']=["The instruction video will start shortly...."]
          self.updateStatus(sid)
 
 
@@ -579,8 +579,8 @@ class SteepInstructions():
          runTask=1
       elif self.config['serverType']=="demoExperiment":
          if sid in self.data:
-            self.data[sid].taskIndex+=1
-            thisIndex=self.data[sid].taskIndex
+            self.data['subjects'][sid].taskIndex+=1
+            thisIndex=self.data['subjects'][sid].taskIndex
             sendToWho=sid
             runTask=1
       if runTask==1:
@@ -614,8 +614,8 @@ class SteepInstructions():
          self.data['instructionsTime']=time.time()-self.data['instructionsStartTime']
          self.data['serverStatus']['instructions']['time']=float(self.data['instructionsTime'])/self.instructionsLength
       else:
-         self.data[sid].instructionsTime=time.time()-self.data[sid].instructionsStartTime
-         self.data['serverStatus']['instructions']['time']=float(self.data[sid].instructionsTime)/self.instructionsLength
+         self.data['subjects'][sid].instructionsTime=time.time()-self.data['subjects'][sid].instructionsStartTime
+         self.data['serverStatus']['instructions']['time']=float(self.data['subjects'][sid].instructionsTime)/self.instructionsLength
 
       self.monitorMessage()
       self.updateTaskTable()
@@ -667,8 +667,8 @@ class SteepInstructions():
          setCaption=1
       elif self.config['serverType']=="demoExperiment":
          if sid in self.data:
-            self.data[sid].captionIndex+=1
-            thisIndex=self.data[sid].captionIndex
+            self.data['subjects'][sid].captionIndex+=1
+            thisIndex=self.data['subjects'][sid].captionIndex
             sendToWho=sid
             setCaption=1
       if setCaption==1:
@@ -701,7 +701,7 @@ class SteepInstructions():
       msg={}
       msg['type']="endInstructions"
       # for sid in self.getSubjectIDList("allPlusVideo"):
-      #    self.data[sid].status["page"]="generic"
-      #    self.data[sid].status["message"]=["The Instructions Have Ended. <br> Plese wait for experiment to continue."]
+      #    self.data['subjects'][sid].status["page"]="generic"
+      #    self.data['subjects'][sid].status["message"]=["The Instructions Have Ended. <br> Plese wait for experiment to continue."]
       return self.messageToId(msg,"allPlusVideo","send")
 
