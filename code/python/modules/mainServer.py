@@ -60,6 +60,7 @@ class SteepMainServer():
          self.data=pickle.load(file)
          file.close() 
          print("Data file reloaded! %s"%(self.config['dataFilePath']))
+
       #save the data to the file every 10 seconds
       self.savingCall = task.LoopingCall(self.saveData)
       self.savingCall.start(10)
@@ -67,6 +68,19 @@ class SteepMainServer():
       #Send wake up message to client every 2 minutes to avoid timeout
       self.wakingCall = task.LoopingCall(self.wakeUp)
       self.wakingCall.start(120,now=False)#now=false doesn't run now, but starts after 120 seconds
+
+
+   def loadPreloadedData(self):
+      if self.options.file!="False":
+         completePath=os.path.abspath(self.options.file) 
+         file = open(completePath,'rb')
+         loadedData=pickle.load(file)
+         file.close() 
+         for k in loadedData:
+            self.createSubject(k.subjectID,{},"","preload",k)
+            self.data['subjects'][k.subjectID].connectionStatus="disconnected"
+         print("External data file loaded from %s!"%(completePath))
+
 
    def blank(self):
       pass
@@ -188,7 +202,6 @@ class SteepMainServer():
             baseSID=subjectID.split("-")[0]
 
             if fromURL and hasDuplicateString and not inDuplicates:
-               print("CONT 345") 
                #remove duplicate string if from URL but not already in duplicates
                subjectID=baseSID
                queryParameters["subjectID"][0]=subjectID
@@ -207,7 +220,6 @@ class SteepMainServer():
 
 
             if not inOne:
-               print("CONT 456") 
                if self.data['serverStatus']['acceptingClients']==1:
                   self.createSubject(subjectID,client,queryParameters,"subject")
                elif self.data['serverStatus']['acceptingClients']==0:
@@ -215,7 +227,6 @@ class SteepMainServer():
                self.setURLParameters(urlParamsToAdd,subjectID,output="send")
                self.confirmSuccessfulSTEEPconnection(client)
             elif inOne:
-               print("CONT 567") 
                print("reconnecting subject %s, %s"%(subjectID,self.data['serverStatus']['page']))
                reconnectNeeded=True
                if subjectID in self.clientsById and baseSID in self.clientsById:
@@ -232,14 +243,12 @@ class SteepMainServer():
                   self.setURLParameters(urlParamsToAdd,subjectID,output="send")
                   self.confirmSuccessfulSTEEPconnection(client)
                elif baseSID not in self.clientsById:
-                  print("CONDITOIN 2") 
                   subjectID=baseSID
                   client.subjectID=subjectID
                   queryParameters["subjectID"][0]=subjectID
                   reconnectNeeded=True
 
                if reconnectNeeded:
-                  print("CONDITOIN 3") 
                   self.clientsById[subjectID]=client
                   self.confirmSuccessfulSTEEPconnection(client)
                   reconnectMethod = getattr(self,"reconnectingClient",None)
@@ -281,26 +290,35 @@ class SteepMainServer():
       else:
          self.experimentDemo(sid,viewType)
 
-   def createSubject(self,subjectID,client,queryParameters,addType):
+   def createSubject(self,subjectID,client,queryParameters,addType,classIN={}):
       print("new %s client: %s"%(addType,subjectID))
       #This sets self.data['subjects'][subjectID] to the Subject class which is defined in experiment.py
-      thisSubject=self.subjectClass()
+      if addType=="preload":
+         preload=True
+         addType="subject"
+         thisSubject=classIN
+         thisSubject.ipAddress="preloaded"
+      else:
+         preload=False
+         thisSubject=self.subjectClass()
+         thisSubject.ipAddress=client.peer
+         self.clientsById[subjectID]=client
       thisSubject.subjectID=subjectID
-      thisSubject.ipAddress=client.peer
       thisSubject.queryParameters=queryParameters
       thisSubject.timer=[0,0,0]
       thisSubject.connectionStatus="connected"
       thisSubject.communicationStatus=["empty","empty"]
       if addType=="reject":
          thisSubject.status["page"]="steepNotAcceptingClientsAnymore"
+         thisSubject.status["subjectIDs"]=[[x,self.data['subjects'][x].connectionStatus] for x in self.data['subjectIDs']]
       elif addType=="duplicate":
          thisSubject.status["page"]="steepDuplicateConnection"
       #managerial
-      self.clientsById[subjectID]=client
       self.data[addType+'IDs'].append(subjectID)
       self.data['subjects'][subjectID]=thisSubject
-      self.clearSessionStorageOnClient(subjectID,"send")
-      self.updateStatus(subjectID)
+      if not preload:
+         self.clearSessionStorageOnClient(subjectID,"send")
+         self.updateStatus(subjectID)
 
 
 
@@ -404,6 +422,7 @@ class SteepMainServer():
          self.messagePythonToJavascript(msg,client)
       except Exception as thisExept: 
          print(thisExept)
+         print(client) 
          sid=client.get("subjectID","NO-ID")
          print("can't send %s message to %s"%(msg['type'],sid))
 
@@ -412,7 +431,10 @@ class SteepMainServer():
          for client in self.videoClients:
             self.sendMessageToClient(msg,client)
       else:
-         self.sendMessageToClient(msg,self.clientsById.get(sid,"NOCLIENTAVAILABLE"))
+         if sid in self.clientsById:   
+            self.sendMessageToClient(msg,self.clientsById.get(sid,"NOCLIENTAVAILABLE"))
+         else:
+            print("can't send message to %s"%(sid)) 
 
    def customMessage(self,subjectID,msg,output="send"):
       #print "send message %s - %s"%(subjectID,msg['type'])

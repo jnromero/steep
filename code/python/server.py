@@ -285,7 +285,7 @@ class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,mon
       ExperimentInstructions.__init__(self)
       sys.stdout.consoleMessage=self.consoleMessage
       sys.stderr.consoleMessage=self.consoleMessage
-
+      self.loadPreloadedData()
 
 #websockets
 factory = SteepServerClass(config,options,log,thisLogCounter)

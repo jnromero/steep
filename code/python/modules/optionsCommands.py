@@ -14,6 +14,8 @@ def getOptions():
                      help="set to True to open the browser on start.")
    parser.add_option("-r", "--restart", dest="restart", default="False",
                      help="set to the string %Y%m%d-%H%M%S to restart the server.")
+   parser.add_option("-f", "--file", dest="file", default="False",
+                     help="enter the relative path to the pickle file with instances of the subject class to be included.")
    parser.add_option("-d", "--debug", dest="debug", default="False",
                      help="set to True to write to console rather than to the console webpage.")
    parser.add_option("-s", "--saveData", dest="saveData", default="True",
