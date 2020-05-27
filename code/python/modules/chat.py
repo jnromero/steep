@@ -13,16 +13,26 @@ class SteepChatManager():
 
       d=self.data['canChatWith']
       d['experimenter']={}
-      d['experimenter']['see']=['everyone','allSubjectIDs']
-      d['experimenter']['send']=['everyone','allSubjectIDs']
+      d['experimenter']['see']=['everyone','allSubjectIDs',"allRejectIDs","allDuplicateIDs"]
+      d['experimenter']['send']=['everyone','allSubjectIDs',"allRejectIDs","allDuplicateIDs"]
       d['allSubjectIDs']={}
       d['allSubjectIDs']['see']=['everyone','experimenter']
       d['allSubjectIDs']['send']=['experimenter']
+      d['allRejectIDs']={}
+      d['allRejectIDs']['see']=['experimenter']
+      d['allRejectIDs']['send']=['experimenter']
+      d['allDuplicateIDs']={}
+      d['allDuplicateIDs']['see']=['experimenter']
+      d['allDuplicateIDs']['send']=['experimenter']
 
    def getType(self,sid):
       if sid in ["experimenter","everyone"]:
          thisType=sid
-      else:
+      elif sid in self.data['duplicateIDs']:
+         thisType="allDuplicateIDs"
+      elif sid in self.data['rejectIDs']:
+         thisType="allRejectIDs"
+      elif sid in self.data['subjectIDs']:
          thisType="allSubjectIDs"
       return thisType
 
@@ -40,6 +50,10 @@ class SteepChatManager():
       for t in toBeDisplayedTypes:
          if t=="allSubjectIDs":
             toBeDisplayed+=self.data['subjectIDs']
+         elif t=="allRejectIDs":
+            toBeDisplayed+=self.data['rejectIDs']
+         elif t=="allDuplicateIDs":
+            toBeDisplayed+=self.data['duplicateIDs']
          else:
             toBeDisplayed.append(t)
       toBeDisplayed.sort()
@@ -60,6 +74,10 @@ class SteepChatManager():
       for t in seeTypes:
          if t=="allSubjectIDs":
             canSee+=self.data['subjectIDs']
+         elif t=="allRejectIDs":
+            canSee+=self.data['rejectIDs']
+         elif t=="allDuplicateIDs":
+            canSee+=self.data['duplicateIDs']
          else:
             canSee.append(t)
 
@@ -67,6 +85,10 @@ class SteepChatManager():
       for t in sendTypes:
          if t=="allSubjectIDs":
             canSend+=self.data['subjectIDs']
+         elif t=="allRejectIDs":
+            canSend+=self.data['rejectIDs']
+         elif t=="allDuplicateIDs":
+            canSend+=self.data['duplicateIDs']
          else:
             canSend.append(t)
 
@@ -87,6 +109,10 @@ class SteepChatManager():
          recent.remove(sid2)
       if sid2 in toBeDisplayed:
          recent.insert(0,sid2)
+
+      if "experimenter" in recent:
+         recent.remove("experimenter")
+         recent.insert(0,"experimenter")
 
    def chatMessageFromClient(self,message,client):
       sender=client.subjectID#this will be either experimenter/sid
@@ -119,9 +145,9 @@ class SteepChatManager():
                unread.remove(receiver)
 
             if sender=="experimenter":
-               self.data[receiver].communicationStatus=["empty","unread"]
+               self.data['subjects'][receiver].communicationStatus=["empty","unread"]
             if receiver=="experimenter":
-               self.data[sender].communicationStatus=["unread","empty"]
+               self.data['subjects'][sender].communicationStatus=["unread","empty"]
 
             currentChat=self.data['chat'][sender].setdefault("messages",{}).setdefault(receiver,[])
             currentChat.append([time.time(),sender,message['message']])
@@ -129,6 +155,22 @@ class SteepChatManager():
             currentChat.append([time.time(),sender,message['message']])
             self.sendChatToClient(sender,False)
             self.sendChatToClient(receiver,True)
+
+   def getSubjectTypes(self,sid):
+      recent=self.data['chat'].get(sid,{}).get('recent',[])
+      this={}
+      for k in recent:
+         if k in self.data['subjectIDs'] or k=="everyone" or k=="experimenter":
+            this[k]="regular"
+         elif k in self.data['rejectIDs']:
+            this[k]="reject"
+         elif k in self.data['duplicateIDs']:
+            this[k]="duplicate"
+         else:
+            this[k]='unknown'
+      return this
+
+
 
    def getChatHistory(self,sid):
       msg={}
@@ -143,6 +185,7 @@ class SteepChatManager():
       msg['access']=self.chatsAccess(sid)
       msg['unread']=self.data['unreadChats'].get(sid,[])
       msg['playSound']="false"
+      msg['subjectTypes']=self.getSubjectTypes(sid)
       return msg
 
    def sendChatToClient(self,sid,playSound=False):
@@ -180,9 +223,9 @@ class SteepChatManager():
          currentUnread.remove(msg['chatName'])
       if sid=="experimenter":
          if msg['chatName']!='everyone':
-            self.data[msg['chatName']].communicationStatus[0]="empty"
+            self.data['subjects'][msg['chatName']].communicationStatus[0]="empty"
       elif len(currentUnread)==0:
-         self.data[sid].communicationStatus[1]="empty"
+         self.data['subjects'][sid].communicationStatus[1]="empty"
 
       self.monitorMessage()
 
