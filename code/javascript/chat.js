@@ -77,7 +77,24 @@ function drawChatWindow(){
     thisDiv.innerHTML="Conversations";
     for(k=0;k<window.recentChatInfo['recent'].length;k++){
       var thisDiv=createAndAddDiv("","chatSubjectHistory");
-      thisDiv.innerHTML=window.recentChatInfo['recent'][k];
+      var thisSID=window.recentChatInfo['recent'][k]
+      var thisSIDArray=thisSID.split("-");
+      thisDiv.innerHTML=thisSID;
+      var subDiv=document.createElement("a");
+      subDiv.style.pointerEvents="none";
+      var subjectType=window.recentChatInfo['subjectTypes'][thisSID];
+      if(subjectType=="duplicate"){
+        thisSID=thisSIDArray[0];
+        subDiv.innerHTML="Duplicate "+thisSIDArray[2];
+        thisDiv.innerHTML=thisSID;
+      }
+      else if(subjectType=="reject"){
+        thisSID=thisSIDArray[0];
+        subDiv.innerHTML="Reject";
+        thisDiv.innerHTML=thisSID;
+      }
+      thisDiv.appendChild(subDiv);
+
       if(thisDiv.innerHTML==sessionStorage.getItem("currentChatConversation")){
         thisDiv.style.backgroundColor="rgba(0,0,255,.1)";
       }
