@@ -35,10 +35,6 @@ class SteepMainServer():
          self.data={}
          self.data['config']=self.config
          self.data['subjectIDs']=[]
-         self.data['rejectIDs']=[]
-         self.data['duplicateIDs']=[]
-         self.data['subjects']={}
-
          self.data['sessionTimeStamp']=self.config['serverStartString']
          self.data['timer']=[0,0,0]
 
@@ -100,7 +96,7 @@ class SteepMainServer():
       if self.config['serverType']=="demoExperiment":
          if "subjectID" in queryParameters:
             del queryParameters['subjectID']
-
+      print(pathName)
       if pathName.split("/")[-1]=="video.html":
          viewType="video"
          subjectID="video"
@@ -115,16 +111,15 @@ class SteepMainServer():
          subjectID="tester"
       elif pathName.split("/")[-1]=="client.html":
          viewType="regular"
-         while True:
-            subjectID=self.generateRandomString(8)
+         for k in range(1,1000):
+            subjectID="subject%s"%(k)
             if subjectID not in self.data['subjectIDs']:
                break
       else:
          viewType="unknown"
          subjectID="unknown"
 
-
-      if "subjectID" in queryParameters:
+      if "subjectID" in queryParameters:#always generate new subjectID for demo
          subjectID=queryParameters["subjectID"][0]
       else:
          urlParamsToAdd["subjectID"]=subjectID
@@ -136,15 +131,15 @@ class SteepMainServer():
 
    def setURLParameters(self,params,sid="all",output="send"):
       for k in params:
-         self.data['subjects'][sid].queryParameters[k]=[params[k]]
+         self.data[sid].queryParameters[k]=[params[k]]
 
       queryString="?"
-      queryString+="%s=%s"%("subjectID",self.data['subjects'][sid].queryParameters["subjectID"][0])
-      queryString+="&%s=%s"%("viewType",self.data['subjects'][sid].queryParameters["viewType"][0])
+      queryString+="%s=%s"%("subjectID",self.data[sid].queryParameters["subjectID"][0])
+      queryString+="&%s=%s"%("viewType",self.data[sid].queryParameters["viewType"][0])
 
-      for k in self.data['subjects'][sid].queryParameters:
+      for k in self.data[sid].queryParameters:
          if k!="subjectID" and k!="viewType":
-            queryString+="&%s=%s"%(k,self.data['subjects'][sid].queryParameters[k][0])
+            queryString+="&%s=%s"%(k,self.data[sid].queryParameters[k][0])
       msg={}
       msg['type']='setQueryString'
       msg['queryString']=queryString
@@ -181,76 +176,43 @@ class SteepMainServer():
             if self.data['serverStatus']['page']=="instructions":
                self.reconnectInstructions("video")
          elif viewType=="regular":
-            #true or false conditions
-            fromURL="subjectID" not in urlParamsToAdd
-            hasDuplicateString=subjectID.find("-duplicate-")>-1
-            inDuplicates=subjectID in self.data['duplicateIDs']
-            baseSID=subjectID.split("-")[0]
-
-            if fromURL and hasDuplicateString and not inDuplicates:
-               print("CONT 345") 
-               #remove duplicate string if from URL but not already in duplicates
-               subjectID=baseSID
-               queryParameters["subjectID"][0]=subjectID
-               client.subjectID=subjectID
-
-            #true or false conditions
-            hasDuplicateString=subjectID.find("-duplicate-")>-1
-            inSubjects=subjectID in self.data['subjectIDs']
-            inRejects=subjectID in self.data['rejectIDs']
-            inDuplicates=subjectID in self.data['duplicateIDs']
-            inOne=inSubjects or inRejects or inDuplicates
-            baseSID=subjectID.split("-")[0]
-            hasBase=baseSID in self.data['subjectIDs']
-
-
-
-
-            if not inOne:
-               print("CONT 456") 
+            if subjectID not in self.data['subjectIDs']: 
                if self.data['serverStatus']['acceptingClients']==1:
-                  self.createSubject(subjectID,client,queryParameters,"subject")
-               elif self.data['serverStatus']['acceptingClients']==0:
-                  self.createSubject(subjectID,client,queryParameters,"reject")
-               self.setURLParameters(urlParamsToAdd,subjectID,output="send")
-               self.confirmSuccessfulSTEEPconnection(client)
-            elif inOne:
-               print("CONT 567") 
-               print("reconnecting subject %s, %s"%(subjectID,self.data['serverStatus']['page']))
-               reconnectNeeded=True
-               if subjectID in self.clientsById and baseSID in self.clientsById:
-                  print("CONDITOIN 1") 
-                  reconnectNeeded=False
-                  for k in range(1,1000):
-                     duplicateSid="%s-duplicate-%s"%(baseSID,k)
-                     if duplicateSid not in self.data['duplicateIDs']:
-                        break
-                  subjectID=duplicateSid
-                  client.subjectID=subjectID
-                  queryParameters["subjectID"][0]=subjectID
-                  self.createSubject(subjectID,client,queryParameters,"duplicate")
+                  self.clientsById[subjectID]=client
+                  self.createSubject(subjectID)
+                  self.data[subjectID].ipAddress=client.peer
+                  self.data[subjectID].connectionStatus='connected'
+                  self.data[subjectID].queryParameters=queryParameters
                   self.setURLParameters(urlParamsToAdd,subjectID,output="send")
                   self.confirmSuccessfulSTEEPconnection(client)
-               elif baseSID not in self.clientsById:
-                  print("CONDITOIN 2") 
-                  subjectID=baseSID
-                  client.subjectID=subjectID
-                  queryParameters["subjectID"][0]=subjectID
-                  reconnectNeeded=True
+               elif self.data['serverStatus']['acceptingClients']==0:
+                  #IF not accepting send a list of clients
+                  msg={}
+                  msg['type']="notAccepting"
+                  msg["subjectIDs"]=[[x,self.data[x].connectionStatus] for x in self.data["subjectIDs"]]
+                  self.messagePythonToJavascript(msg,client)
 
-               if reconnectNeeded:
-                  print("CONDITOIN 3") 
+                  print("New Client Trying to Join: %s, not accepting anymore"%(subjectID))
+            elif subjectID in self.data['subjectIDs']:
+               print("reconnecting subject %s, %s"%(subjectID,self.data['serverStatus']['page']))
+               if subjectID in self.clientsById:
+                  #IF a client with that ID is currently connected
+                  print("connectAnotherBrowser",subjectID)
+                  msg={}
+                  msg['type']="connectAnotherBrowser"
+                  self.messagePythonToJavascript(msg,self.clientsById[subjectID])
+               else:
                   self.clientsById[subjectID]=client
-                  self.confirmSuccessfulSTEEPconnection(client)
+                  self.confirmSuccessfulSTEEPconnection(client);
                   reconnectMethod = getattr(self,"reconnectingClient",None)
                   if callable(reconnectMethod):
                      self.reconnectingClient(client)
                   else:
                      self.updateStatus(subjectID)
 
-               self.data['subjects'][subjectID].ipAddress=client.peer
-               self.data['subjects'][subjectID].connectionStatus='connected'
-               self.data['subjects'][subjectID].queryParameters=queryParameters
+               self.data[subjectID].ipAddress=client.peer
+               self.data[subjectID].connectionStatus='connected'
+               self.data[subjectID].queryParameters=queryParameters
                self.setURLParameters(urlParamsToAdd,subjectID,output="send")
 
       elif self.config['serverType']=="demoExperiment":
@@ -259,11 +221,11 @@ class SteepMainServer():
          print("new demo client: %s"%(subjectID))
          self.clientsById[subjectID]=client
          self.createSubject(subjectID)
-         self.data['subjects'][subjectID].ipAddress=client.peer
-         self.data['subjects'][subjectID].queryParameters=queryParameters
-         self.data['subjects'][subjectID].connectionStatus='connected'
+         self.data[subjectID].ipAddress=client.peer
+         self.data[subjectID].queryParameters=queryParameters
+         self.data[subjectID].connectionStatus='connected'
          self.displayDemo(viewType,subjectID)
-         self.data['subjects'][subjectID].viewType=viewType
+         self.data[subjectID].viewType=viewType
          self.setURLParameters(urlParamsToAdd,subjectID,output="send")
       self.monitorMessage()
 
@@ -281,62 +243,26 @@ class SteepMainServer():
       else:
          self.experimentDemo(sid,viewType)
 
-   def createSubject(self,subjectID,client,queryParameters,addType):
-      print("new %s client: %s"%(addType,subjectID))
-      #This sets self.data['subjects'][subjectID] to the Subject class which is defined in experiment.py
+   def createSubject(self,subjectID):
+      print("new regular client: %s"%(subjectID))
+      #This sets self.data[subjectID] to the Subject class which is defined in experiment.py
       thisSubject=self.subjectClass()
+      if subjectID!="video":
+         self.data['subjectIDs'].append(subjectID)
       thisSubject.subjectID=subjectID
-      thisSubject.ipAddress=client.peer
-      thisSubject.queryParameters=queryParameters
+      thisSubject.ipAddress=""
       thisSubject.timer=[0,0,0]
-      thisSubject.connectionStatus="connected"
-      thisSubject.communicationStatus=["empty","empty"]
-      if addType=="reject":
-         thisSubject.status["page"]="steepNotAcceptingClientsAnymore"
-      elif addType=="duplicate":
-         thisSubject.status["page"]="steepDuplicateConnection"
-      #managerial
-      self.clientsById[subjectID]=client
-      self.data[addType+'IDs'].append(subjectID)
-      self.data['subjects'][subjectID]=thisSubject
+      thisSubject.connectionStatus=""
+      thisSubject.communicationStatus=["empty","empty"]#experimenter has unread from this subject, subject has unread from someone
+      self.data[subjectID]=thisSubject
       self.clearSessionStorageOnClient(subjectID,"send")
       self.updateStatus(subjectID)
-
-
-
-   def disconnectThisClient(self,message,client):
-      sid=message['subjectIDIncoming']
-      msg={}
-      msg['type']='steepDisconnectClient'
-      return self.messageToId(msg,sid,"send")
-
-
-   def rejectThisClient(self,message,client):
-      sid=message['subjectIDIncoming']
-      if sid in self.data['subjectIDs']:
-         self.data['subjectIDs'].remove(sid)
-      if sid not in self.data['rejectIDs']:
-         self.data['rejectIDs'].append(sid)
-      self.data['subjects'][sid].status["page"]="steepNotAcceptingClientsAnymore"
-      self.updateStatus(sid)
-      self.monitorMessage()
-
-   def acceptThisClient(self,message,client):
-      sid=message['subjectIDIncoming']
-      if sid in self.data['rejectIDs']:
-         self.data['rejectIDs'].remove(sid)
-      if sid not in self.data['subjectIDs']:
-         self.data['subjectIDs'].append(sid)
-      self.data['subjects'][sid].status["page"]="generic"
-      self.updateStatus(sid)
-      self.monitorMessage()
-
 
    def deleteSubject(self,subjectID):
       print("Deleteing subject "+subjectID)
       self.data['subjectIDs'].remove(subjectID)
-      if subjectID in self.data['subjects']:
-         del self.data['subjects'][subjectID]
+      if subjectID in self.data:
+         del self.data[subjectID]
       else:
          print("Trying to delete %s from self.data, but not there"%(subjectID))
       if subjectID in self.clientsById:
@@ -384,13 +310,10 @@ class SteepMainServer():
       sids=self.getSubjectIDList(sid)
       msgs=[]
       for s in sids:
-         #msg['selfTimer']=self.updateTimer(self.data['subjects'][s].timer)
-         if s in self.data['subjects']:
-            if "subjectID" not in self.data['subjects'][s].status:
-               self.data['subjects'][s].status['subjectID']=s
-            msg['status']=self.data['subjects'][s].status
-         else:
-            msg['status']={"subjectID":"NoSID"}
+         #msg['selfTimer']=self.updateTimer(self.data[s].timer)
+         if "subjectID" not in self.data[s].status:
+            self.data[s].status['subjectID']=s
+         msg['status']=self.data[s].status
          if output=="send":
             self.sendMessageToClientByID(msg,s)
          elif output=="return":
@@ -427,8 +350,8 @@ class SteepMainServer():
             except:
                print("can't send %s message to %s"%(msg['type'],subjectID))
       else:
-         #msg['selfTimer']=self.updateTimer(self.data['subjects'][subjectID].timer)
-         msg['status']=self.data['subjects'][subjectID].status
+         #msg['selfTimer']=self.updateTimer(self.data[subjectID].timer)
+         msg['status']=self.data[subjectID].status
          if output=="send":
             try:
                self.messagePythonToJavascript(msg,self.clientsById[subjectID])
@@ -537,5 +460,4 @@ class SteepMainServer():
             except Exception as e:
                self.nextMonitorCall=0
 
-if __name__ == '__main__':
-   pass
+
