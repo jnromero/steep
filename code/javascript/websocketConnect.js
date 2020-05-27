@@ -69,23 +69,18 @@ var input = "";
 document.body.addEventListener('keypress',function(ev){
     input += String.fromCharCode(ev.keyCode);
     if(input.substring(input.length-5,input.length) == word){
-      subjectIDs=message['subjectIDs'];
+      subjectIDs=window.state['subjectIDs'];
       document.write("<ol id='clients'><ol>");
       for(k=0;k<subjectIDs.length;k++){
+        console.log(subjectIDs)
         newLI = document.createElement("li");
         newLI.innerHTML="<a href='"+window.location.pathname+"?subjectID="+subjectIDs[k][0]+"'>"+subjectIDs[k][0]+" - "+subjectIDs[k][1]+"</a>";
         document.getElementById("clients").appendChild(newLI);
       }
     }
-});
-
-// // reset input when pressing esc
-// document.body.addEventListener('keyup',function(ev){
-//     if(ev.keyCode == 27) input = "";
-// });
-
-
+  });
 }
+
 
 function sendMessage(message){
   if(sock!=null){
