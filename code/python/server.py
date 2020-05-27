@@ -237,7 +237,6 @@ SteepWebSocketFactory=steepWebSockets.SteepWebSocketFactory
 steepMainServer = loadSource('steepMainServer',str(steepDirectory.joinpath('python', 'modules','mainServer.py')))
 SteepMainServer=steepMainServer.SteepMainServer
 
-
 class ExperimentInstructions():
    def __init__(self):
       "defin blank class in case not importing other"
@@ -267,7 +266,8 @@ SteepTimerManager=steepTimer.SteepTimerManager
 steepChat = loadSource('steepChat',str(steepDirectory.joinpath('python', 'modules','chat.py')))
 SteepChatManager=steepChat.SteepChatManager
 
-class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,subjectClass,SteepInstructions,SteepTimerManager,SteepChatManager,ExperimentInstructions):
+
+class SteepServerClass(SteepMainServer,SteepWebSocketFactory,experimentClass,monitorClass,SteepInstructions,SteepTimerManager,SteepChatManager,ExperimentInstructions):
    def __init__(self,config,options,log,thisLogCounter):
       self.subjectClass=subjectClass
       self.logCounter=thisLogCounter
