@@ -23,6 +23,7 @@ class monitorClass():
          print("can't send message to monitor, from sendMessageToMonitorClients")
 
 
+
    #def monitorMessage(self): in mainServer.py so that it can use reactor.
 
 
@@ -108,9 +109,10 @@ class monitorClass():
       self.currentMonitorTable="clientInfo"
       self.data['monitorTableInfo']['clientInfo']=[
          ['Refresh'      ,'"<a href=\'javascript:void(0)\' onclick=\'refreshClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)'],
-         ['Connection'     ,'self.data[sid].connectionStatus'],
+         ['Connection'     ,'self.data["subjects"][sid].connectionStatus'],
          ['IP Address'     ,'self.clientsById[sid].peer'],
-         ['Delete','"<a href=\'javascript:void(0)\' onclick=\'deleteClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)']         
+         ['Disconnect','"<a href=\'javascript:void(0)\' onclick=\'disconnectClient([\\\"%s\\\"]);\'>%s</a>"%(sid,sid)'],       
+         ['Accept/Reject','"<a href=\'javascript:void(0)\' onclick=\'%sClient([\\\"%s\\\"]);\'>%s</a>"%("reject"*int(sid in self.data["subjectIDs"])+"accept"*int(sid in self.data["rejectIDs"]),sid,"Reject"*int(sid in self.data["subjectIDs"])+"Accept"*int(sid in self.data["rejectIDs"]))']         
       ]
 
    def finalPayoffsSpecificMonitorTableEntries(self):
@@ -118,8 +120,8 @@ class monitorClass():
          self.currentMonitorTable="finalPayoffs"
          sid=self.data['subjectIDs'][0]
          thisTable=[]
-         for k in self.data[sid].finalPayoffs:
-            thisTable.append([k,"'$%%.02f'%%(self.data[sid].finalPayoffs['%s'])"%(k)])
+         for k in self.data['subjects'][sid].finalPayoffs:
+            thisTable.append([k,"'$%%.02f'%%(self.data['subjects'][sid].finalPayoffs['%s'])"%(k)])
          self.data['monitorTableInfo']['finalPayoffs']=thisTable
       except Exception as e: 
          print("can't set final payoffs monitor table",str(e))
@@ -134,29 +136,41 @@ class monitorClass():
    def getMonitorTable(self,client):
       thisMonitorTable=[["subjectID","sid"]]+self.data['monitorTableInfo'][client.currentMonitorTable]
       tableData={}
-      tableData['subjectIDs']=self.data['subjectIDs']
+      connectedRejects=[x for x in self.data['rejectIDs'] if x in self.clientsById]
+      connectedDuplicates=[x for x in self.data['duplicateIDs'] if x in self.clientsById]
+      tableData['subjectIDs']=connectedRejects+connectedDuplicates+self.data['subjectIDs']
       tableData['connected']={}
-      for sid in self.data['subjectIDs']:
-         tableData['connected'][sid]=self.data[sid].connectionStatus
-      tableData['communication']={}
-      for sid in self.data['subjectIDs']:
-         tableData['communication'][sid]=self.data[sid].communicationStatus[0]
 
-      tableData['titles']=[x[0] for x in thisMonitorTable]
-      k=0
+      #get Connection statius
       for sid in tableData['subjectIDs']:
-         k+=1
+         if sid in self.data['rejectIDs']:
+            value="rejected"
+         elif sid in self.data['duplicateIDs']:
+            value="duplicate"
+         else:
+            value=self.data['subjects'][sid].connectionStatus
+         tableData['connected'][sid]=value
+
+      #get communication statius
+      tableData['communication']={}
+      for sid in tableData['subjectIDs']:
+         tableData['communication'][sid]=self.data['subjects'][sid].communicationStatus[0]
+
+      #get Values
+      tableData['titles']=[x[0] for x in thisMonitorTable]
+      for sid in tableData['subjectIDs']:
          tableData[sid]={}
          for item in thisMonitorTable:
             string=item[0]
-            tableData[sid][string]=self.getMonitorTableValue(sid,item)                  
+            value=self.getMonitorTableValue(sid,item)  
+            tableData[sid][string]=value            
       tableData=self.sortMonitorTable(tableData,client.monitorTableSortColumn)
       return tableData
 
    def sortMonitorTable(self,tableData,sortColumns):
       toBeSorted=[]
       for sid in tableData['subjectIDs']:
-         thisList=[sid]
+         thisList=[]
          for c in sortColumns:
             index=c[0]
             sortTyep=c[1]
@@ -166,6 +180,15 @@ class monitorClass():
                thisList.append(sid)
             else:
                thisList.append(self.getMonitorTableValue(sid,item))
+
+         if sid in self.data['subjectIDs']:
+            thisList.append("ZZZ")
+         elif sid in self.data['rejectIDs']:
+            thisList.append("BBB")
+         elif sid in self.data['duplicateIDs']:
+            thisList.append("AAA")
+
+
          toBeSorted.append(thisList)
       index=0
       for c in sortColumns:
@@ -174,7 +197,7 @@ class monitorClass():
             toBeSorted.sort(key=lambda x: x[index])#reverse=True)
          else:
             toBeSorted.sort(key=lambda x: x[index],reverse=True)
-         tableData['subjectIDs']=[x[0] for x in toBeSorted]
+         tableData['subjectIDs']=[x[1] for x in toBeSorted]
       return tableData
 
    def sortMonitorTableMessage(self,message,client):
