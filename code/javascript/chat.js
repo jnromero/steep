@@ -75,7 +75,7 @@ function drawChatWindow(){
       document.getElementById("chatBackgroundCover").style.transform="scale(1)";
     }
     sessionStorage.setItem("chatWindowOpen","true");
-    placeText({"parentDiv":"chatBackgroundCover","divid":"chatBackground","fontSize":"30px","lineHeight":"50px","height":"800px","top":"calc(50% - 400px)","left":"calc(50% - 500px)","width":"1000px","backgroundColor":"rgba(255,255,255,1)","border":"0px solid black","overflow":"scroll","boxShadow": "0px 25px 150px 50px rgba(0, 0, 0, .6)",});
+    placeText({"parentDiv":"chatBackgroundCover","divid":"chatBackground","fontSize":"30px","lineHeight":"50px","height":"70%","top":"10%","left":"calc(50% - 500px)","width":"1000px","backgroundColor":"rgba(255,255,255,1)","border":"0px solid black","overflow":"scroll","boxShadow": "0px 25px 150px 50px rgba(0, 0, 0, .6)",});
     var chatSubjectHistory=createAndAddDiv("chatSubjectHistory","chatBackground");
     var chatConversationTitle=createAndAddDiv("chatConversationTitle","chatBackground");
     var chatConversation=createAndAddDiv("chatConversation","chatBackground");
