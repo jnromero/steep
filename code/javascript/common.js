@@ -705,4 +705,6 @@ function clearSessionStorage(message){
     console.log("2.",sessionStorage);
 }
 
-
+function steepDisconnectClient(){
+    sock.close();
+}
