@@ -12,14 +12,36 @@ function drawPermanentChatLink(){
   drawUnreadNotification();
 }
 
+
+window.steepFlashPagetitleNow=0;
+function flashUnreadChatInPageTitle(){
+  if(document.title.indexOf("Unread")>-1){
+    document.title=document.title.replace("Unread Message! - ", "");
+  }
+  else{
+    document.title="Unread Message! - "+document.title;
+  }
+
+  if(window.steepFlashPagetitleNow==1){
+    setTimeout(flashUnreadChatInPageTitle,1000);
+  }
+  else{
+    document.title=document.title.replace("Unread Message! - ", "");
+  }
+}
+
+
 function drawUnreadNotification(){
   if(window.recentChatInfo!=undefined){
     if(window.recentChatInfo["unread"].length>0){
+        window.steepFlashPagetitleNow=1;
+        flashUnreadChatInPageTitle();
         changeStyleIfDivExists("permanentChatLinkUnread",{"display":"block"});
         changeStyleIfDivExists("permanentChatLink",{"display":"none"});
         changeStyleIfDivExists("permanentChatLinkDescription",{"display":"none"});
     }
     else{
+        window.steepFlashPagetitleNow=0;
         changeStyleIfDivExists("permanentChatLinkDescription",{"display":"block"});
         changeStyleIfDivExists("permanentChatLink",{"display":"block"});
         changeStyleIfDivExists("permanentChatLinkUnread",{"display":"none"});
