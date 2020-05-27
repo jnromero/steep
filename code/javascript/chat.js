@@ -1,11 +1,21 @@
 
 
 function drawPermanentChatLink(){
-  placeText({"divid":"permanentChatLink","position":"absolute","top":"10px","right":"10px","width":"50px","height":"50px","textAlign":"center","lineHeight":"50px","text":"&quest;","color":"rgba(0, 155, 0, 1)","fontSize":"2rem","zIndex":2147483648});
+  placeText({"divid":"permanentChatLink","position":"absolute","border":"2px solid transparent","top":"0px","right":"0px","width":"60px","height":"60px","textAlign":"center","lineHeight":"60px","text":"&quest;","color":"rgba(0, 155, 0, 1)","fontSize":"2rem","zIndex":2147483648});
   placeText({"divid":"permanentChatLinkUnread","position":"absolute","top":"10px","right":"10px","width":"200px","height":"50px","textAlign":"center","lineHeight":"50px","text":"Unread Message!","color":"rgba(0, 155, 0, 1)","fontSize":"1.5rem","display":"none","zIndex":2147483648,"className":"highlightUnreadChatTitle"});
-  placeText({"divid":"permanentChatLinkDescription","position":"absolute","top":"calc(-5rem - 50px)","right":"10px","width":"300px","height":"calc(5rem + 50px)","textAlign":"center","text":"Click the question mark to ask a question at any point during experiment.","color":"rgba(0, 155, 0, 1)","fontSize":"1rem","zIndex":2147483648,"backgroundColor":"transparent","lineHeight":"1.5rem","padding":"1rem","paddingTop":"calc(1rem + 50px)","transition":".2s ease"});
-  hoverDivChangeOtherDiv("permanentChatLink","permanentChatLinkDescription",{"top":"0px",})
-  hoverDivChangeOtherDiv("permanentChatLinkDescription","permanentChatLinkDescription",{"top":"0px",})
+  placeText({"divid":"permanentChatLinkDescription","position":"absolute","top":"0px","right":"10px","width":"300px","height":"calc(5rem + 50px)","textAlign":"center","text":"Click the question mark to ask a question at any point during experiment.","color":"rgba(0, 155, 0, 1)","fontSize":"1rem","zIndex":2147483648,"backgroundColor":"transparent","lineHeight":"1.5rem","padding":"1rem","paddingTop":"calc(1rem + 50px)","transition":".2s ease"});
+
+  var thisElement=document.getElementById("permanentChatLinkDescription");
+  document.getElementById("permanentChatLink").style.backgroundColor="rgba(222,255,222,1)";
+  thisElement.onmouseover = function(){
+    thisElement.style.top="calc(-5rem - 50px)";
+    console.log(thisElement.style.top)
+    thisElement.onmouseover=null;
+    document.getElementById("permanentChatLink").style.backgroundColor="transparent";
+    hoverDivChangeOtherDiv("permanentChatLinkDescription","permanentChatLinkDescription",{"top":"0px",})
+    hoverDivChangeOtherDiv("permanentChatLink","permanentChatLinkDescription",{"top":"0px",})
+  };
+
   clickButton("many","permanentChatLink",getChatHistory);
   clickButton("many","permanentChatLinkUnread",getChatHistory);
   clickButton("many","permanentChatLinkDescription",getChatHistory);
