@@ -52,20 +52,39 @@ function makeid(){
 
 function connectAnotherBrowser(message){
     clearAll();
-    genericScreen('Connected Somewhere Else.  <br>  <input type="button" value="Reconnect" onClick="window.location.href=window.location.href">');
-    console.log(sock);
-    sock=null;
-    console.log(sock);
+    genericScreen('This subject is connected somewhere else.  <br>  <input type="button" value="Reconnect" onClick="window.location.href=window.location.href">');
+    sock.close();
 }
 
-function notAccepting(message){
-  subjectIDs=message['subjectIDs'];
-  document.write("<ol id='clients'><ol>");
-  for(k=0;k<subjectIDs.length;k++){
-    newLI = document.createElement("li");
-    newLI.innerHTML="<a href='"+window.location.pathname+"?subjectID="+subjectIDs[k][0]+"'>"+subjectIDs[k][0]+" - "+subjectIDs[k][1]+"</a>";
-    document.getElementById("clients").appendChild(newLI);
-  }
+
+function steepDuplicateConnection(message){
+  genericScreen("Another client with same subjectID is already connected.");
+}
+
+function steepNotAcceptingClientsAnymore(message){
+  genericScreen("The sever is no longer accepting clients");
+
+var word = "hello";
+var input = "";
+document.body.addEventListener('keypress',function(ev){
+    input += String.fromCharCode(ev.keyCode);
+    if(input.substring(input.length-5,input.length) == word){
+      subjectIDs=message['subjectIDs'];
+      document.write("<ol id='clients'><ol>");
+      for(k=0;k<subjectIDs.length;k++){
+        newLI = document.createElement("li");
+        newLI.innerHTML="<a href='"+window.location.pathname+"?subjectID="+subjectIDs[k][0]+"'>"+subjectIDs[k][0]+" - "+subjectIDs[k][1]+"</a>";
+        document.getElementById("clients").appendChild(newLI);
+      }
+    }
+});
+
+// // reset input when pressing esc
+// document.body.addEventListener('keyup',function(ev){
+//     if(ev.keyCode == 27) input = "";
+// });
+
+
 }
 
 function sendMessage(message){
