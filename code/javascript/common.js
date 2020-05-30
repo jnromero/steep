@@ -290,7 +290,6 @@ function clearAll(){
     window.dispatchEvent(event);
 }
 
-clearAll();
 
 
 function wakeUp(incoming){
@@ -691,9 +690,6 @@ function updateStatus(msg) {
 }
 
 
-
-
-
 function camelCaseToRegular(string){
   string=string
     // insert a space before all caps
@@ -712,3 +708,7 @@ function clearSessionStorage(message){
 function steepDisconnectClient(){
     sock.close();
 }
+
+//create mainDiv on new page.  
+clearAll();
+
