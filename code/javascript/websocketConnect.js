@@ -1,7 +1,8 @@
 var sock = null;
 var pageName=location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
 
-window.onload = function() {
+
+window.addEventListener('load', function() {
   wsuri=window.config['websocketURL'];
   if ("WebSocket" in window) {
     sock = new WebSocket(wsuri);
@@ -28,7 +29,7 @@ window.onload = function() {
       genericScreen('Failed to connect to server.  <br>  <input type="button" value="Reconnect" onClick="window.location.href=window.location.href">');
     }
   }
-};
+});
 
 
 function getUserName(){
