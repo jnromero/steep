@@ -286,7 +286,11 @@ function clearAll(){
     deleteDiv("mainDiv");
     var mainDiv=createDiv("mainDiv");
     $("body").prepend(mainDiv);
+    var event = new Event('steepMainDivAdded');
+    window.dispatchEvent(event);
 }
+
+clearAll();
 
 
 function wakeUp(incoming){
@@ -686,8 +690,8 @@ function updateStatus(msg) {
     statusManager();
 }
 
-mainDiv = createDiv("mainDiv");
-$("body").prepend(mainDiv);
+
+
 
 
 function camelCaseToRegular(string){
