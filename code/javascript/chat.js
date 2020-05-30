@@ -80,7 +80,7 @@ function drawChatWindow(){
       document.getElementById("permanentChatLinkUnread").style.display="none";
       document.getElementById("permanentChatLinkDescription").style.display="none";
     }
-    placeText({"divid":"chatBackgroundCover","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.5)","zIndex":2147483648,"transform":"scale(.05)","transformOrigin":"top right","transition":'.2s ease-in-out'});
+    placeText({"divid":"chatBackgroundCover","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.5)","zIndex":2147483646,"transform":"scale(.05)","transformOrigin":"top right","transition":'.2s ease-in-out'});
     if(sessionStorage.getItem("chatWindowOpen")=="true"){
       document.getElementById("chatBackgroundCover").style.transform="scale(1)";
     }
