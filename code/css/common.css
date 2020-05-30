@@ -46,6 +46,15 @@ div{
     overflow:hidden;
 }
 
+.fullscreenMainDiv{
+    position:fixed        !important;
+    width:100vw           !important;    
+    height:100vh          !important;
+    left:0px              !important;
+    top:0px               !important;
+    transform: scale(1)   !important;
+}
+
 
 #genericScreen{
     font-size: 300%;
