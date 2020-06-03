@@ -2,6 +2,7 @@ from __future__ import print_function,division,absolute_import
 import time
 from twisted.internet import reactor
 import datetime
+import pytz
 class SteepTimerManager():
    def __init__(self):
       self.data['timers']={}
@@ -18,6 +19,10 @@ class SteepTimerManager():
       timerName=args[0]
       duration=args[1]
       args2=args[1:]
+      if isinstance(duration,datetime.datetime):
+         utc_now = pytz.utc.localize(datetime.datetime.utcnow())
+         duration=(this-utc_now).total_seconds()
+         args2=[duration]+args[2:]
 
       self.data['timers'][timerName]=[time.time(),time.time(),duration]
       if timerName in self.timerFunctions:
