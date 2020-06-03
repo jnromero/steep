@@ -422,9 +422,10 @@ class SteepMainServer():
          self.messagePythonToJavascript(msg,client)
       except Exception as thisExept: 
          print(thisExept)
-         print(client) 
-         sid=client.get("subjectID","NO-ID")
-         print("can't send %s message to %s"%(msg['type'],sid))
+         try:
+            print("can't send %s message to %s"%(msg['type'],client.subjectID))
+         except:
+            print("STEEP client has not subjectID")
 
    def sendMessageToClientByID(self,msg,sid):
       if sid=="video":
