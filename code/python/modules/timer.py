@@ -12,30 +12,33 @@ class SteepTimerManager():
    def cancelTimerFunction(self,timerName):
       self.initializeTimer(timerName,0)
 
+   # self.initializeTimer("all",self.data['preStageLengths'][self.data['currentMatch']],self.startMatch)
+   # #self.initializeTimer(sid,5,self.pleaseMakeChoice,sid)
+
    def initializeTimer(self,*args):
-      timerAccess=args[0]# all or sid
-      timerName=args[1]
-      duration=args[2]
-      args2=args[2:]
+      timerName=args[0]
+      duration=args[1]
+      args2=args[1:]
       if isinstance(duration,datetime.datetime):
          utc_now = pytz.utc.localize(datetime.datetime.utcnow())
-         duration=(duration-utc_now).total_seconds()
-         args2=[duration]+list(args[3:])
+         duration=(this-utc_now).total_seconds()
+         args2=[duration]+args[2:]
 
-      myTimers=self.data['timers'].setdefault(timerAccess,{})
-      myTimerFunctions=self.timerFunctions.setdefault(timerAccess,{})
-
-      myTimers[timerName]=[time.time(),duration]
-      if timerName in myTimerFunctions:
-         if myTimerFunctions[timerName].cancelled==0 and myTimerFunctions[timerName].called==0:
-            myTimerFunctions[timerName].cancel()
+      self.data['timers'][timerName]=[time.time(),time.time(),duration]
+      if timerName in self.timerFunctions:
+         if self.timerFunctions[timerName].cancelled==0 and self.timerFunctions[timerName].called==0:
+            self.timerFunctions[timerName].cancel()
       if len(args2)>1:
-         myTimerFunctions[timerName]=reactor.callLater(*args2)
+         self.timerFunctions[timerName]=reactor.callLater(*args2)
 
    def updateTimer(self,timer):
-      remaining=timer[1]-(time.time()-timer[0])#duration - (currentTime-startTime)
+      #timer=currentTime,startTime,totalTime
+      timer[0]=time.time()
+      remaining=timer[2]-(timer[0]-timer[1])
       return remaining
 
    def updateTimerPretty(self,timer):
-      remaining=int(timer[1]-(time.time()-timer[0]))#duration - (currentTime-startTime)
+      #timer=currentTime,startTime,totalTime
+      timer[0]=time.time()
+      remaining=int(timer[2]-(timer[0]-timer[1]))
       return str(datetime.timedelta(seconds=remaining))
