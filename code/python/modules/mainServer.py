@@ -397,17 +397,12 @@ class SteepMainServer():
 
    def messageToId(self,msg,sid="all",output="send"):
       #get timers for everyone
-      allTimers={}
-      for timer in self.data["timers"].get("all",{}):
-         allTimers[timer]=self.updateTimer(self.data['timers']['all'][timer])
+      allTimers=self.updateAllTimers({},"all")
       sids=self.getSubjectIDList(sid)
       msgs=[]
       for s in sids:
-         msg['timers']=allTimers.copy()
-         #get timers for this subjects
-         for timer in self.data["timers"].get(s,{}):
-            msg['timers'][timer]=self.updateTimer(self.data['timers'][s][timer])
-
+         #get timers for this subject
+         msg['timers']=self.updateAllTimers(allTimers.copy(),s)
          if s in self.data['subjects']:
             if "subjectID" not in self.data['subjects'][s].status:
                self.data['subjects'][s].status['subjectID']=s
@@ -466,7 +461,7 @@ class SteepMainServer():
    #       msg=copy.deepcopy(msg)
    #       return msg
 
-         
+
    def runCommand(self,message,client):
       try:
          exec(message['command'])
