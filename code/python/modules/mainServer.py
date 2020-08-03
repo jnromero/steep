@@ -396,13 +396,18 @@ class SteepMainServer():
          self.messageToId(msg,sid,"send")
 
    def messageToId(self,msg,sid="all",output="send"):
-      msg['timers']={}
-      for timer in self.data["timers"]:
-         msg['timers'][timer]=self.updateTimer(self.data['timers'][timer])
+      #get timers for everyone
+      allTimers={}
+      for timer in self.data["timers"].get("all",{}):
+         allTimers[timer]=self.updateTimer(self.data['timers']['all'][timer])
       sids=self.getSubjectIDList(sid)
       msgs=[]
       for s in sids:
-         #msg['selfTimer']=self.updateTimer(self.data['subjects'][s].timer)
+         msg['timers']=allTimers.copy()
+         #get timers for this subjects
+         for timer in self.data["timers"].get(s,{}):
+            msg['timers'][timer]=self.updateTimer(self.data['timers'][s][timer])
+
          if s in self.data['subjects']:
             if "subjectID" not in self.data['subjects'][s].status:
                self.data['subjects'][s].status['subjectID']=s
@@ -437,29 +442,31 @@ class SteepMainServer():
          else:
             print("can't send message to %s"%(sid)) 
 
-   def customMessage(self,subjectID,msg,output="send"):
-      #print "send message %s - %s"%(subjectID,msg['type'])
-      msg['timers']={}
-      for timer in self.data["timers"]:
-         msg['timers'][timer]=self.updateTimer(self.data['timers'][timer])
-      if subjectID=="video":
-         if output=="send":
-            try:
-               for client in self.videoClients:
-                  self.messagePythonToJavascript(msg,client)
-            except:
-               print("can't send %s message to %s"%(msg['type'],subjectID))
-      else:
-         #msg['selfTimer']=self.updateTimer(self.data['subjects'][subjectID].timer)
-         msg['status']=self.data['subjects'][subjectID].status
-         if output=="send":
-            try:
-               self.messagePythonToJavascript(msg,self.clientsById[subjectID])
-            except:
-               print("can't send %s message to %s"%(msg['type'],subjectID))
-      if output=="return":
-         msg=copy.deepcopy(msg)
-         return msg
+   # def customMessage(self,subjectID,msg,output="send"):
+   #    #print "send message %s - %s"%(subjectID,msg['type'])
+   #    msg['timers']={}
+   #    for timer in self.data["timers"]:
+   #       msg['timers'][timer]=self.updateTimer(self.data['timers'][timer])
+   #    if subjectID=="video":
+   #       if output=="send":
+   #          try:
+   #             for client in self.videoClients:
+   #                self.messagePythonToJavascript(msg,client)
+   #          except:
+   #             print("can't send %s message to %s"%(msg['type'],subjectID))
+   #    else:
+   #       #msg['selfTimer']=self.updateTimer(self.data['subjects'][subjectID].timer)
+   #       msg['status']=self.data['subjects'][subjectID].status
+   #       if output=="send":
+   #          try:
+   #             self.messagePythonToJavascript(msg,self.clientsById[subjectID])
+   #          except:
+   #             print("can't send %s message to %s"%(msg['type'],subjectID))
+   #    if output=="return":
+   #       msg=copy.deepcopy(msg)
+   #       return msg
+
+         
    def runCommand(self,message,client):
       try:
          exec(message['command'])
