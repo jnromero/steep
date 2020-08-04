@@ -161,7 +161,15 @@
     color:unset;
 }
 
+.method{
+    display: inline;
+    color: #2ECC40;
+}
 
+.class{
+    display: inline;
+    color: #0074D9;
+}
 
 .navy { color: #001F3F; }
 .blue { color: #0074D9; }
