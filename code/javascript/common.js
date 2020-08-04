@@ -666,7 +666,6 @@ function confirmationActionButtonClick(args){
     if(document.getElementById("confirmationDivTextArea")!=null && document.getElementById("confirmationDivTextArea").value!=undefined){
         message['confirmActionText']=document.getElementById("confirmationDivTextArea").value;
     }
-    console.log(message)
     if (e.target !== e.currentTarget) {
         var clickedItem = e.target.id;
         if(clickedItem=="confirmationDivButtonYes"){
@@ -690,7 +689,6 @@ function updateTimers(incoming){
 
 function messageManager(msg){
   var incoming = JSON.parse(msg);
-  console.log(incoming['type'])
   window.state=incoming['status'];
   updateTimers(incoming);
   //http://stackoverflow.com/questions/359788/how-to-execute-a-javascript-function-when-i-have-its-name-as-a-string
