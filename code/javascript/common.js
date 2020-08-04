@@ -607,6 +607,35 @@ function confirmRunFunctionButtonClick(args){
 }
 
 
+function addOptionChoice(text,number,message){
+    var divid="option"+number;
+    placeText({"divid":divid,"text":text,"display":"inline-flex","position":"relative","parentDiv":"confirmationOptionsHolder","fontSize":"20px","lineHeight":"30px","height":"75px","padding":"0px","width":"150px","backgroundColor":"rgba(0,0,255,.1)","border":"3px solid blue","color":'blue',"marginRight":"25px","marginTop":"25px","overflowY":"scroll","justifyContent":"center","alignItems":"center","verticalAlign":"top"});
+    hoverDivChangeOtherDiv(divid,divid,{"border":"3px solid blue","backgroundColor":"rgba(0,0,255,.2)"});
+    msg={}
+    msg['type']=message['name'];
+    msg['choice']=text;
+    clickButton("many",divid,confirmActionArgs,"Are you sure you want to select option '"+text+"'?",msg);
+}
+
+function confirmActionArgs(args){
+    confirmAction(args[0],args[1]);
+}
+
+function chooseOptions(statement,message){
+    var options=message['options'];
+    placeText({"divid":"confirmationAlertBackgroud","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.3)","zIndex":2147483648});
+    placeText({"parentDiv":"confirmationAlertBackgroud","divid":"confirmationDiv","text":statement,"fontSize":"30px","lineHeight":"50px","height":"unset","padding":"50px","top":"calc(25% - 150px)","left":"calc(50% - 300px)","width":"600px","backgroundColor":"rgba(255,255,255,1)","border":"5px solid black"});
+    placeText({"position":"relative","parentDiv":"confirmationDiv","divid":"confirmationOptionsHolder","fontSize":"30px","lineHeight":"50px","height":"unset","left":"0px","width":"530px","backgroundColor":"rgba(255,255,255,1)","textAlign":"left",});
+    for(var k=0;k<options.length;k++){
+        addOptionChoice(options[k],"_optionchoice"+k,message)
+    } 
+}
+
+// setTimeout(function(){
+// chooseOptions("test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 ",{"type":"testest2"},['opt1','opt2','opt3','opt4'])
+// },200)
+
+
 function confirmAction(statement,message){
     placeText({"divid":"confirmationAlertBackgroud","top":"0px","left":"0px","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,.3)","zIndex":2147483648});
     placeText({"parentDiv":"confirmationAlertBackgroud","divid":"confirmationDiv","text":statement,"fontSize":"30px","lineHeight":"50px","height":"unset","padding":"50px","paddingBottom":"150px","top":"calc(25% - 150px)","left":"calc(50% - 300px)","width":"600px","backgroundColor":"rgba(255,255,255,1)","border":"5px solid black"});

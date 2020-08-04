@@ -77,7 +77,7 @@ class monitorClass():
       
    def updateTaskTable(self):
       msg={"type":"updateTaskTable"}
-      msg['taskList']=[x.split("----")[0] for x in self.monitorTaskList]
+      msg['taskList']=[x['name'] if isinstance(x,dict) else x for x in self.monitorTaskList]
       msg['taskStatus']=self.data['taskStatus']
       msg['serverStatus']=self.data['serverStatus']
       msg['dataFile']=self.config['dataFilePath']
@@ -268,10 +268,11 @@ class monitorClass():
       return title
 
    def monitorTasks(self):
-      self.data['taskStatus']={}
+      self.data.setdefault('taskStatus',{})
       for task in self.monitorTaskList:
-         this=task.split("----")+['regular']
-         self.data['taskStatus'][this[0]]={}
-         self.data['taskStatus'][this[0]]['status']=""
-         self.data['taskStatus'][this[0]]['title']=self.taskToTitle(this[0])
-         self.data['taskStatus'][this[0]]['type']=this[1]
+         taskName=task['name'] if isinstance(task,dict) else task
+         taskType=task if isinstance(task,dict) else {"name":taskName,"type":"regular"}
+         self.data['taskStatus'].setdefault(taskName,{})
+         self.data['taskStatus'][taskName].setdefault('status',"")
+         self.data['taskStatus'][taskName].setdefault('title',self.taskToTitle(taskName))
+         self.data['taskStatus'][taskName].setdefault('type',taskType)

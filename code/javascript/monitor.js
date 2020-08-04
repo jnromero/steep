@@ -10,7 +10,6 @@ function drawPageTabs(currentPage){
   var monitorLeft="200px";
   var serverLeft="0px";
 
-
   placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Server Info","divid":"serverInfoButton","top":"0px","left":serverLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
   placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Monitor","divid":"monitorButton","top":"0px","left":monitorLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
   placeText({"parentDiv":"monitorHeaderRight","zIndex":"11","text":"Console","divid":"consoleButton","top":"0px","left":consoleLeft,"width":"200px","height":"75px","fontSize":"20px","border":"0px solid rgba(0,0,0,.1)","color":"white"});
@@ -178,7 +177,7 @@ function restartPythonServer(){
 }
 
 function makeTaskTable(msg){
-  placeText({"parentDiv":"mainDivInside","divid":"taskTableHolder","width":"300px","height":"100%","top":"0px","right":"0px"});
+  createAndAddDiv("taskTableHolder","mainDivInside");
   drawAcceptingSwitch();
   for(row=0;row<msg['taskList'].length;row++){
     var thisTask=msg['taskList'][row];
@@ -207,16 +206,26 @@ function drawGenericTask(row,thisTask,taskTitle,taskStatus,taskType){
   var divName="taskDiv_"+thisTask;
   var thisDiv=createAndAddDiv(divName,"taskTableHolder");
   thisDiv.className="taskButton";
-  thisDiv.style.top=(60+60*row)+"px";
+  // thisDiv.style.top=(60+60*row)+"px";
   thisDiv.innerHTML=taskTitle;
   if(taskStatus=="Done"){
       thisDiv.style.backgroundColor="var(--w3-green)";
   }
-  else if(taskType=="textInput"){
+  else if(taskType['type']=="textInput"){
       thisDiv.style.backgroundColor="var(--w3-red)";
       clickButton("many",divName,sendTextToServer,thisTask,taskTitle);    
   }
-  else{
+  else if(taskType['type']=="options"){
+      thisDiv.style.backgroundColor="var(--w3-red)";
+      thisDiv.style.height="75px";
+      clickButton("many",divName,sendOptionsToServer,taskType,taskTitle);  
+      var statusTitle=createAndAddDiv(divName+"_status",divName);
+      if(taskStatus==""){statusTitle.innerHTML="No Option Selected";}
+      else{statusTitle.innerHTML=taskStatus;}
+      statusTitle.style.lineHeight="15px";
+      statusTitle.style.fontSize="75%";
+  }
+  else if(taskType['type']=="regular"){
       thisDiv.style.backgroundColor="var(--w3-red)";
       clickButton("many",divName,sendToServer,thisTask,taskTitle);
   }
@@ -227,7 +236,7 @@ function drawOpenChatButton(msg){
   var dataFileButton=createAndAddDiv("chatAllButton","taskTableHolder");
   dataFileButton.className="taskButton alwaysThere";
   dataFileButton.innerHTML="Open Chat Window";
-  dataFileButton.style.top=(100+60*msg['taskList'].length)+"px";
+  // dataFileButton.style.top=(100+60*msg['taskList'].length)+"px";
   // dataFileButton.href=msg['dataFolderURL'];
   clickButton("many","chatAllButton",getChatHistory);
 }
@@ -241,7 +250,7 @@ function drawDataFileButton(msg){
   var dataFileButton=createAndAddDiv("dataFileButton","taskTableHolder");
   dataFileButton.className="taskButton alwaysThere";
   dataFileButton.innerHTML="Download Data Folder (.zip)";
-  dataFileButton.style.top=(160+60*msg['taskList'].length)+"px";
+  // dataFileButton.style.top=(160+60*msg['taskList'].length)+"px";
   dataFileButton.href=msg['dataFolderURL'];
   clickButton("many","dataFileButton",downloadDataFile,msg['dataFolderURL']);
 }
@@ -256,7 +265,7 @@ function drawStopServerButton(msg){
   var stopPythonServerButton=createAndAddDiv("stopPythonServerButton","taskTableHolder");
   stopPythonServerButton.className="taskButton alwaysThere";
   stopPythonServerButton.innerHTML="Stop Python Server";
-  stopPythonServerButton.style.top=(340+60*msg['taskList'].length)+"px";
+  // stopPythonServerButton.style.top=(340+60*msg['taskList'].length)+"px";
   clickButton("once","stopPythonServerButton",stopPythonServer);
 
 }
@@ -266,7 +275,7 @@ function drawRestartServerButton(msg){
   var stopPythonServerButton=createAndAddDiv("restartPythonServerButton","taskTableHolder");
   stopPythonServerButton.className="taskButton alwaysThere";
   stopPythonServerButton.innerHTML="Restart Python Server";
-  stopPythonServerButton.style.top=(400+60*msg['taskList'].length)+"px";
+  // stopPythonServerButton.style.top=(400+60*msg['taskList'].length)+"px";
   clickButton("once","restartPythonServerButton",restartPythonServer);
 
 }
@@ -275,7 +284,7 @@ function drawRefreshAllButton(msg){
   var refreshAllButton=createAndAddDiv("refreshAllButton","taskTableHolder");
   refreshAllButton.className="taskButton alwaysThere";
   refreshAllButton.innerHTML="Refresh All Clients";
-  refreshAllButton.style.top=(220+60*msg['taskList'].length)+"px";
+  // refreshAllButton.style.top=(220+60*msg['taskList'].length)+"px";
   clickButton("once","refreshAllButton",refreshClient,"all");
 }
 
@@ -283,7 +292,7 @@ function drawRefreshAllIn10Button(msg){
   var refreshAllButton=createAndAddDiv("refreshAllIn10Button","taskTableHolder");
   refreshAllButton.className="taskButton alwaysThere";
   refreshAllButton.innerHTML="Refresh All in 10 seconds";
-  refreshAllButton.style.top=(280+60*msg['taskList'].length)+"px";
+  // refreshAllButton.style.top=(280+60*msg['taskList'].length)+"px";
   clickButton("once","refreshAllIn10Button",refreshClientIn10,"all");
 }
 
@@ -387,6 +396,14 @@ function sendTextToServer(args){
   var message={"type":thisTask};
   confirmActionText(statement,message);
 }
+
+function sendOptionsToServer(args){
+  var taskInfo=args[0];
+  var taskTitle=args[1];
+  var statement="Please select an option for <br>"+taskTitle+":";
+  chooseOptions(statement,taskInfo);
+}
+
 
 
 function sendToServer(args){
