@@ -458,10 +458,20 @@ function placeText(incoming){
 
 
 
-function makeTimePretty(timeIN){
+function makeTimePretty(timeIN,frequency=1000){
     var m=Math.floor(timeIN/60);
     var s=Math.floor(timeIN-m*60);
-    var d=(timeIN-60*m-s).toFixed(0);
+    var decimalsToShow=0
+    if(frequency<1000 && frequency>=100){
+        var decimalsToShow=1;
+    }
+    else if(frequency<100 && frequency>=10){
+        var decimalsToShow=2;
+    }
+    else if(frequency<10){
+        var decimalsToShow=3;
+    }
+    var d=(timeIN-60*m-s).toFixed(decimalsToShow);
     m=("0"+m).slice(-2);
     s=("0"+s).slice(-2)+d.slice(1);
     var pretty=m+":"+s;
@@ -470,15 +480,15 @@ function makeTimePretty(timeIN){
 
 
 window.timerCalls={};
-function moveTimer(timerName){
+function moveTimer(timerName,frequency=1000){
     clearTimeout(window.timerCalls[timerName]);
     var timerSeconds=window.timers[timerName]-((new Date()).getTime()-window.timers['timerCheck'])/1000;
-    var pf = partial(moveTimer,timerName);
+    var pf = partial(moveTimer,timerName,frequency);
     if(timerSeconds>0){
-        var pretty = makeTimePretty(timerSeconds);
+        var pretty = makeTimePretty(timerSeconds,frequency);
         if(document.getElementById(timerName)!=null){
             document.getElementById(timerName).innerHTML=pretty;
-            window.timerCalls[timerName]=setTimeout(pf,100);
+            window.timerCalls[timerName]=setTimeout(pf,frequency);
         }
         else{
             window.timerCalls[timerName]=setTimeout(pf,10);
