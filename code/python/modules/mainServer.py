@@ -562,5 +562,23 @@ class SteepMainServer():
             except Exception as e:
                self.nextMonitorCall=0
 
+   def STEEPdataViewer(self,message,client):
+      out={}
+      out['type']="STEEPreturnDataViewer"
+      try:
+         out['string']=str(eval(message['python']))
+      except:
+         out['string']="ERROR"
+      client.sendMessage(json.dumps(out).encode('utf8'))
+
+   def STEEPsendJSToClient(self,message,client):
+      if message['sid']=="monitor":
+         print(message) 
+         out={}
+         out['type']="STEEPreturnJSFromClient"
+         out['string']=message['js']      
+         self.messageToId(out,message['sidTO'],"send")
+
+
 if __name__ == '__main__':
    pass

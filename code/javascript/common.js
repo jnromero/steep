@@ -746,6 +746,32 @@ function steepDisconnectClient(){
     sock.close();
 }
 
+const steep={
+    show(python){
+        var message={"type":"STEEPdataViewer","python":python};
+        sendMessage(message);
+    },
+    sendJS(sid,js){
+        var message={"type":"STEEPsendJSToClient","js":js,"sidTO":sid};
+        sendMessage(message);
+    }
+}
+
+function STEEPreturnDataViewer(message){
+    console.log(message['string'])
+}
+
+function STEEPreturnJSFromClient(message){
+    console.log(message);
+    try{
+        eval(message['string']);
+    }
+    catch{
+        "Error evaluating JS"
+    }
+}
+
+
 //create mainDiv on new page.  
 clearAll();
 
