@@ -101,6 +101,7 @@ def getFiles(config):
     files["exp"]['experiment.css']=cleanLink(config,experimentURL+"files/experiment.css")
     files["exp"]['experiment.js']=cleanLink(config,experimentURL+"files/experiment.js")
     files["exp"]['tester.js']=cleanLink(config,experimentURL+"files/tester.js")
+    files["exp"]['monitor.js']=cleanLink(config,experimentURL+"files/monitor.js")
 
     if "instructionsFolder" in config:
         instructionsFolder=experimentURL+config['instructionsFolder']

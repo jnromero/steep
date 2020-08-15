@@ -31,6 +31,7 @@ def getPage(config):
   this+=pf.addExternalFiles(config,"headStart")
   this+=pf.javascriptLine(files['common']['jquery.js'])
   this+=pf.javascriptLine(files["exp"]['config.js'])
+  this+=pf.javascriptLine(files["exp"]['monitor.js'])
   this+=pf.javascriptLine(files['common']['common.js'])
   this+=pf.javascriptLine(files['common']['websocketConnect.js'])
   this+=pf.javascriptLine(files['common']['chat.js'])
