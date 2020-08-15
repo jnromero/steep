@@ -27,8 +27,8 @@ def getPage(config):
     this+=pf.javascriptLine(files['common']['simulateMouse.js'])
     this+=pf.javascriptLine(files['common']['video.js'])
     this+=pf.addPluginFiles(config,"js")
-    this+=pf.javascriptLine(files['exp']['experiment.js'])
-    this+=pf.javascriptLine(files['common']['instructions.js'])
+    # this+=pf.javascriptLine(files['exp']['experiment.js'])
+    # this+=pf.javascriptLine(files['common']['instructions.js'])
     this+=pf.javascriptLine(files['exp']['tester.js'])
     this+=pf.addExternalFiles(config,"bodyEnd")
     this+='\t</body>\n'
