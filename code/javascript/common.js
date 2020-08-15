@@ -488,7 +488,7 @@ function moveTimer(timerName,frequency=1000){
         var pretty = makeTimePretty(timerSeconds,frequency);
         if(document.getElementById(timerName)!=null){
             document.getElementById(timerName).innerHTML=pretty;
-            window.timerCalls[timerName]=setTimeout(pf,frequency);
+            window.timerCalls[timerName]=setTimeout(pf,Math.min(frequency,100));
         }
         else{
             window.timerCalls[timerName]=setTimeout(pf,10);
