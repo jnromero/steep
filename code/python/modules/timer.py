@@ -25,31 +25,47 @@ class SteepTimerManager():
 
       myTimers=self.data['timers'].setdefault(timerAccess,{})
       myTimerFunctions=self.timerFunctions.setdefault(timerAccess,{})
-
       if duration>0:
          myTimers[timerName]=[time.time(),duration]
          if timerName in myTimerFunctions:
-            if myTimerFunctions[timerName].cancelled==0 and myTimerFunctions[timerName].called==0:
+            #if myTimerFunctions[timerName].cancelled==0 and myTimerFunctions[timerName].called==0:
+            try:
                myTimerFunctions[timerName].cancel()
+            except:
+               print("Couldn't cancel timer function for %s/%s"%(timerAccess,timerName)) 
+               pass
          if len(args2)>1:
             myTimerFunctions[timerName]=reactor.callLater(*args2)
       else:
          if timerName in myTimers:
             del myTimers[timerName]
          if timerName in myTimerFunctions:
+            try:
+               myTimerFunctions[timerName].cancel()
+            except:
+               print("Couldn't cancel timer function for %s/%s"%(timerAccess,timerName)) 
+               pass
             del myTimerFunctions[timerName]
 
    def updateAllTimers(self,startDict,timerAccess):
       out=startDict
+      toDelete=[]
       for timer in self.data['timers'].setdefault(timerAccess,{}):
          remaining=self.updateTimer(self.data['timers'][timerAccess][timer])
          if remaining>=0:
             out[timer]=remaining
          else:
-            del self.data['timers'][timerAccess][timer]
+            toDelete.append([timerAccess,timer])
+      for k in toDelete:
+         del self.data['timers'][k[0]][k[1]]
       return out
 
-
+   def getPrettyTime(self,timerAccess,timerName):
+      thisTimer=self.data['timers'][timerAccess][timerName]
+      remaining=self.updateTimer(thisTimer)
+      minutes=int(remaining/60)
+      seconds=remaining%60
+      return "%s:%.02f"%(minutes,seconds)
 
    def updateTimer(self,timer):
       remaining=timer[1]-(time.time()-timer[0])#duration - (currentTime-startTime)
