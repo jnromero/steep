@@ -118,7 +118,7 @@ class SteepMainServer():
       if pathName.split("/")[-1]=="video.html":
          viewType="video"
          subjectID="video"
-      elif pathName.split("/")[-1]=="monitor.html" or pathName=="/":
+      elif pathName.split("/")[-1]=="monitor.html":
          viewType="monitor"
          subjectID="monitor"
       elif pathName.split("/")[-1]=="console.html":
@@ -127,7 +127,7 @@ class SteepMainServer():
       elif pathName.split("/")[-1]=="tester.html":
          viewType="tester"
          subjectID="tester"
-      elif pathName.split("/")[-1]=="client.html":
+      elif pathName.split("/")[-1]=="client.html" or pathName=="/":
          viewType="regular"
          while True:
             subjectID=self.generateRandomString(8)

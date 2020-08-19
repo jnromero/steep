@@ -33,8 +33,12 @@ class RequestHandler(Resource):
       thisPath=parsedURL.path.replace("//","/")
       root,ext=os.path.splitext(thisPath)
       if thisPath=="/" or thisPath=="":
-         output=""
-         return output.encode('utf-8')
+         # output=""
+         # return output.encode('utf-8')
+         ext=".py"
+         filename="client.py"
+         fileFolder=self.config['packageFolder']+"/html/"
+         fullPath=self.config['webServerRoot']+fileFolder+filename
       elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html","/serverInfo.html","/tester.html"]:
          ext=".py"
          filename=thisPath.replace(".html",".py").replace("/","")
