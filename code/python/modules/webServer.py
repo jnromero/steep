@@ -9,7 +9,7 @@ if sys.version_info >= (3,0):
 else:
    import urlparse as theURLparse
 
-from twisted.web.resource import Resource
+from twisted.web.resource import Resource,NoResource
 from twisted.web.static import File
 
 #Get value from url key function
@@ -33,16 +33,14 @@ class RequestHandler(Resource):
       thisPath=parsedURL.path.replace("//","/")
       root,ext=os.path.splitext(thisPath)
       if thisPath=="/" or thisPath=="":
-         ext=".py"
-         filename="/monitor.py"
-         fileFolder=self.config['packageFolder']+"/html/"
-         fullPath=self.config['webServerRoot']+fileFolder+filename
+         output=""
+         return output.encode('utf-8')
       elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html","/serverInfo.html","/tester.html"]:
          ext=".py"
          filename=thisPath.replace(".html",".py").replace("/","")
          fileFolder=self.config['packageFolder']+"/html/"
          fullPath=self.config['webServerRoot']+fileFolder+filename
-      elif thisPath in ["/experiment.js","/experiment.py","/experiment.css"]:
+      elif thisPath in ["/files/experiment.js","/files/experiment.py","/files/experiment.css"]:
          ext="showFiles"
       else:
          root,ext=os.path.splitext(thisPath)
@@ -69,14 +67,14 @@ class RequestHandler(Resource):
          return File.render_GET(thisFile,request)
       elif ext=="showFiles":
          prismFolder=self.config['packageFolder']+"/css/prism/"
-         filename=self.config['webServerRoot']+self.config['currentExperiment']+"/files/"+thisPath
+         filename=self.config['webServerRoot']+self.config['currentExperiment']+thisPath
          file = open(filename,'rb')
          fileContent=file.read()
-         if thisPath=="/experiment.py":
+         if thisPath=="/files/experiment.py":
             extension="python"
-         elif thisPath=="/experiment.js":
+         elif thisPath=="/files/experiment.js":
             extension="js"
-         elif thisPath=="/experiment.css":
+         elif thisPath=="/files/experiment.css":
             extension="css"
          file.close() 
          output="""<html>
@@ -89,11 +87,12 @@ class RequestHandler(Resource):
 <script src="%s/prism.js"></script>
 
 <h1>%s</h1>
-<pre class="line-numbers"><code class="language-%s">%s
+<pre class="line-numbers"><code class="language-%s">
+%s
 </code></pre>
 
 </body>
-"""%(prismFolder,prismFolder,thisPath,extension,fileContent)
+"""%(prismFolder,prismFolder,thisPath,extension,fileContent.decode("utf-8"))
          return output.encode('utf-8')
       elif os.path.isfile(fullPath):
          if ext==".py":
