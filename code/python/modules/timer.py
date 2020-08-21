@@ -51,7 +51,7 @@ class SteepTimerManager():
       out=startDict
       toDelete=[]
       for timer in self.data['timers'].setdefault(timerAccess,{}):
-         remaining=self.updateTimer(self.data['timers'][timerAccess][timer])
+         remaining=self.updateTimer(timerAccess,timer)
          if remaining>=0:
             out[timer]=remaining
          else:
@@ -61,16 +61,23 @@ class SteepTimerManager():
       return out
 
    def getPrettyTime(self,timerAccess,timerName):
-      thisTimer=self.data['timers'][timerAccess][timerName]
-      remaining=self.updateTimer(thisTimer)
+      remaining=self.updateTimer(timerAccess,timerName)
       minutes=int(remaining/60)
       seconds=remaining%60
       return "%s:%.02f"%(minutes,seconds)
 
-   def updateTimer(self,timer):
-      remaining=timer[1]-(time.time()-timer[0])#duration - (currentTime-startTime)
+   def updateTimer(self,timerAccess,timerName):
+      timer=self.data['timers'].get(timerAccess,{}).get(timerName,None)
+      if timer!=None:   
+         remaining=timer[1]-(time.time()-timer[0])#duration - (currentTime-startTime)
+      else:
+         remaining=0
       return remaining
 
-   def updateTimerPretty(self,timer):
-      remaining=int(timer[1]-(time.time()-timer[0]))#duration - (currentTime-startTime)
+   def updateTimerPretty(self,timerAccess,timerName):
+      timer=self.data['timers'].get(timerAccess,{}).get(timerName,None)
+      if timer!=None:   
+         remaining=int(timer[1]-(time.time()-timer[0]))#duration - (currentTime-startTime)
+      else:
+         remaining=0
       return str(datetime.timedelta(seconds=remaining))
