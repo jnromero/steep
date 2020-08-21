@@ -132,7 +132,7 @@ class SteepChatManager():
                   unread.append(receiver)
             currentChat=self.data['chat'].setdefault("everyone",{}).setdefault("messages",[])
             currentChat.append([time.time(),sender,message['message']])
-            self.sendChatToClient("everyone")
+            self.sendChatToClient("everyone",True)
          else:
             #redundant to save time retreiving
             self.updateRecentChats(sender,receiver)
