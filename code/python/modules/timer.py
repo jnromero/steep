@@ -2,7 +2,8 @@ from __future__ import print_function,division,absolute_import
 import time
 from twisted.internet import reactor
 import datetime
-import pytz
+from dateutil import tz
+UTC = tz.gettz('UTC')
 class SteepTimerManager():
    def __init__(self):
       self.data['timers']={}
@@ -18,7 +19,7 @@ class SteepTimerManager():
       duration=args[2]
       args2=args[2:]
       if isinstance(duration,datetime.datetime):
-         utc_now = pytz.utc.localize(datetime.datetime.utcnow())
+         utc_now = datetime.datetime.utcnow().replace(tzinfo=UTC)
          duration=(duration-utc_now).total_seconds()
          args2=[duration]+list(args[3:])
 
