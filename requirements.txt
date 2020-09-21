@@ -6,3 +6,4 @@ autobahn
 future
 netifaces
 mutagen
+dateutil
