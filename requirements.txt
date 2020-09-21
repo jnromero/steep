@@ -6,4 +6,4 @@ autobahn
 future
 netifaces
 mutagen
-dateutil
+python-dateutil
