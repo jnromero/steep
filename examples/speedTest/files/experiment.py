@@ -52,11 +52,11 @@ class experimentClass():
       #set current clicks for this match to 0
       self.currentClicks=0
       #this starts a timer for all subject that lasts 120 seconds and runs the function self.endMatch after it expires. 
-      self.initializeTimer("everyoneTimer",120,self.endMatch)
+      self.initializeTimer("all","everyoneTimer",120,self.endMatch)
       #update status of all clients
       for sid in self.data['subjectIDs']:
-         self.data[sid].matchClicks=0
-         self.data[sid].status={"page":"game","numberClicks":0,"currentMatch":self.currentMatch,"warning":"no"}
+         self.data['subjects'][sid].matchClicks=0
+         self.data['subjects'][sid].status={"page":"game","numberClicks":0,"currentMatch":self.currentMatch,"warning":"no"}
          self.updateStatus(sid)
       #update monitor screen:
       self.monitorMessage()
@@ -67,11 +67,11 @@ class experimentClass():
       sid=client.subjectID
       #Add 1 to the number of currentClicks for self.currentMatch
       self.currentClicks+=1
-      self.data[sid].matchClicks+=1
-      #Record the data to self.data to be saved. This adds a list [currentMatch,#clicks] to self.data[sid].choices     
-      self.data[sid].choices.append([self.currentMatch,self.currentClicks])
+      self.data['subjects'][sid].matchClicks+=1
+      #Record the data to self.data to be saved. This adds a list [currentMatch,#clicks] to self.data['subjects'][sid].choices     
+      self.data['subjects'][sid].choices.append([self.currentMatch,self.currentClicks])
       #start a self timer "can be called anything"
-      self.initializeTimer("myTimeCanBeLabledAnything"+sid,5,self.highlightMakeChoice,sid)
+      self.initializeTimer(sid,"myTimeCanBeLabledAnything",5,self.highlightMakeChoice,sid)
 
       #Check if there are more than 10 clicks, if so run self.endMatch, otherwise, run self.updateClicks      
       if self.currentClicks>10000:
@@ -84,7 +84,7 @@ class experimentClass():
 
 
    def highlightMakeChoice(self,sid):
-      self.data[sid].status['warning']="yes"
+      self.data['subjects'][sid].status['warning']="yes"
       self.updateStatus(sid)
 
    def updateClicks(self):
@@ -96,22 +96,22 @@ class experimentClass():
 
    def endMatch(self):
       #wait 10 seconds, and then run self.startMatch to start the next match
-      self.initializeTimer("timer",10,self.startMatch)
+      self.initializeTimer("all","timer",10,self.startMatch)
       #update status of all clients
       # messageToId(self,msg,sid="all",output="send"):
       for sid in self.data['subjectIDs']:
-         self.data[sid].status={"page":"postMatch","stage":"noChoices"}
+         self.data['subjects'][sid].status={"page":"postMatch","stage":"noChoices"}
          self.updateStatus(sid)
       
 
    def experimentSpecificMonitorTableEntries(self):
       self.currentMonitorTable="experiment"
       self.data['monitorTableInfo']['experiment']=[
-      ['page'           ,'self.data[sid].status["page"]'],
-      ['stage'          ,'self.data[sid].status["stage"]'],
-      ['Match#'          ,'self.currentMatch'],
-      ['My Clicks'         ,'self.data[sid].matchClicks'],
-      ['Total Clicks'            ,'self.currentClicks'],
+      ['page'           ,'self.data["subjects"][sid].status["page"]'],
+      ['stage'          ,'self.data["subjects"][sid].status["stage"]'],
+      ['Match#'         ,'self.currentMatch'],
+      ['My Clicks'      ,'self.data["subjects"][sid].matchClicks'],
+      ['Total Clicks'   ,'self.currentClicks'],
       ]
       self.newMonitorTable()
 
