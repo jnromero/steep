@@ -5,11 +5,12 @@ import time
 from twisted.internet import reactor
 import random
 from mutagen.mp3 import MP3
+from pathlib import Path
 
 class SteepInstructions():
    def __init__(self):
       "self.doNothering=1"
-      self.instructionsAudioFile=self.config['domain']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.mp3"
+      self.instructionsAudioFile=Path(self.config['domain'])/Path(self.config['currentExperiment'])/Path(self.config['instructionsFolder']).joinpath("generatedFiles","output.mp3")
       self.instructionsFinishedCaption="Instructions Finished. Please wait patiently for experiment to continue."
       #so video can be like a regular subject with a status
       self.instructionsPlaybackSpeed=1
@@ -119,20 +120,20 @@ class SteepInstructions():
       self.sendListOfMessages(msgs)
 
    def getInstructionsTasks(self):
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/taskTimes.json"
+      filename=Path(self.config['webServerRoot'])/Path(self.config['currentExperiment'])/Path(self.config['instructionsFolder']).joinpath("generatedFiles","taskTimes.json")
       file = open(filename,'r')
       self.taskTimes=json.load(file)
       file.close() 
       self.data['taskIndex']=-1
 
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/tasksOut.json"
+      filename=Path(self.config['webServerRoot'])/Path(self.config['currentExperiment'])/Path(self.config['instructionsFolder']).joinpath("generatedFiles","tasksOut.json")
       file = open(filename,'r')
       self.tasks=json.load(file)
       file.close() 
  
    def getInstructionsCaptions(self):
       #is a list of lists with [caption,time to next,total time at end of this caption display]
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/captions.json"
+      filename=Path(self.config['webServerRoot'])/Path(self.config['currentExperiment'])/Path(self.config['instructionsFolder']).joinpath("generatedFiles","captions.json")
       file = open(filename,'r')
       self.captions=json.load(file)
       file.close() 
@@ -140,7 +141,8 @@ class SteepInstructions():
       self.data['captionIndex']=-1
 
    def getInstructionsDuration(self):
-      instructionLength=MP3(self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/generatedFiles/output.mp3").info.length
+      mp3Path=Path(self.config['webServerRoot'])/Path(self.config['currentExperiment'])/Path(self.config['instructionsFolder']).joinpath("generatedFiles","output.mp3")
+      instructionLength=MP3(mp3Path).info.length
       # instructionLength=MP3(self.instructionsAudioFile)
       self.instructionsLength=float(instructionLength)/self.instructionsPlaybackSpeed
       self.instructionsLength+=10#add 10 second buffer at end.  

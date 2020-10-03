@@ -14,7 +14,7 @@ if sys.version_info >= (3,0):
    import urllib.parse as theURLparse
 else:
    import urlparse as theURLparse
-
+from pathlib import Path
 
 class SteepMainServer():
    def __init__(self):
@@ -532,7 +532,7 @@ class SteepMainServer():
             self.nextConsoleCall=reactor.callLater(.1,self.consoleMessage)
    def getCurrentConsoleLines(self,tab):
       currentTab=tab
-      thisFile=self.config['logFolder']+"/pickle/%s.pickle"%(currentTab)
+      thisFile=Path(self.config['logFolder']).joinpath("pickle","%s.pickle"%(currentTab))
       with open(thisFile,'rb') as file:
          out=[]
          while 3<4:

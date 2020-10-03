@@ -26,6 +26,7 @@ for x in steepDirectory.parents:
    if x in experimentDirectory.parents:
       webServerRoot=x
       break
+
 functions = loadSource('functions',str(steepDirectory.joinpath('python', 'modules','functions.py')))
 from twisted.internet import reactor#,ssl
 from twisted.web.server import Site
@@ -48,9 +49,10 @@ if options.saveData=="False":
 #set Location for config
 config={}
 config['location']=options.location
-config['webServerRoot']=str(webServerRoot)+"/"
-config['currentExperiment']="/"+str((experimentDirectory.relative_to(webServerRoot)))+"/"
-config['packageFolder']="/"+str((steepDirectory.relative_to(webServerRoot)))+"/"
+config['webServerRoot']=str(webServerRoot)
+config['currentExperiment']=str((experimentDirectory.relative_to(webServerRoot)))
+config['packageFolder']=str((steepDirectory.relative_to(webServerRoot)))
+
 try:
    locationSettings = loadSource('locationSettings',str(steepDirectory.joinpath('locations','%s.py'%(options.location))))
    if options.location=="local":
@@ -205,12 +207,12 @@ else:
 
 
 #copy experiment file for later viewing
-dataFolderFiles=config['webServerRoot']+config['dataFolder']+"/files/"
+dataFolderFiles=pathlib.Path(config['webServerRoot'])/pathlib.Path(config['dataFolder']).joinpath('files')
 if not os.path.exists(dataFolderFiles):
    os.makedirs(dataFolderFiles)
-shutil.copyfile(experimentFile,dataFolderFiles+"/experiment.py")
-shutil.copyfile(experimentFile.replace(".py",".js"),dataFolderFiles+"/experiment.js")
-shutil.copyfile(experimentFile.replace(".py",".css"),dataFolderFiles+"/experiment.css")
+shutil.copyfile(experimentFile,dataFolderFiles.joinpath('experiment.py'))
+shutil.copyfile(experimentFile.replace(".py",".js"),dataFolderFiles.joinpath('experiment.js'))
+shutil.copyfile(experimentFile.replace(".py",".css"),dataFolderFiles.joinpath('experiment.css'))
 
 filename=str(steepDirectory.joinpath('python', 'modules','viewer.py'))
 file = open(filename,'r')
@@ -219,7 +221,7 @@ file.close()
 
 fileData=fileData.replace("PICKLEFILENAMEGOESHERE",serverStartString+".pickle")
 
-filename=dataFolderFiles+"/../viewer.py"
+filename=dataFolderFiles.joinpath('../viewer.py').resolve()
 file = open(filename,'w')
 file.writelines(fileData)
 file.close() 
@@ -245,9 +247,9 @@ class SteepInstructions():
       "defin blank class in case not importing other"
 if 'instructions' in config:
    #load experiment specific quiz module
-   experimentInstructionsFile=config['webServerRoot']+config['currentExperiment']+"/files/instructions.py"
+   experimentInstructionsFile=pathlib.Path(config['webServerRoot'])/pathlib.Path(config['currentExperiment']).joinpath("/files/instructions.py")
    experimentInstructions = loadSource('experimentInstructions',experimentInstructionsFile)
-   shutil.copyfile(experimentInstructionsFile,dataFolderFiles+"/instructions.py")
+   shutil.copyfile(experimentInstructionsFile,dataFolderFiles.joinpath("/instructions.py"))
    ExperimentInstructions=experimentInstructions.ExperimentInstructions
    
    #load instructions module

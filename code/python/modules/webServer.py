@@ -11,6 +11,7 @@ else:
 
 from twisted.web.resource import Resource,NoResource
 from twisted.web.static import File
+from pathlib import Path
 
 #Get value from url key function
 def getValueFromQueryKey(query,key):
@@ -37,25 +38,29 @@ class RequestHandler(Resource):
          # return output.encode('utf-8')
          ext=".py"
          filename="client.py"
-         fileFolder=self.config['packageFolder']+"/html/"
-         fullPath=self.config['webServerRoot']+fileFolder+filename
+         fileFolder=Path(self.config['packageFolder']).joinpath("html")
+         fullPath=Path(self.config['webServerRoot'])/fileFolder.joinpath(filename)
       elif thisPath in ["/client.html","/monitor.html","/instructions.html","/video.html","/questionnaire.html","/quiz.html","/serverInfo.html","/tester.html"]:
          ext=".py"
          filename=thisPath.replace(".html",".py").replace("/","")
-         fileFolder=self.config['packageFolder']+"/html/"
-         fullPath=self.config['webServerRoot']+fileFolder+filename
+         fileFolder=Path(self.config['packageFolder']).joinpath("html")
+         fullPath=Path(self.config['webServerRoot'])/fileFolder.joinpath(filename)
       elif thisPath in ["/files/experiment.js","/files/experiment.py","/files/experiment.css"]:
          ext="showFiles"
       else:
-         root,ext=os.path.splitext(thisPath)
-         filename=os.path.basename(thisPath)
-         if filename=="":
+         thisPath=Path(thisPath)
+         ext=thisPath.suffix
+         if ext=="":
+            fileFolder=thisPath.relative_to(thisPath.anchor)
             filename="index.py"
             ext=".py"
-         fileFolder=thisPath.replace(filename,"")
-         fullPath=self.config['webServerRoot']+fileFolder+filename
+         else:
+            fileFolder=thisPath.parent.relative_to(thisPath.parent.anchor)
+            filename=thisPath.name
+
+         fullPath=Path(self.config['webServerRoot'])/fileFolder/filename
          if filename=="favicon.ico":
-            fullPath=self.config['webServerRoot']+self.config['packageFolder']+"/html/triangle.png"
+            fullPath=Path(self.config['webServerRoot'])/Path(self.config['packageFolder']).joinpath("html","triangle.png")
       if ext==".zip":
          #will download the data file for ANY zip extension.
          dataFolder=self.config['webServerRoot']+self.config['dataFolder']
@@ -100,29 +105,28 @@ class RequestHandler(Resource):
          return output.encode('utf-8')
       elif os.path.isfile(fullPath):
          if ext==".py":
-            print("running %s from %s"%(filename,self.config['webServerRoot']+fileFolder))            
-            thisPage = imp.load_source('thisPage',self.config['webServerRoot']+fileFolder+filename)
+            print("running %s from %s"%(filename,str(Path(self.config['webServerRoot'])/fileFolder)))
+            thisPage = imp.load_source('thisPage',str(Path(self.config['webServerRoot'])/fileFolder.joinpath(filename)))
             output=thisPage.getPage(self.config)
             return output.encode('utf-8')
          elif ext==".m4a":
             request.setHeader("Content-Type","audio/mp4")
-            thisFile=File(self.config['webServerRoot']+thisPath)
+            thisFile=File(Path(self.config['webServerRoot'])/thisPath)
             return File.render_GET(thisFile,request)
          elif ext==".pickle":         
             #this causes file to be downloaded automatically rather than being opened in the browser.   
             request.setHeader("Content-Disposition","attachment")
-            thisFile=File(self.config['webServerRoot']+thisPath)
+            thisFile=File(Path(self.config['webServerRoot'])/thisPath)
             return File.render_GET(thisFile,request)
          else:
             #print "getting file: "+self.config['webServerRoot']+fileFolder+filename
-            thisFile=File(self.config['webServerRoot']+fileFolder+filename)
+            thisFile=File(Path(self.config['webServerRoot'])/fileFolder/filename)
             return File.render_GET(thisFile,request)
       else:
          print(request)
          print("ErrorLine: File NOT found: %s"%(fullPath), file=sys.stderr)
          #print >> sys.stderr, "ErrorLine: File NOT found: %s"%(fullPath)
          return "<html><h1>File Not Found - %s</h1></html>"%(fullPath)
-
 
 
 

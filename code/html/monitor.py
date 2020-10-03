@@ -2,10 +2,11 @@
 import imp
 import sys
 import netifaces as ni
+from pathlib import Path 
 
 
 def getPage(config):
-  pf = imp.load_source('pf', config['webServerRoot']+config['packageFolder']+"/html/pageFunctions.py")
+  pf = imp.load_source('pf',str(Path(config['webServerRoot'])/Path(config['packageFolder']).joinpath("html","pageFunctions.py")))
   thisVersion=sys.version.split("\n")[0]
   thisVersion=thisVersion.replace("\"","'")
   string=""
@@ -29,8 +30,8 @@ def getPage(config):
   this+='\t<head>\n'
   this+='\t\t<title>STEEP: Monitor</title>\n'
   this+=pf.addExternalFiles(config,"headStart")
-  this+=pf.javascriptLine(files['common']['jquery.js'])
   this+=pf.javascriptLine(files["exp"]['config.js'])
+  this+=pf.javascriptLine(files['common']['jquery.js'])
   this+=pf.javascriptLine(files["exp"]['monitor.js'])
   this+=pf.javascriptLine(files['common']['common.js'])
   this+=pf.javascriptLine(files['common']['websocketConnect.js'])

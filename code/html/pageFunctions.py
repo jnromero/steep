@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import random
 import os 
+from pathlib import Path
 
 def addExternalFiles(config,location):
     #location is either "headStart" or "headEnd" "bodyStart" "bodyEnd"
@@ -58,54 +59,52 @@ def addPluginFiles(config,extension):
 
 
 def javascriptLine(url):
- return '\t\t<script type="text/javascript" src="%s"></script>\n'%(url)
+    return '\t\t<script type="text/javascript" src="%s"></script>\n'%(url)
 
 def cssLine(url):
-  return '\t\t<link rel="stylesheet" type="text/css" href="%s">\n'%(url)
+    return '\t\t<link rel="stylesheet" type="text/css" href="%s">\n'%(url)
 
 def cleanLink(config,link):
-    out=link.replace(config['domain'],config['webServerRoot'],1)
-    out=os.path.abspath(out) 
-    out=out.replace(config['webServerRoot'],config['domain']+"/",1)
+    out=str(link).replace("https:/","https://").replace("http:/","http://")
     return out
 
 def getFiles(config):
-    packageFolder=config['packageFolder']
-    currentExperiment=config['currentExperiment']
-    domain=config['domain']
-    packageURL=domain+packageFolder
-    experimentURL=domain+currentExperiment
+    packageFolder=Path(config['packageFolder'])
+    currentExperiment=Path(config['currentExperiment'])
+    domain=Path(config['domain'])
+    packageURL=domain/packageFolder
+    experimentURL=domain/currentExperiment
 
     files={}
     files['common']={}
 
-    files['common']['jquery.js']=cleanLink(config,packageURL+"javascript/jquery-1.11.3.min.js")
-    files['common']['velocity.js']=cleanLink(config,packageURL+"javascript/velocity.min.js")
-    files['common']['common.js']=cleanLink(config,packageURL+"javascript/common.js")
-    files['common']['websocketConnect.js']=cleanLink(config,packageURL+"javascript/websocketConnect.js")
-    files['common']['video.js']=cleanLink(config,packageURL+"javascript/video.js")
-    files['common']['instructions.js']=cleanLink(config,packageURL+"javascript/instructions.js")
-    files['common']['monitor.js']=cleanLink(config,packageURL+"javascript/monitor.js")
-    files['common']['chat.js']=cleanLink(config,packageURL+"javascript/chat.js")
+    files['common']['jquery.js']=cleanLink(config,packageURL.joinpath("javascript","jquery-1.11.3.min.js"))
+    files['common']['velocity.js']=cleanLink(config,packageURL.joinpath("javascript","velocity.min.js"))
+    files['common']['common.js']=cleanLink(config,packageURL.joinpath("javascript","common.js"))
+    files['common']['websocketConnect.js']=cleanLink(config,packageURL.joinpath("javascript","websocketConnect.js"))
+    files['common']['video.js']=cleanLink(config,packageURL.joinpath("javascript","video.js"))
+    files['common']['instructions.js']=cleanLink(config,packageURL.joinpath("javascript","instructions.js"))
+    files['common']['monitor.js']=cleanLink(config,packageURL.joinpath("javascript","monitor.js"))
+    files['common']['chat.js']=cleanLink(config,packageURL.joinpath("javascript","chat.js"))
 
-    files['common']['simulateMouse.css']=cleanLink(config,packageURL+"javascript/simulateMouse/simulateMouse.css")
-    files['common']['simulateMouse.js']=cleanLink(config,packageURL+"javascript/simulateMouse/simulateMouse.js")
+    files['common']['simulateMouse.css']=cleanLink(config,packageURL.joinpath("javascript","simulateMouse","simulateMouse.css"))
+    files['common']['simulateMouse.js']=cleanLink(config,packageURL.joinpath("javascript","simulateMouse","simulateMouse.js"))
 
-    files['common']['instructions.css']=cleanLink(config,packageURL+"css/instructions.css")
-    files['common']['common.css']=cleanLink(config,packageURL+"css/common.css")
-    files['common']['monitor.css']=cleanLink(config,packageURL+"css/monitor.css")
-    files['common']['chat.css']=cleanLink(config,packageURL+"css/chat.css")
+    files['common']['instructions.css']=cleanLink(config,packageURL.joinpath("css","instructions.css"))
+    files['common']['common.css']=cleanLink(config,packageURL.joinpath("css","common.css"))
+    files['common']['monitor.css']=cleanLink(config,packageURL.joinpath("css","monitor.css"))
+    files['common']['chat.css']=cleanLink(config,packageURL.joinpath("css","chat.css"))
 
     files["exp"]={}
     files["exp"]['config.js']=config["configJsURL"]
-    files["exp"]['experiment.css']=cleanLink(config,experimentURL+"files/experiment.css")
-    files["exp"]['experiment.js']=cleanLink(config,experimentURL+"files/experiment.js")
-    files["exp"]['tester.js']=cleanLink(config,experimentURL+"files/tester.js")
-    files["exp"]['monitor.js']=cleanLink(config,experimentURL+"files/monitor.js")
+    files["exp"]['experiment.css']=cleanLink(config,experimentURL.joinpath("files","experiment.css"))
+    files["exp"]['experiment.js']=cleanLink(config,experimentURL.joinpath("files","experiment.js"))
+    files["exp"]['tester.js']=cleanLink(config,experimentURL.joinpath("files","tester.js"))
+    files["exp"]['monitor.js']=cleanLink(config,experimentURL.joinpath("files","monitor.js"))
 
     if "instructionsFolder" in config:
-        instructionsFolder=experimentURL+config['instructionsFolder']
-        files["exp"]['instructions.js']=instructionsFolder+"instructions.js"
+        instructionsFolder=experimentURL/Path(config['instructionsFolder'])
+        files["exp"]['instructions.js']=instructionsFolder.joinpath("instructions.js")
 
 
     #this ensures that we won't use cached versions of these js and css files.  

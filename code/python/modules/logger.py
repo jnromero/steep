@@ -5,7 +5,7 @@ import time
 import sys
 import pickle 
 from builtins import bytes
-
+from pathlib import Path
 
 class logCounter():
    def __init__(self):
@@ -30,8 +30,8 @@ def createBlankFile(filename):
 
 
 def getFilenames(config,fileCount):
-   txtFile=config['logFolder']+"/txt/%s.txt"%(fileCount)
-   pickleFile=config['logFolder']+"/pickle/%s.pickle"%(fileCount)
+   txtFile=Path(config['logFolder']).joinpath("txt","%s.txt"%(fileCount))
+   pickleFile=Path(config['logFolder']).joinpath("pickle","%s.pickle"%(fileCount))
    return [txtFile,pickleFile]
 
 def newFiles(config,fileCount):

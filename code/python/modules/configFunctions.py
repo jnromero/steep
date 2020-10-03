@@ -1,29 +1,28 @@
-from __future__ import print_function,division,absolute_import   
 import os
+from pathlib import Path
 
 def setOtherFileLocations(config):
-	config['dataFolder']=config['currentExperiment']+"/data/"+config['serverStartString']+"/"
+	config['dataFolder']=str(Path(config['currentExperiment']).joinpath("data",config['serverStartString']))
+	config['configJsURL']=str(Path(config['domain'])/Path(config['dataFolder']).joinpath("config.js")).replace("https:/","https://").replace("http:/","http://")
+	config['configJsRelative']=str(Path(config['dataFolder']).joinpath("config.js"))
+	config['configJsPath']=str(Path(config['webServerRoot'])/Path(config['dataFolder']).joinpath("config.js"))
 
-	config['configJsURL']=config['domain']+config['dataFolder']+"/config.js"
-	config['configJsRelative']=config['dataFolder']+"/config.js"
-	config['configJsPath']=config['webServerRoot']+config['dataFolder']+"/config.js"
+	config['dataFileRelativePath']=str(Path(config['dataFolder']).joinpath("%s.pickle"%(config['serverStartString'])))
+	config['dataFolderURL']=str(Path(config['domain'])/Path(config['currentExperiment']).joinpath("data",config['serverStartString']+".zip")).replace("https:/","https://").replace("http:/","http://")
+	config['dataFilePath']=str(Path(config['webServerRoot'])/Path(config['dataFileRelativePath']))
+	config['dataFileURL']=str(Path(config['domain'])/Path(config['dataFileRelativePath'])).replace("https:/","https://").replace("http:/","http://")
 
-	config['dataFileRelativePath']=config['dataFolder']+"/%s.pickle"%(config['serverStartString'])
-	config['dataFolderURL']=config['domain']+config['currentExperiment']+"/data/"+config['serverStartString']+".zip"
-	config['dataFilePath']=config['webServerRoot']+config['dataFileRelativePath']
-	config['dataFileURL']=config['domain']+config['dataFileRelativePath']
+	config['fullDataFolder']=str(Path(config['webServerRoot'])/Path(config['dataFolder']))
+	config['logFolder']=str(Path(config['fullDataFolder']).joinpath("logs"))
+	config['messageLogFile']=str(Path(config['logFolder']).joinpath("messages","messagesLog.pickle"))
+	config['twistedLogFile']=str(Path(config['logFolder']).joinpath("twistedLog.log"))
+	config['fullLogFile']=str(Path(config['logFolder']).joinpath("fullLog.pickle"))
 
-	config['fullDataFolder']=config['webServerRoot']+config['dataFolder']
-	config['logFolder']=config['fullDataFolder']+"/logs/"
-	config['messageLogFile']=config['logFolder']+"/messages/messagesLog.pickle"
-	config['twistedLogFile']=config['logFolder']+"/twistedLog.log"
-	config['fullLogFile']=config['logFolder']+"/fullLog.pickle"
-
-	makeFolderIfNeeded(config['fullDataFolder'])
-	makeFolderIfNeeded(config['logFolder'])
-	makeFolderIfNeeded(config['logFolder']+"messages/")
-	makeFolderIfNeeded(config['logFolder']+"txt/")
-	makeFolderIfNeeded(config['logFolder']+"pickle/")
+	makeFolderIfNeeded(Path(config['fullDataFolder']))
+	makeFolderIfNeeded(Path(config['logFolder']))
+	makeFolderIfNeeded(Path(config['logFolder']).joinpath("messages/"))
+	makeFolderIfNeeded(Path(config['logFolder']).joinpath("txt/"))
+	makeFolderIfNeeded(Path(config['logFolder']).joinpath("pickle/"))
 
 
 	string="""import pickle 
@@ -40,21 +39,17 @@ with open(filename,'rb') as f:
 			break
 """
 
-	filename=config['logFolder']+"/messages/messagesLogViewer.py"
+	filename=Path(config['logFolder']).joinpath("messages","messagesLogViewer.py")
 	file = open(filename,'w')
 	file.writelines(string)
 	file.close() 
-
-
-
-
 
 	return config
 
 def writeJavascriptConfigFile(config):
 	string="window.config=%s;"%(config)
 	string=string.replace(",",",\n\t")
-	file = open(config['webServerRoot']+config['configJsRelative'],'w')
+	file = open(Path(config['webServerRoot'])/Path(config['configJsRelative']),'w')
 	file.writelines(string)
 	file.close() 
 

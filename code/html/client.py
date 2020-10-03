@@ -1,8 +1,9 @@
 #!/usr/bin/python
 import imp
+from pathlib import Path 
 
 def getPage(config):
-    pf = imp.load_source('pf', config['webServerRoot']+config['packageFolder']+"/html/pageFunctions.py")
+    pf = imp.load_source('pf',str(Path(config['webServerRoot'])/Path(config['packageFolder']).joinpath("html","pageFunctions.py")))
     files=pf.getFiles(config)
     this=''
     this+='<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Traditional//EN">\n'
