@@ -65,7 +65,7 @@ def cssLine(url):
     return '\t\t<link rel="stylesheet" type="text/css" href="%s">\n'%(url)
 
 def cleanLink(config,link):
-    out=str(link).replace("https:/","https://").replace("http:/","http://")
+    out=str(link).replace("\\","/").replace("https:/","https://").replace("http:/","http://")
     return out
 
 def getFiles(config):
