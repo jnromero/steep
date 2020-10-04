@@ -96,7 +96,7 @@ def getFiles(config):
     files['common']['chat.css']=cleanLink(config,packageURL.joinpath("css","chat.css"))
 
     files["exp"]={}
-    files["exp"]['config.js']=config["configJsURL"]
+    files["exp"]['config.js']=cleanLink(config,config["configJsURL"])
     files["exp"]['experiment.css']=cleanLink(config,experimentURL.joinpath("files","experiment.css"))
     files["exp"]['experiment.js']=cleanLink(config,experimentURL.joinpath("files","experiment.js"))
     files["exp"]['tester.js']=cleanLink(config,experimentURL.joinpath("files","tester.js"))
