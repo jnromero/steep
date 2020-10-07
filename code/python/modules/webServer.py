@@ -63,12 +63,11 @@ class RequestHandler(Resource):
             fullPath=Path(self.config['webServerRoot'])/Path(self.config['packageFolder']).joinpath("html","triangle.png")
       if ext==".zip":
          #will download the data file for ANY zip extension.
-         dataFolder=self.config['webServerRoot']+self.config['dataFolder']
-         outputName=self.config['webServerRoot']+self.config['currentExperiment']+"/data/"+self.config['serverStartString']
-         fullPath=outputName+".zip"
+         dataFolder=Path(self.config['webServerRoot'])/Path(self.config['dataFolder'])
+         outputName=Path(self.config['webServerRoot'])/Path(self.config['currentExperiment']).joinpath("data",self.config['serverStartString'])
+         fullPath=outputName.with_suffix(".zip")
          print("creating zip file ",fullPath," for data folder ",dataFolder)
          shutil.make_archive(outputName,'zip',dataFolder)
-         filename=self.config['serverStartString']+".zip"
          #this causes file to be downloaded automatically rather than being opened in the browser.   
          request.setHeader("Content-Disposition","attachment")
          thisFile=File(fullPath)
