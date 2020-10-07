@@ -109,6 +109,8 @@ class RequestHandler(Resource):
             output=thisPage.getPage(self.config)
             return output.encode('utf-8')
          elif ext==".m4a":
+            thisPath=Path(thisPath)
+            thisPath=thisPath.relative_to(thisPath.anchor)
             request.setHeader("Content-Type","audio/mp4")
             thisFile=File(Path(self.config['webServerRoot'])/thisPath)
             return File.render_GET(thisFile,request)
