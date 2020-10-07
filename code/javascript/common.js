@@ -772,6 +772,73 @@ function STEEPreturnJSFromClient(message){
 }
 
 
+
+
+function setWindowSize(width,height){
+    var mainDiv=document.getElementById("mainDiv");
+    if(mainDiv!=null){
+        changeMainDivSize(width,height)
+    }
+    else{
+        var pf=partial(changeMainDivSize,width,height);
+        window.addEventListener('steepMainDivAdded',pf);
+    }
+}
+
+function changeMainDivSize(width,height){
+    window.STEEPMainDivWidth=width;
+    window.STEEPMainDivHeight=height;
+    document.getElementById("mainDiv").style.width=window.STEEPMainDivWidth+"px";
+    document.getElementById("mainDiv").style.height=window.STEEPMainDivHeight+"px";
+}
+
+function setThisExperimentWindowSize(){
+    if(window.STEEPMainDivWidth==undefined){window.STEEPMainDivWidth=document.getElementById("mainDiv").style.width;}
+    if(window.STEEPMainDivHeight==undefined){window.STEEPMainDivHeight=document.getElementById("mainDiv").style.height;}
+    var width=Math.min(window.innerWidth,window.screen.width);
+    var height=Math.min(window.innerHeight,window.screen.height);
+    var width=Math.min(window.innerWidth);
+    var height=Math.min(window.innerHeight);
+    var scaleX=width/window.STEEPMainDivWidth;
+    var scaleY=height/window.STEEPMainDivHeight;
+    var scale=Math.min(scaleX,scaleY)
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        var screenTooSmallScreen=createAndAddDiv("screenTooSmallScreen","mainDiv");
+        document.getElementById("screenTooSmallScreen").style.display="block";
+        screenTooSmallScreen.innerHTML="Incompatible device<br><br>Please use a desktop computer with a larger screen.";
+        document.getElementById("mainDiv").classList.add("fullscreenMainDiv");
+    }
+    else if(scale<.5){
+        var screenTooSmallScreen=createAndAddDiv("screenTooSmallScreen","mainDiv");
+        document.getElementById("screenTooSmallScreen").style.display="block";
+        screenTooSmallScreen.innerHTML="Screen too small<br><br>Please resize your browser or use a device with a bigger screen.";
+        document.getElementById("mainDiv").classList.add("fullscreenMainDiv");
+    }
+    else{
+        deleteDiv("screenTooSmallScreen")
+        document.getElementById("mainDiv").classList.remove("fullscreenMainDiv");
+        // document.getElementById("screenTooSmallScreen").style.display="none";
+        document.getElementById("mainDiv").style.position="absolute";
+        document.getElementById("mainDiv").style.transform="scale("+scale+")";
+        document.getElementById("mainDiv").style.transformOrigin="top left";
+        if(scaleX<=scaleY){
+            document.getElementById("mainDiv").style.left="0px";
+        }
+        else{
+            var mainDivWidth=window.STEEPMainDivWidth*scale;
+            var thisWidth=(width-mainDivWidth)/2;
+            document.getElementById("mainDiv").style.left=thisWidth+"px";
+        }        
+    }
+}
+
+function resizeWindow(){
+    window.addEventListener('steepMainDivAdded',setThisExperimentWindowSize);
+    window.addEventListener("resize", setThisExperimentWindowSize);
+}
+
+
+
 //create mainDiv on new page.  
 clearAll();
 
