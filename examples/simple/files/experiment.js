@@ -27,12 +27,18 @@ function drawMatch(currentMatch) {
     }
     else{
         var thisColor="black";
-        var personalTimer="myTimeCanBeLabledAnything"+window.state['subjectID']
-        var thisText = "My Personal Timer That is Subject Specific: <time id='"+personalTimer+"'>0</time>";
-        moveTimer(personalTimer);
+        var thisText = "My Personal Timer That is Subject Specific: <time id='myTimeCanBeLabledAnything'>0</time>";
+        moveTimer("myTimeCanBeLabledAnything");
     }
 
-    placeText({"divid":"myMatchText","color":thisColor,"text":thisText,"top":"600px","height":"100px","fontSize":"25px","lineHeight":"50px","width":"100%"});
+    placeText({
+        "divid":"myMatchText",
+        "color":thisColor,"text":thisText,"top":"600px",
+        "height":"100px",
+        "fontSize":"25px",
+        "lineHeight":"50px",
+        "width":"100%"
+        });
 
     moveTimer("everyoneTimer");
 }
@@ -67,3 +73,11 @@ function postMatch(){
     genericScreen("That match is over.  The next match will start in <time id='timer'>0</time>");
     moveTimer("timer");
 }
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
+// Set main window size and then resize window to fill screen
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
+
+//This 
+setWindowSize(1000,1000);
+resizeWindow();

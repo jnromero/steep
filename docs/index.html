@@ -157,6 +157,7 @@ The javascript function will have access to the entire msg dictionary, so any re
 
 </div>
 
+
 <div class="subheader">Client to Server (.js to .py)</div>
 <div class="p">
 Since the client is sending messages with javascript to a python server, the client to server messages are sent from javascript using code as follows:
@@ -404,6 +405,53 @@ unzip experiment.zip -d /experiment/
 <!-- *********************************************************************************************** -->
 <!-- *********************************************************************************************** -->
 <!-- *********************************************************************************************** -->
+
+
+<div class="header">Designing Client Pages</div>
+<div class="p">
+The main functionality of STEEP is to provide an interface between a python server and a clients web browser.  I do have some additional javascript functions that may be useful when designing the clients page with javascript.  
+<div class="subheader">Setting the window size</div>
+<div class="p">
+At the end of the experiment.js file, you can add these two lines.  The first command, setWindowSize, takes two arguments, width and height in pixels, and will set the default size of the div with id mainDiv, which is the div that you should put all experimental content.
+
+<pre class="line-numbers"><code class="language-js">//experiment.js
+//This sets the default size for "mainDiv", the main experiment window
+setWindowSize(1600,900);
+//this ensures that the window is always scaled to fit the browser.  Useful if you don't have the same monitor size for every client.
+resizeWindow();
+
+</code></pre>
+</div>
+
+
+
+<div class="subheader">Adding elements</div>
+<div class="p">
+You can add elements on your own using standard javascript libraries or other packages.  I created a function, placeText, which adds an absolutely placed div inside mainDiv with the corresponding styles added as inline styles.  
+<pre class="line-numbers"><code class="language-js">//experiment.js
+
+placeText({
+  "divid":"myDivName",
+  "color":"red",
+  "text":"This is a test div",
+  "top":"600px",
+  "height":"100px",
+  "fontSize":"25px",
+  "lineHeight":"50px",
+  "width":"100%",
+  "backgroundColor":"blue"
+});
+
+//document.getElementById("myDivName").style.backgroundColor="blue";
+
+</code></pre>
+
+The above example adds a div named "myDivName" to "mainDiv".  This div has text that is colored red, has the text "This is a test div", is place 600px from the top, with a height of 100px, a font size of 25px, a line height of 50px, and a width of 100%.  You can add other style elements to the placeText command as well.  Any style element that you can add using standard javascript you can include as an argument in placeText.  For example if you 
+</div>
+
+</div>
+
+
 
 
 </div>

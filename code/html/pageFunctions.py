@@ -34,9 +34,6 @@ def addExternalFiles(config,location):
                         string+=javascriptLine(url)
                     if extension=="css":
                         string+=cssLine(url)
-
-
-
     return string
 
 

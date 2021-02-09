@@ -1,5 +1,5 @@
 #file: experiment.py
-#this is where you will define the experimentClass class, subjectClass class, and monitorClass class
+#this is where you will define the experimentClass class, subjectClass class
 from __future__ import print_function
 import os
 
@@ -12,7 +12,7 @@ class experimentClass():
       # initialize the class
       self.setParameters()
       #these are function that can be run by clicking a button on the monitor page
-      self.monitorTaskList=['startExperiment']
+      self.monitorTaskList=['startExperiment',"startQuiz"]
    def setParameters(self):
       self.data['exchangeRate']=.1
       self.currentMatch=-1
@@ -71,7 +71,7 @@ class experimentClass():
       #Record the data to self.data to be saved. This adds a list [currentMatch,#clicks] to self.data['subjects'][sid].choices     
       self.data['subjects'][sid].choices.append([self.currentMatch,self.currentClicks])
       #start a self timer "can be called anything"
-      self.initializeTimer(sid,"myTimeCanBeLabledAnything"+sid,5,self.highlightMakeChoice,sid)
+      self.initializeTimer(sid,"myTimeCanBeLabledAnything",5,self.highlightMakeChoice,sid)
 
       #Check if there are more than 10 clicks, if so run self.endMatch, otherwise, run self.updateClicks      
       if self.currentClicks>10:
@@ -125,7 +125,6 @@ class subjectClass():
       self.status={}
       self.status['page']="generic"
       self.status['message']=["Please read, sign, and date your consent form. <br> You may read over the instructions as we wait to begin."]
-
       #number of clicks this match
       self.matchClicks=0
 
